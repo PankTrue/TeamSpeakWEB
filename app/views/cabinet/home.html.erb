@@ -1,0 +1,52 @@
+<div>
+На вашем счету: <%= @user.money %> руб.
+</div>
+
+<h2>Список серверов</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Доменное имя</th>
+      <th>Количество слотов</th>
+      <th>До какого оплачено</th>
+      <th>Осталось дней</th>
+      
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @user.tsservers.each do |ts| %>
+      <tr>
+        <td><%= ts.id %></td>
+        <td><%= ts.dns+'.easy-ts3.ru' %></td>
+        <td><%= ts.slots %></td>
+        <td><%= ts.time_payment+30.days %></td>
+        <td><%= ts.time_payment-Time.now %></td>
+        <td><%= link_to 'Destroy', {controller: "cabinet", action: "destroy", id: ts} , data: { confirm: 'Are you sure?' }  %></td>
+
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="btn btn-default">
+<%= link_to "Купить сервер", cabinet_new_path %>
+</div>
+
+<div>
+<%= request.remote_ip %>
+
+</div>
+
+<div>
+  <% @data.each do |temp| %>
+  <li><%= temp %></li>
+  <% end %>
+</div>
+
+<div>
+  <h1>
+    <%= @port %>
+  </h1>
+</div>

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  port: 1
+  dns: MyString
+  slots: 1
+  time_payment: 2016-07-19
+  user_id: 1
+
+two:
+  port: 1
+  dns: MyString
+  slots: 1
+  time_payment: 2016-07-19
+  user_id: 1
