@@ -6,7 +6,6 @@ include CabinetHelper
   	@user=user_data
     server=CabinetHelper::Server.new
     @data=server.serverlist
-    @port=free_port
   end
 
   def new
@@ -25,10 +24,9 @@ include CabinetHelper
     @token=data['token']
 
     	if @ts.save
-    		redirect_to cabinet_home_path
-    		flash.notice = 'Вы успешно купили сервер'
-        flash[:alert] = "Ваш ключ: #{@token}"
-    	else
+    		flash[:notice] = "Ваш ключ: #{@token}"
+        redirect_to cabinet_home_path
+      else
         render :new
     	end
     end
