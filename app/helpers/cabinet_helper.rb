@@ -4,7 +4,7 @@ module CabinetHelper
 	class Server
 
 		def connect_server
-			if (%x'lsof -i :#{10011}').nil?
+			unless (%x'lsof -i :#{10011}').nil?
 				ts = Teamspeak::Client.new
 				ts.login('serveradmin','fIKUs4uC')
 			return ts
@@ -31,6 +31,22 @@ module CabinetHelper
 
 		def server_edit
 
+		end
+
+		def server_status(machine_id)
+			ts=connect_server
+			if ts != 1
+				ts.command('use', {sid: machine_id}, '-virtual')
+				info = ts.command('whoami')
+				ts.disconnect
+					if info['virtualserver_status'] == 'online'
+						return 'Online'
+					else
+						return 'Offline'
+					end
+				else
+					return 'Offline'
+			end
 		end
 
 		def serverlist

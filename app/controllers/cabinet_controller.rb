@@ -3,9 +3,11 @@ include CabinetHelper
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
   def home
-  	@user=user_data
-    server=CabinetHelper::Server.new
-    @data=server.serverlist
+   @user=current_user
+   # server=CabinetHelper::Server.new
+   # @data=server.serverlist
+   @status = CabinetHelper::Server.new
+
   end
 
   def new
@@ -14,7 +16,7 @@ include CabinetHelper
 
   def create
   	@ts = Tsserver.new(ts_params)
-  	@ts.user_id = user_data.id
+  	@ts.user_id = current_user.id
   	@ts.time_payment = Time.now
     if @ts.valid?
     server=CabinetHelper::Server.new
@@ -34,7 +36,7 @@ include CabinetHelper
 
   def destroy
     if @ts = Tsserver.where(id: params[:id]).first
-      if @ts.user_id == user_data.id
+      if @ts.user_id == current_user.id
         server=CabinetHelper::Server.new
         server.server_destroy(@ts.machine_id)
         @ts.destroy
@@ -55,9 +57,7 @@ private
 		params.require(:tsserver).permit(:slots, :dns)
 	end
 
-	def user_data
-  		user=User.find(current_user)
-	end
+
 
   def free_port
     i=2000
