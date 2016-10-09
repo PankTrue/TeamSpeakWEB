@@ -1,0 +1,58 @@
+<%= form_for @ts, url: {action: "create"} do |f| %>
+<% if @ts.errors.any? %>
+<div id="error_explanation">
+    <h2><%= pluralize(@ts.errors.count, "error") %> prohibited this ts from being saved:</h2>
+
+    <ul>
+        <% @ts.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+        <% end %>
+    </ul>
+</div>
+<% end %>
+
+<div class="field">
+    <%= f.label :slots %>
+    <%= f.number_field :slots, in: 10..512 %>
+</div>
+
+<div class="field">
+    <%= f.label :dns %>
+    <%= f.search_field :dns %>.easy-ts.ru
+</div>
+
+
+
+
+<h1>
+  <input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512">
+</h1>
+
+
+
+
+
+<div class="actions">
+    <%= f.submit %>
+</div>
+<% end %>
+
+
+
+<script>
+  $("[data-slider]")
+      .each(function () {
+        var input = $(this);
+        $("<span>")
+            .addClass("output")
+            .insertAfter($(this));
+      })
+      .bind("slider:ready slider:changed", function (event, data) {
+        $(this)
+            .nextAll(".output:first")
+            .html(data.value.toFixed(0));
+      });
+</script>
+
+
+
