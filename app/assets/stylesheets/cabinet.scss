@@ -1,3 +1,18 @@
 // Place all the styles related to the cabinet controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.field_slots{
+  font-size: 100px;
+}
+
+ul.hr{
+  margin: 0; /* Обнуляем значение отступов */
+  padding: 4px; /* Значение полей */
+}
+
+ul.hr li {
+  display: inline; /* Отображать как строчный элемент */
+  margin-right: 5px; /* Отступ слева */
+  padding: 3px; /* Поля вокруг текста */
+}
