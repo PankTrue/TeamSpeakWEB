@@ -17,7 +17,7 @@ include CabinetHelper
   def create
   	@ts = Tsserver.new(ts_params)
   	@ts.user_id = current_user.id
-  	@ts.time_payment = Time.now
+  	@ts.time_payment = Time.now + @ts[:time]
     if @ts.valid?
     server=CabinetHelper::Server.new
     data=server.server_create(free_port,@ts.slots)
@@ -54,7 +54,7 @@ include CabinetHelper
 
 private
 	def ts_params
-		params.require(:tsserver).permit(:slots, :dns)
+		params.require(:tsserver).permit(:slots, :dns, :time)
 	end
 
 

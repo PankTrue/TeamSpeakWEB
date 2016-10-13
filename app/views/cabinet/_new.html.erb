@@ -1,54 +1,89 @@
-<%= form_for @ts, url: {action: "create"} do |f| %>
-    <% if @ts.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(@ts.errors.count, "error") %> prohibited this ts from being saved:</h2>
+<div class="buy">
+  <h1>Покупка сервера</h1>
+  <%= form_for @ts, url: {action: "create"} do |f| %>
+      <% if @ts.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@ts.errors.count, "error") %> prohibited this ts from being saved:</h2>
 
-          <ul>
-            <% @ts.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-    <% end %>
+            <ul>
+              <% @ts.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
 
-    <div class="field">
-    </div>
+      <div class="field">
+      </div>
 
-    <div class="field">
-      <%= f.label :dns %>
-      <%= f.search_field :dns %>.easy-ts.ru
-    </div>
+      <div class="field">
+        <%= f.label :dns %>
+        <%= f.search_field :dns %>.easy-ts.ru
+      </div>
+
+  <table><tr>
+        <td> <%= f.number_field :slots, in: 10..512, value: 10 %></td>
+        <td>10</td>
+        <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512"></td>
+        <td>512</td>
+  </table></tr>
+
+      <select name="time" class="select" id="SelectTime">
+        <option value="1">1 месяц</option>
+        <option value="2">2 месяца</option>
+        <option value="3">3 месяца</option>
+        <option value="6">6 месяцев</option>
+        <option value="12">1 год</option>
+      </select>
 
 
-<ul class="hr">
-      <li><%= f.number_field :slots, in: 10..512, value: 10 %></li>
-      <li><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512"></li>
-</ul>
+      <ul class="hr">
+        <li>Стоимость:</li>
+        <li class="cost">30</li>
+        <li>руб.</li>
+      </ul>
 
 
+      <div class="actions">
+        <%= f.submit %>
+      </div>
+  <% end %>
 
 
-    <div class="actions">
-      <%= f.submit %>
-    </div>
-<% end %>
+</div>
+
+
 
 
 
 <script>
-  $("#tsserver_slots").bind("keyup focusout", function(event){
+  function SetCost() {
+    var data1 = parseInt($("#tsserver_slots").val());
+    var data2 = $('#SelectTime').val();
+    data2 = parseInt(data2);
+    var data = data1 * 3 * data2;
+    $('.cost').html(data);
+  }
+
+    $('#SelectTime').bind('click', function(event){
+      SetCost();
+    });
+
+    $("#tsserver_slots").bind("keyup focusout", function(event){
     var data = parseInt($("#tsserver_slots").val());
     if (data>512)
     {
       $('#tsserver_slots').val(512);
       data = 512;
-
+      SetCost();
     }
 
     if (data>=10)
     {
       var selector = $("[data-slider]");
       selector.simpleSlider("setValue", data);
+      SetCost();
+
     }
 
   });
@@ -60,14 +95,17 @@
       $('#tsserver_slots').val(10);
       var selector = $("[data-slider]");
       selector.simpleSlider("setValue", 10);
+      SetCost();
+
     }
   });
 
-  $("[data-slider]")
-        .bind("slider:ready slider:changed", function (event, data) {
+  $("[data-slider]").bind("slider:ready slider:changed", function (event, data) {
         $('#tsserver_slots').val(data.value.toFixed(0));
+    SetCost();
 
-      });
+
+  });
 
 
 

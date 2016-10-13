@@ -2,17 +2,20 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.field_slots{
-  font-size: 100px;
+.time{
+
 }
 
-ul.hr{
+ul.hr {
   margin: 0; /* Обнуляем значение отступов */
   padding: 4px; /* Значение полей */
 }
-
 ul.hr li {
+  font-size: 20px;
   display: inline; /* Отображать как строчный элемент */
   margin-right: 5px; /* Отступ слева */
-  padding: 3px; /* Поля вокруг текста */
+ // border: 1px solid #000; /* Рамка вокруг текста */
+ // padding: 3px; /* Поля вокруг текста */
 }
+
+
