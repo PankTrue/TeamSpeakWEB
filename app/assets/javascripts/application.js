@@ -13,6 +13,9 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require jquery.turbolinks
 //= require bootstrap
+//= require simple-slider.min
 //= require_tree .
 
+$.turbo.use('turbolinks:load', 'turbolinks:request-start');
