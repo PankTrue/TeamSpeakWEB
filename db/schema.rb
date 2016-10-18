@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20160719114433) do
     t.integer  "port",         null: false
     t.string   "dns"
     t.integer  "slots",        null: false
-    t.datetime "time_payment", null: false
+    t.date     "time_payment", null: false
     t.integer  "user_id",      null: false
     t.integer  "machine_id",   null: false
     t.datetime "created_at",   null: false

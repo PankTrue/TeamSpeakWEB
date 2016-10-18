@@ -1,5 +1,6 @@
 class CabinetController < ApplicationController
 include CabinetHelper
+require 'date'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
   def home
@@ -14,25 +15,31 @@ include CabinetHelper
   	@ts=Tsserver.new
   end
 
-  def create
-  	@ts = Tsserver.new(ts_params)
-  	@ts.user_id = current_user.id
-  	@ts.time_payment = Time.now + @ts[:time]
-    if @ts.valid?
+def create
+  @ts = Tsserver.new(ts_params)
+  time = @ts.time_payment
+  date = Time.now
+  date = date.to_date
+  date = date >> time.to_i
+  @ts.time_payment = date
+
+ # if @ts.valid
+    @ts.user_id = current_user.id
     server=CabinetHelper::Server.new
     data=server.server_create(free_port,@ts.slots)
     @ts.machine_id=data['sid']
     @ts.port=data['virtualserver_port']
     @token=data['token']
 
-    	if @ts.save
-    		flash[:notice] = "Ваш ключ: #{@token}"
-        redirect_to cabinet_home_path
-      else
-        render :new
-    	end
-    end
-  end
+    @ts.save
+      flash[:notice] = "Ваш ключ: #{@token}"
+      redirect_to cabinet_home_path
+ # else
+   # flash[:notice] = "No valid data"
+  #end
+end
+
+
 
   def destroy
     if @ts = Tsserver.where(id: params[:id]).first
@@ -53,8 +60,10 @@ include CabinetHelper
 
 
 private
+
+
 	def ts_params
-		params.require(:tsserver).permit(:slots, :dns, :time)
+		params.require(:tsserver).permit(:slots, :dns, :time_payment)
 	end
 
 

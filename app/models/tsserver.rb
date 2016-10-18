@@ -3,5 +3,4 @@ class Tsserver < ApplicationRecord
 
 	validates :slots, presence: true
 	validates :dns, uniqueness: true
-	validates :port, uniqueness: true
 end

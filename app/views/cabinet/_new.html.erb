@@ -18,7 +18,7 @@
 
       <div class="field">
         <%= f.label :dns %>
-        <%= f.search_field :dns %>.easy-ts.ru
+        <%= f.text_field :dns %>.easy-ts.ru
       </div>
 
   <table><tr>
@@ -28,7 +28,7 @@
         <td>512</td>
   </table></tr>
 
-      <select name="time" class="select" id="SelectTime">
+      <select name="tsserver[time_payment]" class="select" id="tsserver_time_payment">
         <option value="1">1 месяц</option>
         <option value="2">2 месяца</option>
         <option value="3">3 месяца</option>
@@ -45,7 +45,7 @@
 
 
       <div class="actions">
-        <%= f.submit %>
+        <%= f.submit "Купить сервер"%>
       </div>
   <% end %>
 
