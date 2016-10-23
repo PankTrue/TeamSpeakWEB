@@ -19,7 +19,7 @@
     <% @user.tsservers.each do |ts| %>
       <tr>
         <td><%= ts.id %></td>
-        <td><%= ts.dns+'.easy-ts3.ru' %></td>
+        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.nil? %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= @status.server_status(ts.machine_id) %></td>

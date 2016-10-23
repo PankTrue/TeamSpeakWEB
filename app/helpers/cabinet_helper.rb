@@ -3,13 +3,22 @@ module CabinetHelper
 
 	class Server
 
+		def server_worked?
+			path = '/home/pank/Рабочий\ стол/teamspeak/ts3server_startscript.sh'
+			if (%x'sh #{path} status') == "Server is running\n"
+				return true
+			else
+				return false
+			end
+		end
+
 		def connect_server
-			unless (%x'lsof -i :#{10011}').nil?
+			if server_worked?
 				ts = Teamspeak::Client.new
 				ts.login('serveradmin','fIKUs4uC')
-			return ts
+				return ts
 			else
-			return 1
+				return 1
 			end
 		end
 
@@ -24,9 +33,11 @@ module CabinetHelper
 
 		def server_destroy(machine_id)
 			ts=connect_server
-			ts.command('serverstop',sid: machine_id)
-			ts.command('serverdelete',sid: machine_id)
-			ts.disconnect
+			if ts != 1
+				ts.command('serverstop',sid: machine_id)
+				ts.command('serverdelete',sid: machine_id)
+				ts.disconnect
+			end
 		end
 
 		def server_edit
@@ -44,8 +55,8 @@ module CabinetHelper
 					else
 						return 'Offline'
 					end
-				else
-					return 'Offline'
+			else
+				return 'Offline'
 			end
 		end
 

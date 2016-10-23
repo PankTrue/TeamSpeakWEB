@@ -1,13 +1,12 @@
 $(document).on('turbolinks:load', function() {
     function SetCost() {
+        var data2 = parseInt($('#tsserver_time_payment').val());
         var data1 = parseInt($("#tsserver_slots").val());
-        var data2 = $('#SelectTime').val();
-        data2 = parseInt(data2);
         var data = data1 * 3 * data2;
-        $('.cost').html(data);
+        $('span.cost').text(data);
     }
 
-    $('.select').bind('click', function(event){
+    $('#tsserver_time_payment').bind('click', function(event){
         SetCost();
     });
 

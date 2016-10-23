@@ -3,40 +3,61 @@ include CabinetHelper
 require 'date'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
+
+
   def home
-   @user=current_user
-   # server=CabinetHelper::Server.new
+    @user=current_user
+
+    # server=CabinetHelper::Server.new
    # @data=server.serverlist
    @status = CabinetHelper::Server.new
 
   end
 
   def new
-  	@ts=Tsserver.new
+    @user=current_user
+    @ts=Tsserver.new
   end
 
 def create
-  @ts = Tsserver.new(ts_params)
-  time = @ts.time_payment
-  date = Time.now
-  date = date.to_date
-  date = date >> time.to_i
-  @ts.time_payment = date
+  server=CabinetHelper::Server.new
+  if server.server_worked?
+    user = current_user
+    @ts = Tsserver.new(ts_params)
 
- # if @ts.valid
-    @ts.user_id = current_user.id
-    server=CabinetHelper::Server.new
-    data=server.server_create(free_port,@ts.slots)
-    @ts.machine_id=data['sid']
-    @ts.port=data['virtualserver_port']
-    @token=data['token']
+    time = ts_params[:time_payment].to_i
+    @ts.time_payment = time
+    @ts.user_id = user.id
 
-    @ts.save
-      flash[:notice] = "Ваш ключ: #{@token}"
+    cost = time * 3 * @ts.slots
+    if @ts.dns == ""
+      @ts.dns = nil
+    end
+
+      if user.money >= cost
+        if @ts.valid?
+          @ts.time_payment = time_pay(time)
+          data=server.server_create(free_port,@ts.slots)
+          @ts.machine_id=data['sid']
+          @ts.port =data['virtualserver_port']
+          @token=data['token']
+          @ts.save validate: false
+            flash[:notice] = "Ваш ключ: #{@token}"
+            redirect_to cabinet_home_path
+          user.money = user.money - cost
+          user.save
+        else
+           render cabinet_new_path
+        end
+      else
+        flash[:notice]='Недостаточно средств'
+        redirect_to cabinet_home_path
+      end
+  else
+      flash[:notice] = 'В данный момент сервер не работает. Повторите попытку позже'
       redirect_to cabinet_home_path
- # else
-   # flash[:notice] = "No valid data"
-  #end
+  end
+
 end
 
 
@@ -61,6 +82,12 @@ end
 
 private
 
+  def time_pay(time)
+    date = Time.now
+    date = date.to_date
+    return date >> time.to_i
+  end
+
 
 	def ts_params
 		params.require(:tsserver).permit(:slots, :dns, :time_payment)
@@ -76,7 +103,7 @@ private
       data.each do |temp|
         used_ports << temp['virtualserver_port']
       end
-    
+
     while true
       if used_ports.include?(i)
         i+=1
