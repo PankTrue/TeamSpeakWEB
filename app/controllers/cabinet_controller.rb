@@ -90,21 +90,24 @@ end
 
 def extend_up
   ts = Tsserver.new(extend_params)
-  s = Tsserver.where(id: ts.id)
+  s = Tsserver.where(id: ts.id).take!
   user = current_user
-if user.money >= (s.slots * 3)
-  if user.id == s.user_id
-    user.money = user.money - (s.slots * 3)
-    s.time_payment = s.time_payment >> (ts.time_patment).to_i
-    s.save
-    user.save
-  else
-    redirect_to cabinet_home_path
-  end
-else
-  flash[:notice] = 'Недостаточно средств'
-  redirect_to cabinet_home_path
-end
+
+    if user.money >= (s.slots * 3)
+      if user.id == s.user_id
+        user.money = user.money - (s.slots * 3)
+        s.time_payment = s.time_payment >> extend_params[:time_payment].to_i
+        s.save validate: false
+        user.save
+        flash[:notice] = 'Вы успешно продлил'
+        redirect_to cabinet_home_path
+      else
+        redirect_to cabinet_home_path
+      end
+    else
+      flash[:notice] = 'Недостаточно средств'
+      redirect_to cabinet_home_path
+    end
 end
 
 
