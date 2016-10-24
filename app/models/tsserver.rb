@@ -7,5 +7,7 @@ class Tsserver < ApplicationRecord
 	validates :slots, :time_payment, presence: true
 	validates :dns, uniqueness: true, allow_nil: true
 	validates :time_payment, inclusion: {in: select_data}
+	validates :server_id, inclusion: @servers
+
 
 end

@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get 'cabinet/destroy/:id', to: 'cabinet#destroy'
   get 'cabinet/home'
+  get 'cabinet/extend'
+  post 'cabinet/extend_up'
 
   get 'cabinet', to: 'cabinet#home'
 

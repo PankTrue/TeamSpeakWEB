@@ -3,11 +3,12 @@
 </div>
 
 <h2>Список серверов</h2>
-<table>
+<table class="server-list">
   <thead>
     <tr>
-      <th>ID</th>
+      <td>ID</td>
       <th>Доменное имя</th>
+      <th>IP</th>
       <th>Количество слотов</th>
       <th>До какого оплачено</th>
       <th>Статус</th>
@@ -20,17 +21,20 @@
       <tr>
         <td><%= ts.id %></td>
         <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.nil? %></td>
+        <td><%= @ip + ':' + ts.port.to_s %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= @status.server_status(ts.machine_id) %></td>
-        <td><%= link_to 'Destroy', {controller: "cabinet", action: "destroy", id: ts} , data: { confirm: 'Are you sure?' }  %></td>
+        <td><%= link_to 'Удалить', {controller: "cabinet", action: "destroy", id: ts} , data: { confirm: 'Are you sure?' }  %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <div class="btn btn-default">
-<%= link_to "Купить сервер", cabinet_new_path %>
+<%= link_to 'Купить сервер', cabinet_new_path %>
+<td><%= link_to 'Продлить',{ controller: "cabinet", action: "extend"} %></td>
+
 </div>
 
 <div>

@@ -1,0 +1,26 @@
+<%= form_for @ts, url: {controller: "cabinet", action: "extend_up"} do |f| %>
+    <% if @ts.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@ts.errors.count, "error") %> prohibited this ts from being saved:</h2>
+
+          <ul>
+            <% @ts.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+    <div class="field">
+      <%= f.label 'Выберете id сервера' %>
+      <%= f.select :id, @servers.ids%>
+    </div>
+
+    <div class="field">
+      <%= f.label 'На сколько хотите продлить?' %>
+      <%= f.select :time_payment, Tsserver::Payment_Data%>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "Продлить"%>
+    </div>
+<% end %>

@@ -6,6 +6,7 @@ require 'date'
 
 
   def home
+    @ip = 'localhost'
     @user=current_user
 
     # server=CabinetHelper::Server.new
@@ -62,10 +63,11 @@ end
 
 
 
-  def destroy
+def destroy
+  server=CabinetHelper::Server.new
+  if server.server_worked?
     if @ts = Tsserver.where(id: params[:id]).first
       if @ts.user_id == current_user.id
-        server=CabinetHelper::Server.new
         server.server_destroy(@ts.machine_id)
         @ts.destroy
         redirect_to cabinet_home_path
@@ -75,9 +77,35 @@ end
     else
       redirect_to cabinet_home_path
     end
+  else
+    flash[:notice] = 'Невозможно удалить сервер, т.к. он выключен.'
+    redirect_to cabinet_home_path
   end
+end
 
+def extend
+  @ts = Tsserver.new
+  @servers = Tsserver.where(user_id: current_user.id)
+end
 
+def extend_up
+  ts = Tsserver.new(extend_params)
+  s = Tsserver.where(id: ts.id)
+  user = current_user
+if user.money >= (s.slots * 3)
+  if user.id == s.user_id
+    user.money = user.money - (s.slots * 3)
+    s.time_payment = s.time_payment >> (ts.time_patment).to_i
+    s.save
+    user.save
+  else
+    redirect_to cabinet_home_path
+  end
+else
+  flash[:notice] = 'Недостаточно средств'
+  redirect_to cabinet_home_path
+end
+end
 
 
 private
@@ -91,7 +119,11 @@ private
 
 	def ts_params
 		params.require(:tsserver).permit(:slots, :dns, :time_payment)
-	end
+  end
+
+  def extend_params
+    params.require(:tsserver).permit(:time_payment, :id)
+  end
 
 
 
