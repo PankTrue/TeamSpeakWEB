@@ -25,7 +25,8 @@
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= @status.server_status(ts.machine_id) %></td>
-        <td><%= link_to 'Удалить', {controller: "cabinet", action: "destroy", id: ts} , data: { confirm: 'Are you sure?' }  %></td>
+        <td><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Are you sure?' }  %></td>
+        <td><%= link_to 'Продлить', {controller: "cabinet", action: "extend", id: ts.id}%></td>
       </tr>
     <% end %>
   </tbody>
@@ -35,9 +36,7 @@
 <%= link_to 'Купить сервер', cabinet_new_path %>
 
 </div>
-<div class="btn btn-default">
-<%= link_to 'Продлить',{ controller: "cabinet", action: "extend"} %>
-</div>
+
 
 <div>
 <%= request.remote_ip %>

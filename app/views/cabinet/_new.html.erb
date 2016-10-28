@@ -1,6 +1,6 @@
 <div class="buy">
   <h1>Покупка сервера</h1>
-  <%= form_for @ts, url: {controller: "cabinet", action: "create"} do |f| %>
+  <%= form_for @ts, url: {controller: "cabinet", action: "create"}, method: :post do |f| %>
       <% if @ts.errors.any? %>
           <div id="error_explanation">
             <h2><%= pluralize(@ts.errors.count, "error") %> prohibited this ts from being saved:</h2>

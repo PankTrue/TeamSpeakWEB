@@ -1,18 +1,18 @@
 class CabinetController < ApplicationController
 include CabinetHelper
 require 'date'
+  protect_from_forgery with: :exception
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
 
-
-  def home
+def home
     @ip = 'localhost'
     @user=current_user
 
     # server=CabinetHelper::Server.new
    # @data=server.serverlist
    @status = CabinetHelper::Server.new
-
+   @servers = Tsserver.where(user_id: current_user.id)
   end
 
   def new
@@ -84,13 +84,11 @@ def destroy
 end
 
 def extend
-  @ts = Tsserver.new
-  @servers = Tsserver.where(user_id: current_user.id)
+  @ts = Tsserver.where(id: params[:id]).take!
 end
 
 def extend_up
-  ts = Tsserver.new(extend_params)
-  s = Tsserver.where(id: ts.id).take!
+  s = Tsserver.where(id: params[:id]).take!
   user = current_user
 
     if user.money >= (s.slots * 3)

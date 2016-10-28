@@ -2,10 +2,10 @@ Rails.application.routes.draw do
   get 'cabinet/new'
   post 'cabinet/create'
 
-  get 'cabinet/destroy/:id', to: 'cabinet#destroy'
+  delete 'cabinet/:id', to: 'cabinet#destroy'
   get 'cabinet/home'
-  get 'cabinet/extend'
-  post 'cabinet/extend_up'
+  get 'cabinet/extend/:id', to: 'cabinet#extend'
+  post 'cabinet/extend_up/:id', to: 'cabinet#extend_up'
 
   get 'cabinet', to: 'cabinet#home'
 
