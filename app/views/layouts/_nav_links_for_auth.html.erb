@@ -1,4 +1,7 @@
 <% if user_signed_in? %>
+    <% if admin? %>
+        <li><%= link_to "Админ панель", admin_home_path %></li>
+    <% end %>
   <li><%= link_to "Личный кабинет", cabinet_home_path %></li>
   <li><%= link_to 'Выход', destroy_user_session_path, :method=>'delete' %></li>
 <% else %>

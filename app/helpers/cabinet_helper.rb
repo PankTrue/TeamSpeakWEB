@@ -22,6 +22,22 @@ module CabinetHelper
 			end
 		end
 
+		def server_stop(machine_id)
+			ts = connect_server
+			if ts != 1
+				ts.command('serverstop',sid: machine_id)
+				ts.disconnect
+			end
+		end
+
+		def server_start(machine_id)
+			ts = connect_server
+			if ts != 1
+				ts.command('serverstart',sid: machine_id)
+				ts.disconnect
+			end
+		end
+
 		def server_create(port,slots)
 			ts=connect_server
 			if ts != 1
@@ -34,9 +50,14 @@ module CabinetHelper
 		def server_destroy(machine_id)
 			ts=connect_server
 			if ts != 1
+				if server_status(machine_id) == 'Online'
 				ts.command('serverstop',sid: machine_id)
 				ts.command('serverdelete',sid: machine_id)
 				ts.disconnect
+				else
+					ts.command('serverdelete',sid: machine_id)
+					ts.disconnect
+				end
 			end
 		end
 

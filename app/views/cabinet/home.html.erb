@@ -25,8 +25,11 @@
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= @status.server_status(ts.machine_id) %></td>
+        <td><%= link_to 'Редактировать'  %></td>
+        <td><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></td>
+        <td><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></td>
         <td><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Are you sure?' }  %></td>
-        <td><%= link_to 'Продлить', {controller: "cabinet", action: "extend", id: ts.id}%></td>
+
       </tr>
     <% end %>
   </tbody>

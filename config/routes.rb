@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'admin/home'
+
   get 'cabinet/new'
   post 'cabinet/create'
 
@@ -6,6 +8,7 @@ Rails.application.routes.draw do
   get 'cabinet/home'
   get 'cabinet/extend/:id', to: 'cabinet#extend'
   post 'cabinet/extend_up/:id', to: 'cabinet#extend_up'
+  post 'cabinet/work/:id', to: 'cabinet#work'
 
   get 'cabinet', to: 'cabinet#home'
 

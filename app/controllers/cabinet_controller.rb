@@ -1,7 +1,6 @@
 class CabinetController < ApplicationController
 include CabinetHelper
 require 'date'
-  protect_from_forgery with: :exception
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
 
@@ -42,7 +41,7 @@ def create
           @ts.machine_id=data['sid']
           @ts.port =data['virtualserver_port']
           @token=data['token']
-          @ts.save validate: false
+          @ts.save
             flash[:notice] = "Ваш ключ: #{@token}"
             redirect_to cabinet_home_path
           user.money = user.money - cost
@@ -106,6 +105,27 @@ def extend_up
       flash[:notice] = 'Недостаточно средств'
       redirect_to cabinet_home_path
     end
+end
+
+def work
+  ts = Tsserver.where(id: params[:id]).take!
+  user = current_user
+  id = ts.machine_id
+
+    if user.id == ts.user_id
+      server=CabinetHelper::Server.new
+      if server.server_status(id) == 'Online'
+        server.server_stop id
+        redirect_to cabinet_home_path
+      else
+        server.server_start id
+        redirect_to cabinet_home_path
+      end
+
+    else
+      redirect_to cabinet_home_path
+    end
+
 end
 
 
