@@ -1,2 +1,19 @@
-<h1>Admin#home</h1>
-<p>Find me in app/views/admin/home.html.erb</p>
+<h2>User list</h2>
+<table class="server-list">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Email</th>
+
+  </tr>
+  </thead>
+
+<% @users.each do |user| %>
+  <tbody>
+    <tr>
+      <td><%= user.id %></td>
+      <td><%= user.email %></td>
+      <td><%= link_to 'Info', {controller: 'admin', action: 'info', id: user.id} %></td>
+    </tr>
+  </tbody>
+<% end %>

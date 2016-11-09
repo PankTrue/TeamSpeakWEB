@@ -1,5 +1,6 @@
 class CabinetController < ApplicationController
 include CabinetHelper
+include TeamspeakHelper
 require 'date'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
@@ -36,12 +37,13 @@ def create
 
       if user.money >= cost
         if @ts.valid?
+          user.spent+=cost
           @ts.time_payment = time_pay(time)
           data=server.server_create(free_port,@ts.slots)
           @ts.machine_id=data['sid']
           @ts.port =data['virtualserver_port']
           @token=data['token']
-          @ts.save
+          @ts.save validate: false
             flash[:notice] = "Ваш ключ: #{@token}"
             redirect_to cabinet_home_path
           user.money = user.money - cost
@@ -92,6 +94,7 @@ def extend_up
 
     if user.money >= (s.slots * 3)
       if user.id == s.user_id
+        user.spent+=(s.slots * 3)
         user.money = user.money - (s.slots * 3)
         s.time_payment = s.time_payment >> extend_params[:time_payment].to_i
         s.save validate: false
@@ -127,6 +130,8 @@ def work
     end
 
 end
+
+
 
 
 private

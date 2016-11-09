@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160719114433) do
+ActiveRecord::Schema.define(version: 20161109133505) do
 
   create_table "tsservers", force: :cascade do |t|
     t.integer  "port",         null: false
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20160719114433) do
     t.float    "money",                  default: 0.0
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.float    "spent",                  default: 0.0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

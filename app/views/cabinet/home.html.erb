@@ -1,12 +1,16 @@
 <div>
-На вашем счету: <%= @user.money %> руб.
+На вашем счету: <%= @user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default' %>
+
 </div>
 
+  <div>
+
+  </div>
+
 <h2>Список серверов</h2>
-<table class="server-list">
+<table class="table">
   <thead>
     <tr>
-      <td>ID</td>
       <th>Доменное имя</th>
       <th>IP</th>
       <th>Количество слотов</th>
@@ -19,7 +23,6 @@
   <tbody>
     <% @user.tsservers.each do |ts| %>
       <tr>
-        <td><%= ts.id %></td>
         <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.nil? %></td>
         <td><%= @ip + ':' + ts.port.to_s %></td>
         <td><%= ts.slots %></td>
@@ -35,16 +38,12 @@
   </tbody>
 </table>
 
-<div class="btn btn-default">
-<%= link_to 'Купить сервер', cabinet_new_path %>
-
-</div>
 
 
-<div>
+
+<div hidden="true">
 <%= request.remote_ip %>
 
 </div>
-
 
 

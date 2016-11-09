@@ -8,7 +8,7 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
   </head>
-  <body>
+  <body class="container">
     <header>
       <%= render 'layouts/navigation' %>
     </header>
@@ -18,5 +18,9 @@
       <% end %>
        <%= yield %>
     </main>
+    <div>
+      <h3>Copyright 2016 <a href="http://vk.com/panktrue">Pank</a></h3>
+    </div>
+
   </body>
 </html>

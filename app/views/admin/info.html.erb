@@ -1,0 +1,29 @@
+<h2><%= @user.email %></h2>
+
+<%= form_tag "/admin/setmoney/#{@user.id}", method: :post do %>
+    Баланс:<%= number_field_tag 'money', @user.money  %>
+    <%= submit_tag 'Save', id: @user.id %>
+<% end %>
+Всего потрачего пользователем: <%= @user.spent %> руб.
+
+<table class="server-list">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Доменное имя</th>
+    <th>Количество слотов</th>
+    <th>До какого оплачено</th>
+
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @user.tsservers.each do |ts| %>
+      <tr>
+        <td><%= ts.id %></td>
+        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.nil? %></td>
+        <td><%= ts.slots %></td>
+        <td><%= ts.time_payment %></td>
+      </tr>
+  </tbody>
+  <% end %>
