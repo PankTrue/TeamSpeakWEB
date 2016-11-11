@@ -13,51 +13,72 @@ def home
    # @data=server.serverlist
    @status = CabinetHelper::Server.new
    @servers = Tsserver.where(user_id: current_user.id)
-  end
+end
 
-  def new
-    @user=current_user
-    @ts=Tsserver.new
+def edit
+  @ts = Tsserver.new
+  @s = Tsserver.where(id: params[:id]).take!
+  @days = CabinetHelper::Other.new().sec2days(@s.time_payment.to_time - Time.now)
+end
+
+def update
+  ts = Tsserver.where(id: params[:id]).take!
+  if current_user.id == ts.user_id
+    ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+    redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
+  else
+    redirect_to cabinet_home_path
   end
+end
+
+
+def new
+  @user=current_user
+  @ts=Tsserver.new
+end
 
 def create
   server=CabinetHelper::Server.new
   if server.server_worked?
     user = current_user
     @ts = Tsserver.new(ts_params)
-
     time = ts_params[:time_payment].to_i
-    @ts.time_payment = time
-    @ts.user_id = user.id
+    if [1,2,3,6,12].include?(time)
 
-    cost = time * 3 * @ts.slots
-    if @ts.dns == ""
-      @ts.dns = nil
-    end
+      @ts.time_payment = time
+      @ts.user_id = user.id
 
-      if user.money >= cost
-        if @ts.valid?
-          user.spent+=cost
-          @ts.time_payment = time_pay(time)
-          data=server.server_create(free_port,@ts.slots)
-          @ts.machine_id=data['sid']
-          @ts.port =data['virtualserver_port']
-          @token=data['token']
-          @ts.save validate: false
-            flash[:notice] = "Ваш ключ: #{@token}"
-            redirect_to cabinet_home_path
-          user.money = user.money - cost
-          user.save
-        else
-           render cabinet_new_path
-        end
-      else
-        flash[:notice]='Недостаточно средств'
-        redirect_to cabinet_home_path
+      cost = time * 3 * @ts.slots
+      if @ts.dns == ""
+        @ts.dns = nil
       end
+
+        if user.money >= cost
+          if @ts.valid?
+            user.spent+=cost
+            @ts.time_payment = Date.today + 30*time
+            data=server.server_create(free_port,@ts.slots)
+            @ts.machine_id=data['sid']
+            @ts.port =data['virtualserver_port']
+            @token=data['token']
+            @ts.save validate: false
+              flash[:notice] = "Ваш ключ: #{@token}"
+              redirect_to cabinet_home_path
+            user.money = user.money - cost
+            user.save
+          else
+             render cabinet_new_path
+          end
+        else
+          flash[:notice]='Недостаточно средств'
+          redirect_to cabinet_home_path
+        end
+    else
+      render '_new'
+    end
   else
-      flash[:notice] = 'В данный момент сервер не работает. Повторите попытку позже'
-      redirect_to cabinet_home_path
+    flash[:notice] = 'В данный момент сервер не работает. Повторите попытку позже'
+    redirect_to cabinet_home_path
   end
 
 end
@@ -91,13 +112,14 @@ end
 def extend_up
   s = Tsserver.where(id: params[:id]).take!
   user = current_user
-
+  time = extend_params[:time_payment].to_i
+  if [1,2,3,6,12].include?(time)
     if user.money >= (s.slots * 3)
       if user.id == s.user_id
         user.spent+=(s.slots * 3)
         user.money = user.money - (s.slots * 3)
-        s.time_payment = s.time_payment >> extend_params[:time_payment].to_i
-        s.save validate: false
+        s.time_payment = s.time_payment + time * 30
+        s.save
         user.save
         flash[:notice] = 'Вы успешно продлил'
         redirect_to cabinet_home_path
@@ -108,6 +130,9 @@ def extend_up
       flash[:notice] = 'Недостаточно средств'
       redirect_to cabinet_home_path
     end
+  else
+    redirect_to cabinet_home_path
+  end
 end
 
 def work
@@ -136,20 +161,20 @@ end
 
 private
 
-  def time_pay(time)
-    date = Time.now
-    date = date.to_date
-    return date >> time.to_i
-  end
 
+
+  def edit_params
+    params.require(:tsserver).permit(:slots, :dns)
+  end
 
 	def ts_params
 		params.require(:tsserver).permit(:slots, :dns, :time_payment)
   end
 
   def extend_params
-    params.require(:tsserver).permit(:time_payment, :id)
+    params.require(:tsserver).permit(:time_payment)
   end
+
 
 
 

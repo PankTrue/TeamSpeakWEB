@@ -1,5 +1,5 @@
 <div>
-На вашем счету: <%= @user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default' %>
+На вашем счету: <%= @user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
 
 </div>
 
@@ -14,7 +14,7 @@
       <th>Доменное имя</th>
       <th>IP</th>
       <th>Количество слотов</th>
-      <th>До какого оплачено</th>
+      <th>Дата следующего платежа</th>
       <th>Статус</th>
       
     </tr>
@@ -28,7 +28,7 @@
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= @status.server_status(ts.machine_id) %></td>
-        <td><%= link_to 'Редактировать'  %></td>
+        <td><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></td>
         <td><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></td>
         <td><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></td>
         <td><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Are you sure?' }  %></td>

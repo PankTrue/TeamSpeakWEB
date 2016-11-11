@@ -96,6 +96,23 @@ module CabinetHelper
 			end
 		end
 
+
+
 	end
+
+	class Other
+
+		def sec2days(seсs)
+			time = seсs.round
+			time /= 60
+			time /= 60
+			time /= 24
+			time+=1
+		end
+
+	end
+
+
+
 
 end

@@ -18,4 +18,3 @@
 //= require simple-slider.min
 //= require_tree .
 
-$.turbo.use('turbolinks:load', 'turbolinks:request-start');

@@ -2,10 +2,8 @@ class Tsserver < ApplicationRecord
 	belongs_to :user
 
 	Payment_Data = {'1 месяц':1,'2 месяца':2, '3 месяца':3,'6 месяцев':6,'1 год':12}
-	date = [1,2,3,6,12]
 
-	validates :slots, :time_payment, presence: true
+	validates :slots, presence: true, numericality: true, inclusion: {in: 10..512}
 	validates :dns, uniqueness: true, allow_nil: true
-	validates :time_payment, inclusion: date
 
 end

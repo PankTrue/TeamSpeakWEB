@@ -2,7 +2,7 @@
 
 <%= form_tag "/admin/setmoney/#{@user.id}", method: :post do %>
     Баланс:<%= number_field_tag 'money', @user.money  %>
-    <%= submit_tag 'Save', id: @user.id %>
+    <%= submit_tag 'Save', id: @user.id, remote:true %>
 <% end %>
 Всего потрачего пользователем: <%= @user.spent %> руб.
 
