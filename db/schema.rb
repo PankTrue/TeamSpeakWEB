@@ -10,17 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161109133505) do
+ActiveRecord::Schema.define(version: 20161112180011) do
 
   create_table "tsservers", force: :cascade do |t|
-    t.integer  "port",         null: false
+    t.integer  "port",                        null: false
     t.string   "dns"
-    t.integer  "slots",        null: false
-    t.date     "time_payment", null: false
-    t.integer  "user_id",      null: false
-    t.integer  "machine_id",   null: false
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer  "slots",                       null: false
+    t.date     "time_payment",                null: false
+    t.integer  "user_id",                     null: false
+    t.integer  "machine_id",                  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "state",        default: true
     t.index ["user_id"], name: "index_tsservers_on_user_id"
   end
 
