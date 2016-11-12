@@ -23,9 +23,19 @@ end
 
 def update
   ts = Tsserver.where(id: params[:id]).take!
-  if current_user.id == ts.user_id
-    ts.update dns: edit_params[:dns], slots: edit_params[:slots]
-    redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
+  user = User.where(id: current_user.id).take!
+
+  days = CabinetHelper::Other.new().sec2days(ts.time_payment.to_time - Time.now)
+
+  cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
+  if user.id == ts.user_id
+    if user.money >= cost
+      user.update money: (user.money - cost)
+      ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+      redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
+    else
+      redirect_to cabinet_home_path, notice: 'Недостаточно средст'
+    end
   else
     redirect_to cabinet_home_path
   end
