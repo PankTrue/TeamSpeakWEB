@@ -15,6 +15,7 @@
       <th>IP</th>
       <th>Количество слотов</th>
       <th>Дата следующего платежа</th>
+      <th>Остаток дней</th>
       <th>Статус</th>
       
     </tr>
@@ -27,11 +28,22 @@
         <td><%= @ip + ':' + ts.port.to_s %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
+        <td><%= CabinetHelper::Server.new().sec2days(ts.time_payment.to_time - Time.now) %></td>
         <td><%= @status.server_status(ts.machine_id) %></td>
-        <td><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></td>
-        <td><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></td>
-        <td><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></td>
-        <td><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Are you sure?' }  %></td>
+        <td><div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Функции
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
+            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
+            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
+            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Are you sure?' }  %></li>
+          </ul>
+        </div>
+        </td>
+
 
       </tr>
     <% end %>

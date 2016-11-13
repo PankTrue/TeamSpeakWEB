@@ -1,6 +1,5 @@
 class CabinetController < ApplicationController
 include CabinetHelper
-include TeamspeakHelper
 require 'date'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
@@ -13,19 +12,20 @@ def home
    # @data=server.serverlist
    @status = CabinetHelper::Server.new
    @servers = Tsserver.where(user_id: current_user.id)
+
 end
 
 def edit
   @ts = Tsserver.new
   @s = Tsserver.where(id: params[:id]).take!
-  @days = CabinetHelper::Other.new().sec2days(@s.time_payment.to_time - Time.now)
+  @days = sec2days(@s.time_payment.to_time - Time.now)
 end
 
 def update
   ts = Tsserver.where(id: params[:id]).take!
   user = User.where(id: current_user.id).take!
 
-  days = CabinetHelper::Other.new().sec2days(ts.time_payment.to_time - Time.now)
+  days = sec2days(ts.time_payment.to_time - Time.now)
 
   cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
   if user.id == ts.user_id
@@ -183,6 +183,14 @@ private
 
   def extend_params
     params.require(:tsserver).permit(:time_payment)
+  end
+
+  def sec2days(seсs)
+    time = seсs.round
+    time /= 60
+    time /= 60
+    time /= 24
+    time+=2
   end
 
 

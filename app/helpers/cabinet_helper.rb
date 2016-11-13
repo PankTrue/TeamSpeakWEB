@@ -2,10 +2,19 @@ require 'teamspeak-ruby'
 module CabinetHelper
 
 	class Server
+		@@ts_path = '/home/pank/Рабочий\ стол/teamspeak/ts3server_startscript.sh'
+
+		def global_server_start
+			unless server_worked?
+				%x'sh #{@@ts_path} start'
+				return true
+			else
+				return false
+			end
+		end
 
 		def server_worked?
-			path = '/home/pank/Рабочий\ стол/teamspeak/ts3server_startscript.sh'
-			if (%x'sh #{path} status') == "Server is running\n"
+			if (%x'sh #{@@ts_path} status') == "Server is running\n"
 				return true
 			else
 				return false
@@ -96,21 +105,17 @@ module CabinetHelper
 			end
 		end
 
-
-
-	end
-
-	class Other
-
 		def sec2days(seсs)
 			time = seсs.round
 			time /= 60
 			time /= 60
 			time /= 24
-			time+=1
+			time+=2
 		end
 
+
 	end
+
 
 
 
