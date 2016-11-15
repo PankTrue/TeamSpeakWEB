@@ -21,7 +21,7 @@ schedule.cron '0 0 * * *' do
     end
 end
 
-schedule.every '1s' do
+schedule.every '1m' do
 
   if cab.global_server_start
     ts = Tsserver.all

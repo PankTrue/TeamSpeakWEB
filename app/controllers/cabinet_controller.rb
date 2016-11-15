@@ -24,13 +24,20 @@ end
 def update
   ts = Tsserver.where(id: params[:id]).take!
   user = User.where(id: current_user.id).take!
-
+  server = CabinetHelper::Server.new
   days = sec2days(ts.time_payment.to_time - Time.now)
 
   cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
   if user.id == ts.user_id
     if user.money >= cost
       user.update money: (user.money - cost)
+      if ts.dns != '' and edit_params[:dns] != ''
+        server.edit_dns(server.dns_to_dnscfg(ts.dns, ts.port),server.dns_to_dnscfg(edit_params[:dns],ts.port))
+      elsif ts.dns != '' and edit_params[:dns] == ''
+        server.del_dns(ts.dns)
+      else          #ts.dns == nil and edit_params[:dns] != nil
+        server.new_dns(edit_params[:dns])
+      end
       ts.update dns: edit_params[:dns], slots: edit_params[:slots]
       redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
     else
@@ -71,6 +78,7 @@ def create
             @ts.machine_id=data['sid']
             @ts.port =data['virtualserver_port']
             @token=data['token']
+            server.new_dns("#{@ts.dns}.easy-ts.ru=127.0.0.1:#{@ts.port}") unless @ts.dns == nil
             @ts.save validate: false
               flash[:notice] = "Ваш ключ: #{@token}"
               redirect_to cabinet_home_path
@@ -102,6 +110,7 @@ def destroy
       if @ts.user_id == current_user.id
         server.server_destroy(@ts.machine_id)
         @ts.destroy
+        server.del_dns "#{@ts.dns}.easy-ts.ru=127.0.0.1:#{@ts.port}" unless @ts.dns == ''
         redirect_to cabinet_home_path
       else
         redirect_to cabinet_home_path

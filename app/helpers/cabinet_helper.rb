@@ -2,11 +2,18 @@ require 'teamspeak-ruby'
 module CabinetHelper
 
 	class Server
-		@@ts_path = '/home/pank/Рабочий\ стол/teamspeak/ts3server_startscript.sh'
+
+
+		def initialize
+			@ts_path = '/home/pank/Desktop/teamspeak'
+			@ts_sctript_path = @ts_path + '/ts3server_startscript.sh'
+			@dns_cfg_path = @ts_path + '/tsdns/tsdns_settings.ini'
+			@dns_script_path = @ts_path + '/tsdnsserver'
+		end
 
 		def global_server_start
 			unless server_worked?
-				%x'sh #{@@ts_path} start'
+				%x"sh #{@ts_sctript_path} start"
 				return true
 			else
 				return false
@@ -14,7 +21,7 @@ module CabinetHelper
 		end
 
 		def server_worked?
-			if (%x'sh #{@@ts_path} status') == "Server is running\n"
+			if (%x"sh #{@ts_sctript_path} status") == "Server is running\n"
 				return true
 			else
 				return false
@@ -111,6 +118,49 @@ module CabinetHelper
 			time /= 60
 			time /= 24
 			time+=2
+		end
+
+		def new_dns dns
+			File.open(@dns_cfg_path, 'a') do |f|
+				f.puts dns
+			end
+			%x"#{@dns_script_path} --update"
+		end
+
+		def edit_dns old_dns, new_dns
+			arr = Array.new
+			File.open @dns_cfg_path, "r" do |f|
+				f.each_line do |l|
+					arr << l
+				end
+			end
+
+			arr[arr.index(old_dns+"\n")] = new_dns + "\n"
+			arr.uniq!
+			File.open @dns_cfg_path, "w" do |f|
+				f.puts arr
+			end
+			%x"#{@dns_script_path} --update"
+		end
+
+		def del_dns dns
+			arr = Array.new
+			File.open @dns_cfg_path, "r" do |f|
+				f.each_line do |l|
+					arr << l
+				end
+			end
+
+			arr.delete(dns+"\n")
+
+			File.open @dns_cfg_path, "w" do |f|
+				f.puts arr
+			end
+			%x"#{@dns_script_path} --update"
+		end
+
+		def dns_to_dnscfg dns, port
+			"#{dns}.easy-ts.ru=127.0.0.1:#{port}"
 		end
 
 
