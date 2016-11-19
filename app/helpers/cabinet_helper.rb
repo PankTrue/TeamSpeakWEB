@@ -5,6 +5,7 @@ module CabinetHelper
 
 
 		def initialize
+			@ip = '127.0.0.1'
 			@ts_path = '/home/pank/Desktop/teamspeak'
 			@ts_sctript_path = @ts_path + '/ts3server_startscript.sh'
 			@dns_cfg_path = @ts_path + '/tsdns/tsdns_settings.ini'
@@ -134,8 +135,11 @@ module CabinetHelper
 					arr << l
 				end
 			end
+			index = arr.index(old_dns+"\n")
+			unless index.nil?
+				arr[index] = new_dns.to_s + "\n"
+			end
 
-			arr[arr.index(old_dns+"\n")] = new_dns + "\n"
 			arr.uniq!
 			File.open @dns_cfg_path, "w" do |f|
 				f.puts arr
@@ -160,7 +164,7 @@ module CabinetHelper
 		end
 
 		def dns_to_dnscfg dns, port
-			"#{dns}.easy-ts.ru=127.0.0.1:#{port}"
+			"#{dns}.easy-ts.ru=#{@ip}:#{port}"
 		end
 
 

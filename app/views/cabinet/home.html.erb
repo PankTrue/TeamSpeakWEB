@@ -24,7 +24,7 @@
   <tbody>
     <% @user.tsservers.each do |ts| %>
       <tr>
-        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.nil? %></td>
+        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns == '' %></td>
         <td><%= @ip + ':' + ts.port.to_s %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>

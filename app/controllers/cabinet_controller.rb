@@ -26,19 +26,22 @@ def update
   user = User.where(id: current_user.id).take!
   server = CabinetHelper::Server.new
   days = sec2days(ts.time_payment.to_time - Time.now)
-
+  old_dns = ts.dns
   cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
   if user.id == ts.user_id
     if user.money >= cost
       user.update money: (user.money - cost)
-      if ts.dns != '' and edit_params[:dns] != ''
-        server.edit_dns(server.dns_to_dnscfg(ts.dns, ts.port),server.dns_to_dnscfg(edit_params[:dns],ts.port))
-      elsif ts.dns != '' and edit_params[:dns] == ''
-        server.del_dns(ts.dns)
-      else          #ts.dns == nil and edit_params[:dns] != nil
-        server.new_dns(edit_params[:dns])
+      if ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+        if old_dns != '' and edit_params[:dns] != ''
+          server.edit_dns(server.dns_to_dnscfg(old_dns, ts.port),server.dns_to_dnscfg(edit_params[:dns],ts.port))
+        elsif old_dns != '' and edit_params[:dns] == ''
+          server.del_dns(server.dns_to_dnscfg(old_dns, ts.port))
+        elsif old_dns == '' and edit_params[:dns] != ''
+          server.new_dns(server.dns_to_dnscfg(edit_params[:dns],ts.port))
+        end
+      else
+        render 'cabinet/edit'
       end
-      ts.update dns: edit_params[:dns], slots: edit_params[:slots]
       redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
     else
       redirect_to cabinet_home_path, notice: 'Недостаточно средст'
@@ -66,9 +69,6 @@ def create
       @ts.user_id = user.id
 
       cost = time * 3 * @ts.slots
-      if @ts.dns == ""
-        @ts.dns = nil
-      end
 
         if user.money >= cost
           if @ts.valid?
@@ -78,7 +78,7 @@ def create
             @ts.machine_id=data['sid']
             @ts.port =data['virtualserver_port']
             @token=data['token']
-            server.new_dns("#{@ts.dns}.easy-ts.ru=127.0.0.1:#{@ts.port}") unless @ts.dns == nil
+            server.new_dns(server.dns_to_dnscfg(@ts.dns, @ts.port)) unless @ts.dns == ''
             @ts.save validate: false
               flash[:notice] = "Ваш ключ: #{@token}"
               redirect_to cabinet_home_path
@@ -107,11 +107,13 @@ def destroy
   server=CabinetHelper::Server.new
   if server.server_worked?
     if @ts = Tsserver.where(id: params[:id]).first
+      dns, port = @ts.dns, @ts.port
       if @ts.user_id == current_user.id
         server.server_destroy(@ts.machine_id)
-        @ts.destroy
-        server.del_dns "#{@ts.dns}.easy-ts.ru=127.0.0.1:#{@ts.port}" unless @ts.dns == ''
-        redirect_to cabinet_home_path
+        if @ts.destroy
+          server.del_dns(server.dns_to_dnscfg(dns, port)) unless dns == ''
+          redirect_to cabinet_home_path
+        end
       else
         redirect_to cabinet_home_path
       end
