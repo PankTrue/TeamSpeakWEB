@@ -30,7 +30,7 @@ def update
   cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
   if user.id == ts.user_id
     if user.money >= cost
-      user.update money: (user.money - cost)
+      user.update money: (user.money - cost), spent: user.spent+=cost
       if ts.update dns: edit_params[:dns], slots: edit_params[:slots]
         if old_dns != '' and edit_params[:dns] != ''
           server.edit_dns(server.dns_to_dnscfg(old_dns, ts.port),server.dns_to_dnscfg(edit_params[:dns],ts.port))
@@ -135,9 +135,9 @@ def extend_up
   user = current_user
   time = extend_params[:time_payment].to_i
   if [1,2,3,6,12].include?(time)
-    if user.money >= (s.slots * 3)
+    if user.money >= (s.slots * 3 * time)
       if user.id == s.user_id
-        user.spent+=(s.slots * 3)
+        user.spent+=(s.slots * 3 * time)
         user.money = user.money - (s.slots * 3)
         s.time_payment = s.time_payment + time * 30
         s.save
