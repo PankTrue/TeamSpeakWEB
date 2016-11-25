@@ -3,9 +3,6 @@
 
 </div>
 
-  <div>
-
-  </div>
 
 <h2>Список серверов</h2>
 <table class="table">
@@ -39,7 +36,7 @@
             <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
             <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
             <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
-            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Are you sure?' }  %></li>
+            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
           </ul>
         </div>
         </td>

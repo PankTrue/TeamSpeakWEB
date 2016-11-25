@@ -15,16 +15,16 @@
 
       <%= f.label 'Доменное имя' %>
       <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
-        <%= f.text_field :dns, class: 'form-control', placeholder: "Введите новое доменное имя", value: @s.dns %>
+        <%= f.text_field :dns, class: 'form-control', placeholder: "Введите новое доменное имя" %>
         <span class="input-group-addon" id="basic-addon2">.east-ts.ru</span>
       </div>
 
 
       <%= f.label 'Кол-во слотов' %>
       <table><tr>
-        <td> <%= f.number_field :slots, in: 10..512, value: @s.slots  %></td>
+        <td> <%= f.number_field :slots, in: 10..512  %></td>
         <td>10</td>
-        <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512" value=<%= @s.slots %>></td>
+        <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512" value="<%=@ts.slots %>"></td>
         <td>512</td>
       </table></tr>
 
@@ -47,7 +47,7 @@
 
 
     function SetCost() {
-      var def = parseInt(<%= @s.slots %>);
+      var def = parseInt(<%= @ts.slots %>);
       var current = parseInt($('#tsserver_slots').val());
       var days = parseInt(<%= @days %>)
       $('span.cost').text(((current-def)*(3/30*days)).toFixed(2));

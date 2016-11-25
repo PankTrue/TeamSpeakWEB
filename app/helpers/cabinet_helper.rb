@@ -78,8 +78,12 @@ module CabinetHelper
 			end
 		end
 
-		def server_edit
-
+		def server_autostart(machine_id, state)
+			ts=connect_server
+			if ts != 1
+				ts.command('use', sid: machine_id )
+				ts.command('serveredit', 'virtualserver_autostart': state)
+			end
 		end
 
 		def server_status(machine_id)
@@ -112,6 +116,7 @@ module CabinetHelper
 			return tmp
 			end
 		end
+
 
 		def sec2days(seсs)
 			time = seсs.round

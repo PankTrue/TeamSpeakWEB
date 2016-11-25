@@ -3,6 +3,8 @@ include CabinetHelper
 require 'date'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
+  before_action :edit_params, only: [:update]
+  before_action :extend_params, only: [:extend_up]
 
 def home
     @ip = 'localhost'
@@ -16,9 +18,9 @@ def home
 end
 
 def edit
-  @ts = Tsserver.new
-  @s = Tsserver.where(id: params[:id]).take!
-  @days = sec2days(@s.time_payment.to_time - Time.now)
+  @ts = Tsserver.find(params[:id])
+  redirect_to cabinet_home_path unless @ts.user_id == current_user.id
+  @days = sec2days(@ts.time_payment.to_time - Time.now)
 end
 
 def update
@@ -92,7 +94,7 @@ def create
           redirect_to cabinet_home_path
         end
     else
-      render '_new'
+      render 'new'
     end
   else
     flash[:notice] = 'В данный момент сервер не работает. Повторите попытку позже'
@@ -128,22 +130,31 @@ end
 
 def extend
   @ts = Tsserver.where(id: params[:id]).take!
+  redirect_to cabinet_home_path unless @ts.user_id == current_user.id
 end
 
 def extend_up
   s = Tsserver.where(id: params[:id]).take!
   user = current_user
   time = extend_params[:time_payment].to_i
+  cab = CabinetHelper::Server.new
   if [1,2,3,6,12].include?(time)
     if user.money >= (s.slots * 3 * time)
       if user.id == s.user_id
         user.spent+=(s.slots * 3 * time)
         user.money = user.money - (s.slots * 3)
-        s.time_payment = s.time_payment + time * 30
-        s.save
-        user.save
-        flash[:notice] = 'Вы успешно продлил'
-        redirect_to cabinet_home_path
+        s.state = true
+        if Date.today < s.time_payment
+          s.time_payment = s.time_payment + time * 30
+        else
+          s.time_payment = Date.today + time * 30
+        end
+        if s.save and user.save
+          cab.server_start(s.machine_id)
+          cab.server_autostart s.machine_id, 1
+          flash[:notice] = 'Вы успешно продлил'
+          redirect_to cabinet_home_path
+        end
       else
         redirect_to cabinet_home_path
       end
@@ -158,24 +169,28 @@ end
 
 def work
   ts = Tsserver.where(id: params[:id]).take!
-  user = current_user
   id = ts.machine_id
 
-    if user.id == ts.user_id
-      server=CabinetHelper::Server.new
-      if server.server_status(id) == 'Online'
-        server.server_stop id
-        redirect_to cabinet_home_path
+    if current_user.id == ts.user_id
+      if ts.state
+        server=CabinetHelper::Server.new
+        if server.server_status(id) == 'Online'
+          server.server_stop id
+          redirect_to cabinet_home_path
+        else
+          server.server_start id
+          redirect_to cabinet_home_path
+        end
       else
-        server.server_start id
-        redirect_to cabinet_home_path
+        redirect_to cabinet_home_path, notice: 'Продлите сервер'
       end
-
     else
       redirect_to cabinet_home_path
     end
 
 end
+
+
 
 
 
