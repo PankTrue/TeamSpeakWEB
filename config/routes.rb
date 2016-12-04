@@ -1,13 +1,12 @@
 Rails.application.routes.draw do
 
-
-  get 'report/index', to: 'report#index', as: 'report_index'
-  get 'report/new', to: 'report#new', as: 'report_new'
-  post 'report/create', to: 'report#create', as: 'report_create'
-  get 'report/edit/:id', to: 'report#edit', as: 'report_edit'
-  post 'report/update/:id', to: 'report#update', as: 'report_update'
-  delete 'report/destroy/:id', to: 'report#destroy', as: 'report_destroy'
-
+  resources :w1, only: [] do
+    post :callback, on: :collection
+    match :success, on: :collection, via: [:get, :post]
+    match :fail, on: :collection, via: [:get, :post]
+  end
+  post 'cabinet/free_dns', to: 'cabinet#free_dns'
+  get 'cabinet/pay'
   get 'cabinet/new'
   post 'cabinet/create'
   delete 'cabinet/:id', to: 'cabinet#destroy'

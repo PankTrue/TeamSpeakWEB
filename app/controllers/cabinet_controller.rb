@@ -1,6 +1,7 @@
 class CabinetController < ApplicationController
-include CabinetHelper
+helper CabinetHelper
 require 'date'
+require 'base64'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
   before_action :edit_params, only: [:update]
@@ -12,9 +13,14 @@ def home
 
     # server=CabinetHelper::Server.new
    # @data=server.serverlist
-   @status = CabinetHelper::Server.new
-   @servers = Tsserver.where(user_id: current_user.id)
-
+    @servers = Tsserver.where(user_id: current_user.id)
+    servs = Array.new
+     @servers.each do |temp|
+        servs << temp.machine_id
+     end
+    server = Teamspeak::Functions.new
+    @status = server_status(server.server_list, servs)
+    server.disconnect
 end
 
 def edit
@@ -26,7 +32,8 @@ end
 def update
   ts = Tsserver.where(id: params[:id]).take!
   user = User.where(id: current_user.id).take!
-  server = CabinetHelper::Server.new
+  server = Teamspeak::Functions.new
+  other = Teamspeak::Other.new
   days = sec2days(ts.time_payment.to_time - Time.now)
   old_dns = ts.dns
   cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
@@ -34,12 +41,13 @@ def update
     if user.money >= cost
       user.update money: (user.money - cost), spent: user.spent+=cost
       if ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+        server.server_edit_slots ts.machine_id, edit_params[:slots]
         if old_dns != '' and edit_params[:dns] != ''
-          server.edit_dns(server.dns_to_dnscfg(old_dns, ts.port),server.dns_to_dnscfg(edit_params[:dns],ts.port))
+          other.edit_dns(old_dns, ts.port,edit_params[:dns],ts.port)
         elsif old_dns != '' and edit_params[:dns] == ''
-          server.del_dns(server.dns_to_dnscfg(old_dns, ts.port))
+          other.del_dns(old_dns, ts.port)
         elsif old_dns == '' and edit_params[:dns] != ''
-          server.new_dns(server.dns_to_dnscfg(edit_params[:dns],ts.port))
+          other.new_dns(edit_params[:dns],ts.port)
         end
       else
         render 'cabinet/edit'
@@ -51,17 +59,18 @@ def update
   else
     redirect_to cabinet_home_path
   end
+  server.disconnect
 end
 
 
 def new
-  @user=current_user
   @ts=Tsserver.new
 end
 
-def create
-  server=CabinetHelper::Server.new
-  if server.server_worked?
+
+  def create
+  server=Teamspeak::Functions.new
+  other = Teamspeak::Other.new
     user = current_user
     @ts = Tsserver.new(ts_params)
     time = ts_params[:time_payment].to_i
@@ -80,8 +89,8 @@ def create
             @ts.machine_id=data['sid']
             @ts.port =data['virtualserver_port']
             @token=data['token']
-            server.new_dns(server.dns_to_dnscfg(@ts.dns, @ts.port)) unless @ts.dns == ''
-            @ts.save validate: false
+            other.new_dns(@ts.dns, @ts.port) unless @ts.dns == ''
+            @ts.save
               flash[:notice] = "Ваш ключ: #{@token}"
               redirect_to cabinet_home_path
             user.money = user.money - cost
@@ -96,36 +105,27 @@ def create
     else
       render 'new'
     end
-  else
-    flash[:notice] = 'В данный момент сервер не работает. Повторите попытку позже'
-    redirect_to cabinet_home_path
-  end
 
+server.disconnect
 end
 
 
 
 def destroy
-  server=CabinetHelper::Server.new
-  if server.server_worked?
-    if @ts = Tsserver.where(id: params[:id]).first
+  server=Teamspeak::Functions.new
+    @ts = Tsserver.where(id: params[:id]).first
       dns, port = @ts.dns, @ts.port
       if @ts.user_id == current_user.id
         server.server_destroy(@ts.machine_id)
         if @ts.destroy
-          server.del_dns(server.dns_to_dnscfg(dns, port)) unless dns == ''
+          server.del_dns(dns, port) unless dns.blank?
           redirect_to cabinet_home_path
         end
       else
         redirect_to cabinet_home_path
       end
-    else
-      redirect_to cabinet_home_path
-    end
-  else
-    flash[:notice] = 'Невозможно удалить сервер, т.к. он выключен.'
-    redirect_to cabinet_home_path
-  end
+
+server.disconnect
 end
 
 def extend
@@ -137,7 +137,7 @@ def extend_up
   s = Tsserver.where(id: params[:id]).take!
   user = current_user
   time = extend_params[:time_payment].to_i
-  cab = CabinetHelper::Server.new
+  cab = Teamspeak::Functions.new
   if [1,2,3,6,12].include?(time)
     if user.money >= (s.slots * 3 * time)
       if user.id == s.user_id
@@ -148,10 +148,10 @@ def extend_up
           s.time_payment = s.time_payment + time * 30
         else
           s.time_payment = Date.today + time * 30
-        end
-        if s.save and user.save
           cab.server_start(s.machine_id)
           cab.server_autostart s.machine_id, 1
+        end
+        if s.save validate:false and user.save
           flash[:notice] = 'Вы успешно продлил'
           redirect_to cabinet_home_path
         end
@@ -165,29 +165,47 @@ def extend_up
   else
     redirect_to cabinet_home_path
   end
+  cab.disconnect
 end
 
 def work
   ts = Tsserver.where(id: params[:id]).take!
   id = ts.machine_id
-
-    if current_user.id == ts.user_id
-      if ts.state
-        server=CabinetHelper::Server.new
-        if server.server_status(id) == 'Online'
-          server.server_stop id
-          redirect_to cabinet_home_path
+      if current_user.id == ts.user_id
+        if ts.state
+          server=Teamspeak::Functions.new
+          if server.server_status(id) == 'Online'
+            server.server_stop id
+            redirect_to cabinet_home_path
+          else
+            server.server_start id
+            redirect_to cabinet_home_path
+          end
         else
-          server.server_start id
-          redirect_to cabinet_home_path
+          redirect_to cabinet_home_path, notice: 'Продлите сервер'
         end
       else
-        redirect_to cabinet_home_path, notice: 'Продлите сервер'
+        redirect_to cabinet_home_path
       end
-    else
-      redirect_to cabinet_home_path
-    end
+server.disconnect
+end
 
+def pay
+  @w1 = Hash.new
+  @w1 = {
+      merchant_id: Settings_Walletone.merchant_id,
+      description: "BASE64:#{Base64.encode64("Пополнение баланса user_id: #{current_user.id}")}",
+      signature: generate_signature
+  }
+
+end
+
+def free_dns
+  dns_list = Tsserver.pluck(:dns)
+  status = dns_list.include?(params[:dns]) ? true:false
+  respond_to do |format|
+    format.json { render :json => {status: status} }
+  end
 end
 
 
@@ -211,21 +229,13 @@ private
     params.require(:tsserver).permit(:time_payment)
   end
 
-  def sec2days(seсs)
-    time = seсs.round
-    time /= 60
-    time /= 60
-    time /= 24
-    time+=2
-  end
-
 
 
 
   def free_port
     i=2000
-    server=CabinetHelper::Server.new
-    data=server.serverlist
+    server=Teamspeak::Functions.new
+    data=server.server_list
     used_ports=[]
       data.each do |temp|
         used_ports << temp['virtualserver_port']
@@ -243,7 +253,27 @@ private
         i+=1
       end
     end
+    server.disconnect
   end
 
+  def generate_signature
+    data = params.clone
+    data.delete('WMI_SIGNATURE')
+    data = data.sort
+    values = data.map {|key,val| val}
+    signature_string = values + @options[:secret]
+    Digest::MD5.base64digest(signature_string)
+  end
+
+  def server_status(server_list, user_servers)
+    arr = Array.new
+    server_list.each do |temp|
+      if user_servers.include?(temp["virtualserver_id"])
+        arr << temp["virtualserver_id"]
+        arr << temp["virtualserver_status"]
+      end
+    end
+    arr
+  end
 
 end

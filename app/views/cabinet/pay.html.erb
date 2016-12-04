@@ -1,0 +1,12 @@
+<%= form_tag("https://wl.walletone.com/checkout/checkout/Index", method: 'post', authenticity_token: false, enforce_utf8: false) do %>
+
+  <%= hidden_field_tag 'WMI_MERCHANT_ID', value: @w1[:merchant_id] %>
+  <%= number_field_tag 'WMI_PAYMENT_AMOUNT', value: 100 %> руб.
+  <%= hidden_field_tag 'WMI_CURRENCY_ID', value: 643 %>
+  <%= hidden_field_tag 'WMI_DESCRIPTION', value: @w1[:description] %>
+  <%= hidden_field_tag 'WMI_SUCCESS_URL', value: 'http://easy-ts.ru/w1/success' %>
+  <%= hidden_field_tag 'WMI_FAIL_URL', value: 'http://easy-ts.ru/w1/fail' %>
+  <%= hidden_field_tag 'WMI_SIGNATURE', value: @w1[:signature] %>
+    <br>
+    <%= submit_tag 'Пополнить' %>
+<% end %>

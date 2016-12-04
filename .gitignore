@@ -19,3 +19,7 @@
 .idea
 # Ignore Byebug command history file.
 .byebug_history
+# Secrets
+/config/database.yml
+/config/secrets.yml
+/config/settings.yml

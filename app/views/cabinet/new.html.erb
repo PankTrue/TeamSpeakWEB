@@ -1,9 +1,10 @@
 <div class="buy">
-  <h1>Покупка сервера</h1>
+  <h2>Покупка сервера</h2>
+
   <%= form_for @ts, url: {controller: "cabinet", action: "create"}, method: :post do |f| %>
       <% if @ts.errors.any? %>
           <div id="error_explanation">
-            <h2><%= pluralize(@ts.errors.count, "error") %> prohibited this ts from being saved:</h2>
+            <h2><%= pluralize(@ts.errors.count, "ошибка") %> prohibited this ts from being saved:</h2>
 
             <ul>
               <% @ts.errors.full_messages.each do |message| %>
@@ -15,19 +16,24 @@
 
 
 
+<div class="border">
+  <ul class="hr">
 
-
-        <%= f.label 'Доменное имя' %>
+    <li><%= f.label 'Доменное имя' %></li>
         <br>
 
 
 
-      <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
-        <%= f.text_field :dns, class: 'form-control', placeholder: "Введите доменное имя" %>
+    <li><div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
+        <%= f.text_field :dns, class: 'form-control', id: 'dns_input' , placeholder: "Введите доменное имя", allow_nil: true %>
         <span class="input-group-addon" id="basic-addon2">.east-ts.ru</span>
-      </div>
+      </div></li>
 
+    <li><span id="dns_status">Введите домен(необязательно)</span></li>
+  </ul>
+</div>
 
+<div class="border">
         <%= f.label 'Кол-во слотов' %>
   <table><tr>
         <td> <%= f.number_field :slots, in: 10..512, value: 10 %></td>
@@ -35,28 +41,33 @@
         <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512"></td>
         <td>512</td>
   </table></tr>
+</div>
 
+
+<div class="border">
 
       <div class="field">
-        <%= f.select :time_payment, Tsserver::Payment_Data%>
+        <%= f.label 'Время оплаты' %>
+        <br>
+        <%= f.select :time_payment, Tsserver::Payment_Data %>
 
       </div>
 
+</div>
 
-
-
+<div class="border">
       <ul class="hr">
         <li>Стоимость:</li>
         <li><span class="cost">30</span></li>
         <li>руб.</li>
       </ul>
+</div>
 
 
       <div class="actions">
         <%= f.submit "Купить сервер"%>
       </div>
   <% end %>
-
 
 </div>
 
@@ -68,6 +79,35 @@
       var data = data1 * 3 * data2;
       $('span.cost').text(data);
     }
+    
+
+    $('#dns_input').bind('change', function (event) {
+      var dns = $('#dns_input').val();
+        if ((/^[A-Za-z0-9_-]+$/.test(dns)) && dns != '' ) {
+          $.ajax({
+            type: 'POST',
+            url: "/cabinet/free_dns",
+            data: {dns: dns},
+            success:function(data){
+              if ((data.status) == true){
+                $('#dns_status').text('Домен занят');
+              }else{
+                $('#dns_status').text('Домен свободен');
+              }
+            },
+            error:function(data){
+
+            }
+
+          });
+        }else if (dns == ''){
+          $('#dns_status').text('Введите домен(необязательно)');
+        }else{
+          $('#dns_status').text('Недопустимый домен');
+        }
+    });
+
+
 
     $('#tsserver_time_payment').bind('click', function(event){
       SetCost();

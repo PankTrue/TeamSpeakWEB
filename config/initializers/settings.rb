@@ -1,0 +1,5 @@
+require "#{Rails.root}/lib/teamspeak/teamspeak.rb"
+class Settings < Settingslogic
+  source "#{Rails.root}/config/settings.yml"
+  namespace Rails.env
+end

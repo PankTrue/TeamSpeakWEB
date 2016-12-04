@@ -25,8 +25,8 @@
         <td><%= @ip + ':' + ts.port.to_s %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
-        <td><%= CabinetHelper::Server.new().sec2days(ts.time_payment.to_time - Time.now) %></td>
-        <td><%= @status.server_status(ts.machine_id) %></td>
+        <td><%= sec2days(ts.time_payment.to_time - Time.now) %></td>
+        <td><%= @status[@status.index(ts.machine_id)+1]%></td>
         <td><div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Функции
