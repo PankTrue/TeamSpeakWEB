@@ -12,17 +12,16 @@ class AdminController < ApplicationController
 
   def setmoney
     @user = User.where(id: params[:id]).take!
-    @user.money = params[:money]
+    @user.update money: params[:money]
     @user.save
     respond_to do |format|
       format.html { redirect_to admin_info_path @user.id  }
-      format.js
     end
   end
 
 private
   def admin?
-    unless Rails.application.secrets.admin_list.include?(current_user.email)
+    unless Settings.other.admin_list.include?(current_user.email)
       redirect_to root_path
     end
   end

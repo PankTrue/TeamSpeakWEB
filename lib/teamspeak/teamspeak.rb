@@ -51,8 +51,7 @@ module Teamspeak
         @sock = TCPSocket.new(host, port)
       rescue
         %x"sh #{Settings.teamspeak.ts_path}/ts3server_startscript.sh start"
-        sleep 5
-        @sock = TCPSocket.new(host, port)
+        raise 'Error'
       end
       # Check if the response is the same as a normal teamspeak 3 server.
       if @sock.gets.strip != 'TS3'
@@ -212,6 +211,15 @@ module Teamspeak
       self.command('serveredit', 'virtualserver_maxclients':slots)
     end
 
+    def server_destroy machine_id
+      if server_status machine_id
+        self.command('serverstop',sid: machine_id)
+        self.command('serverdelete',sid: machine_id)
+      else
+        self.command('serverdelete',sid: machine_id)
+      end
+    end
+
     def server_list
       tmp=Array.new
       self.command('serverlist').each do |temp|
@@ -226,6 +234,10 @@ module Teamspeak
   end
 
   class Other
+
+    def initialize
+      @ip = '127.0.0.1'
+    end
 
     def sec2days(sec)
       time = seс.round
@@ -278,7 +290,7 @@ module Teamspeak
     end
 
     def dns_to_dnscfg dns, port
-      "#{dns}.easy-ts.ru=#{@ip}:#{port}"
+      "#{dns}.easy-ts.ru=#{Settings.other.ip}:#{port}"
     end
 
   end

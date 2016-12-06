@@ -1,8 +1,12 @@
 <div>
-На вашем счету: <%= @user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
+На вашем счету: <%= current_user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
 
 </div>
-
+<h4>Авто-продление</h4>
+<div class="btn-group" id="toggle_event_editing">
+  <button type="button" class="btn btn-info locked_active">OFF</button>
+  <button type="button" class="btn btn-default unlocked_inactive">ON</button>
+</div>
 
 <h2>Список серверов</h2>
 <table class="table">
@@ -14,31 +18,34 @@
       <th>Дата следующего платежа</th>
       <th>Остаток дней</th>
       <th>Статус</th>
-      
+
     </tr>
   </thead>
 
   <tbody>
-    <% @user.tsservers.each do |ts| %>
+    <% current_user.tsservers.each do |ts| %>
       <tr>
         <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns == '' %></td>
-        <td><%= @ip + ':' + ts.port.to_s %></td>
+        <td><%= Settings.other.ip + ':' + ts.port.to_s %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= sec2days(ts.time_payment.to_time - Time.now) %></td>
-        <td><%= @status[@status.index(ts.machine_id)+1]%></td>
-        <td><div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Функции
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
-            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
-            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
-            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
-          </ul>
-        </div>
+        <td><%= (@status[@status.index(ts.machine_id)+1]=='online') ? 'Online':'Offline' %></td>
+
+
+        <td>
+            <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              Функции
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
+              <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
+              <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
+              <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
+            </ul>
+            </div>
         </td>
 
 
@@ -54,5 +61,36 @@
 <%= request.remote_ip %>
 
 </div>
+
+
+<script type="text/javascript" charset="utf-8">
+
+    if((<%= current_user.auto_extension %>) && (($('#toggle_event_editing button').hasClass('locked_active')) || (('#toggle_event_editing button').hasClass('locked_active')))){
+        $('#toggle_event_editing button').eq(0).toggleClass('locked_inactive locked_active btn-default btn-info');
+        $('#toggle_event_editing button').eq(1).toggleClass('unlocked_inactive unlocked_active btn-info btn-default');
+    }
+
+
+    $('#toggle_event_editing button').click(function(){
+        if($(this).hasClass('locked_active') || $(this).hasClass('unlocked_inactive')){
+            $.ajax({
+                type: 'POST',
+                url: "/cabinet/edit_auto_extension",
+                data: {auto_extension: true}
+            });
+            $('#toggle_event_editing button').eq(0).toggleClass('locked_inactive locked_active btn-default btn-info');
+            $('#toggle_event_editing button').eq(1).toggleClass('unlocked_inactive unlocked_active btn-info btn-default');
+        }else{
+          /* code to do when locking */
+            $.ajax({
+                type: 'POST',
+                url: "/cabinet/edit_auto_extension",
+                data: {auto_extension: false}
+            });
+            $('#toggle_event_editing button').eq(0).toggleClass('locked_inactive locked_active btn-default btn-info');
+            $('#toggle_event_editing button').eq(1).toggleClass('unlocked_inactive unlocked_active btn-info btn-default');
+        }})
+
+</script>
 
 

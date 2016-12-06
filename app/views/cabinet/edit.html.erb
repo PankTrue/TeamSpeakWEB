@@ -13,23 +13,31 @@
     <% end %>
 
 
-      <%= f.label 'Доменное имя' %>
-      <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
-        <%= f.text_field :dns, class: 'form-control', placeholder: "Введите новое доменное имя" %>
-        <span class="input-group-addon" id="basic-addon2">.east-ts.ru</span>
+      <div class="border">
+        <ul class="hr">
+          <li><%= f.label 'Доменное имя' %></li>
+          <br>
+          <li><div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
+            <%= f.text_field :dns, class: 'form-control', id: 'dns_input' , placeholder: "Введите новое доменное имя", allow_nil: true %>
+            <span class="input-group-addon" id="basic-addon2">.east-ts.ru</span>
+          </div></li>
+          <li><span id="dns_status">Введите домен(необязательно)</span></li>
+        </ul>
       </div>
 
+      <div class="border">
 
-      <%= f.label 'Кол-во слотов' %>
-      <table><tr>
-        <td> <%= f.number_field :slots, in: 10..512  %></td>
-        <td>10</td>
-        <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512" value="<%=@ts.slots %>"></td>
-        <td>512</td>
-      </table></tr>
+        <%= f.label 'Кол-во слотов' %>
+        <table><tr>
+          <td> <%= f.number_field :slots, in: 10..512  %></td>
+          <td>10</td>
+          <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="10,512" value="<%=@ts.slots %>"></td>
+          <td>512</td>
+        </table></tr>
+      </div>
+      <div class="border">
 
-      <div>
-        <h3>Стоимость: <span class="cost">0</span></h3>
+          <h3>Стоимость: <span class="cost">0</span></h3>
       </div>
 
 
@@ -44,13 +52,54 @@
 <script type="text/javascript" charset="utf-8">
   $(document).on('turbolinks:load', function() {
 
+dns1 = false
+
+      $('#dns_input').bind('change', function (event) {
+          var dns = $('#dns_input').val();
+          if (dns != '<%= @ts.dns %>') {
+              dns1 = true
+              if ((/^[A-Za-z0-9_-]+$/.test(dns)) && dns != '') {
+                  SetCost();
+              $.ajax({
+                  type: 'POST',
+                  url: "/cabinet/free_dns",
+                  data: {dns: dns},
+                  success: function (data) {
+                      if ((data.status) == true) {
+                          $('#dns_status').text('Домен занят');
+                      } else {
+                          $('#dns_status').text('Домен свободен');
+                      }
+                  },
+                  error: function (data) {
+
+                  }
+
+              });
+              } else if (dns == '') {
+              $('#dns_status').text('Введите домен(необязательно)');
+               } else {
+              $('#dns_status').text('Недопустимый домен');
+               }
+
+          }else{
+            dns1 = false;
+              SetCost();
+          };
+      });
+
 
 
     function SetCost() {
+        if (dns1 == true) {
+            addmoney = 10.0;
+        }else{
+            addmoney = 0.0;
+        };
       var def = parseInt(<%= @ts.slots %>);
       var current = parseInt($('#tsserver_slots').val());
       var days = parseInt(<%= @days %>)
-      $('span.cost').text(((current-def)*(3/30*days)).toFixed(2));
+      $('span.cost').text((((current-def)*(3/30*days))+addmoney).toFixed(2));
     }
 
     $('#tsserver_time_payment').bind('click', function(event){

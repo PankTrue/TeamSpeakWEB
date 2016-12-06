@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     match :success, on: :collection, via: [:get, :post]
     match :fail, on: :collection, via: [:get, :post]
   end
+  post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension'
   post 'cabinet/free_dns', to: 'cabinet#free_dns'
   get 'cabinet/pay'
   get 'cabinet/new'

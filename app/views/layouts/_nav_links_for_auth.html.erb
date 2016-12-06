@@ -1,3 +1,11 @@
+<li><div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Аккаунт
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+
 <% if user_signed_in? %>
     <% if admin? %>
         <li><%= link_to "Админ панель", admin_home_path %></li>
@@ -7,5 +15,8 @@
 <% else %>
   <li><%= link_to 'Вход', new_user_session_path %></li>
   <li><%= link_to 'Регистрация', new_user_registration_path %></li>
+  <li><%= link_to 'Забыли пароль?', new_user_password_path %></li>
 <% end %>
 
+  </ul>
+</div></li>

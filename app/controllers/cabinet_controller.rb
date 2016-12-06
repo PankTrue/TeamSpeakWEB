@@ -8,12 +8,7 @@ require 'base64'
   before_action :extend_params, only: [:extend_up]
 
 def home
-    @ip = 'localhost'
-    @user=current_user
-
-    # server=CabinetHelper::Server.new
-   # @data=server.serverlist
-    @servers = Tsserver.where(user_id: current_user.id)
+    @servers = Tsserver.where(user_id: current_user.id).select(:machine_id)
     servs = Array.new
      @servers.each do |temp|
         servs << temp.machine_id
@@ -24,35 +19,38 @@ def home
 end
 
 def edit
-  @ts = Tsserver.find(params[:id])
+  @ts = Tsserver.where(id: params[:id]).take!
   redirect_to cabinet_home_path unless @ts.user_id == current_user.id
   @days = sec2days(@ts.time_payment.to_time - Time.now)
 end
 
 def update
-  ts = Tsserver.where(id: params[:id]).take!
+  @ts = Tsserver.where(id: params[:id]).take!
   user = User.where(id: current_user.id).take!
   server = Teamspeak::Functions.new
   other = Teamspeak::Other.new
-  days = sec2days(ts.time_payment.to_time - Time.now)
-  old_dns = ts.dns
-  cost = ((edit_params[:slots].to_i - ts.slots) * (3.to_f/30*days)).round 2
-  if user.id == ts.user_id
+  days = sec2days(@ts.time_payment.to_time - Time.now)
+  old_dns = @ts.dns
+  cost = (((edit_params[:slots].to_i - @ts.slots) * (3.to_f/30*days))).round 2
+  cost += 10 if old_dns != edit_params[:dns]
+  if user.id == @ts.user_id
     if user.money >= cost
-      user.update money: (user.money - cost), spent: user.spent+=cost
-      if ts.update dns: edit_params[:dns], slots: edit_params[:slots]
-        server.server_edit_slots ts.machine_id, edit_params[:slots]
-        if old_dns != '' and edit_params[:dns] != ''
-          other.edit_dns(old_dns, ts.port,edit_params[:dns],ts.port)
-        elsif old_dns != '' and edit_params[:dns] == ''
-          other.del_dns(old_dns, ts.port)
-        elsif old_dns == '' and edit_params[:dns] != ''
-          other.new_dns(edit_params[:dns],ts.port)
+      if @ts.valid?
+        if @ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+          user.update! money: ((user.money - cost).round 2), spent: user.spent+=cost
+          server.server_edit_slots @ts.machine_id, edit_params[:slots]
+          if !old_dns.empty? and !edit_params[:dns].empty?
+            other.edit_dns(old_dns, @ts.port,edit_params[:dns],@ts.port)
+          elsif !old_dns.empty? and edit_params[:dns].empty?
+            other.del_dns(old_dns, @ts.port)
+          elsif old_dns.empty? and !edit_params[:dns].empty?
+            other.new_dns(edit_params[:dns],@ts.port)
+          end
+          redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
+        else
+          render 'cabinet/edit'
         end
-      else
-        render 'cabinet/edit'
       end
-      redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
     else
       redirect_to cabinet_home_path, notice: 'Недостаточно средст'
     end
@@ -68,7 +66,7 @@ def new
 end
 
 
-  def create
+def create
   server=Teamspeak::Functions.new
   other = Teamspeak::Other.new
     user = current_user
@@ -89,7 +87,7 @@ end
             @ts.machine_id=data['sid']
             @ts.port =data['virtualserver_port']
             @token=data['token']
-            other.new_dns(@ts.dns, @ts.port) unless @ts.dns == ''
+            other.new_dns(@ts.dns, @ts.port) unless @ts.dns.empty?
             @ts.save
               flash[:notice] = "Ваш ключ: #{@token}"
               redirect_to cabinet_home_path
@@ -113,12 +111,13 @@ end
 
 def destroy
   server=Teamspeak::Functions.new
-    @ts = Tsserver.where(id: params[:id]).first
+  other = Teamspeak::Other.new
+    @ts = Tsserver.find(params[:id])
       dns, port = @ts.dns, @ts.port
       if @ts.user_id == current_user.id
         server.server_destroy(@ts.machine_id)
         if @ts.destroy
-          server.del_dns(dns, port) unless dns.blank?
+          other.del_dns(dns, port) unless dns.empty?
           redirect_to cabinet_home_path
         end
       else
@@ -142,7 +141,7 @@ def extend_up
     if user.money >= (s.slots * 3 * time)
       if user.id == s.user_id
         user.spent+=(s.slots * 3 * time)
-        user.money = user.money - (s.slots * 3)
+        user.money = user.money - (s.slots * 3 * time)
         s.state = true
         if Date.today < s.time_payment
           s.time_payment = s.time_payment + time * 30
@@ -174,20 +173,20 @@ def work
       if current_user.id == ts.user_id
         if ts.state
           server=Teamspeak::Functions.new
-          if server.server_status(id) == 'Online'
+          if server.server_status(id)
             server.server_stop id
             redirect_to cabinet_home_path
           else
             server.server_start id
             redirect_to cabinet_home_path
           end
+          server.disconnect
         else
           redirect_to cabinet_home_path, notice: 'Продлите сервер'
         end
       else
         redirect_to cabinet_home_path
       end
-server.disconnect
 end
 
 def pay
@@ -206,6 +205,10 @@ def free_dns
   respond_to do |format|
     format.json { render :json => {status: status} }
   end
+end
+
+def edit_auto_extension
+  current_user.update auto_extension: params[:auto_extension]
 end
 
 
@@ -274,6 +277,14 @@ private
       end
     end
     arr
+  end
+
+  def sec2days(sec)
+    time = sec.round
+    time /= 60
+    time /= 60
+    time /= 24
+    time+=2
   end
 
 end

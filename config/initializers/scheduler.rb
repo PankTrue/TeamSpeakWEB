@@ -2,21 +2,36 @@ require 'rufus-scheduler'
 require "#{Rails.root}/lib/teamspeak/teamspeak.rb"
 
 
+def sec2days(s)
+  time = s.round
+  time /= 60
+  time /= 60
+  time /= 24
+  time+=2
+end
+
 
 server = Teamspeak::Functions.new
-other = Teamspeak::Other.new
 schedule = Rufus::Scheduler.singleton
 
 
-
+#schedule.every '10s' do    #for debug
 schedule.cron '0 0 * * *' do
   ts = Tsserver.all
     ts.each do |t|
-      if (other.sec2days(t.time_payment.to_time - Time.now) <= 0) and (t.state == true)
-        t.update state: false
+      if (sec2days(t.time_payment.to_time - Time.now) <= 0)
+        u = User.where(id: t.user_id).take
+        cost = t.slots * 3
+        if u.auto_extension and u.money >= cost
+          u.update money: u.money - cost
+          t.update time_payment: Date.today + 30, state: true
+          server.server_start t.machine_id
+        elsif t.state
+          t.update state: false
+        end
       end
 
-      if t.state == false and server.server_status(t.machine_id) == 'Online'
+      if t.state == false and server.server_status(t.machine_id)
         server.server_autostart t.machine_id, 0
         server.server_stop t.machine_id
       end

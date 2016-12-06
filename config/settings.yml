@@ -7,6 +7,10 @@ development: &defaults
     login: 'serveradmin'
     password: 'fIKUs4uC'
     ts_path: '/home/pank/Desktop/teamspeak'
+  other:
+    admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
+    ip: '127.0.0.1'
+
 
 
 staging:
