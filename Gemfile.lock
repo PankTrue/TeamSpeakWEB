@@ -98,6 +98,8 @@ GEM
     orm_adapter (0.5.0)
     puma (3.6.2)
     rack (2.0.1)
+    rack-attack (5.0.1)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.0.1)
@@ -189,6 +191,7 @@ DEPENDENCIES
   jquery-turbolinks
   listen (~> 3.0.5)
   puma (~> 3.0)
+  rack-attack
   rails (~> 5.0.0.1)
   rails-i18n (~> 5.0.0)
   rufus-scheduler

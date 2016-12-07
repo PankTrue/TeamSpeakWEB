@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     match :success, on: :collection, via: [:get, :post]
     match :fail, on: :collection, via: [:get, :post]
   end
+
   post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension'
   post 'cabinet/free_dns', to: 'cabinet#free_dns'
   get 'cabinet/pay'
@@ -18,6 +19,7 @@ Rails.application.routes.draw do
   get 'cabinet', to: 'cabinet#home'
   get 'cabinet/edit/:id', to: 'cabinet#edit', as: 'cabinet_edit'
   post 'cabinet/update/:id', to: 'cabinet#update', as: 'cabinet_update'
+  post 'cabinet/get_token', to: 'cabinet#get_token'
 
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
   get 'admin/home'

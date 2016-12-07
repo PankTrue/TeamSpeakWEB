@@ -193,6 +193,16 @@ def work
       end
 end
 
+def get_token
+  @ts = Tsserver.where(id: params[:id]).take!
+  server = Teamspeak::Functions.new
+    if current_user.id==@ts.user_id or Settings.other.admin_list.include?(current_user.email)
+      respond_to do |f|
+        f.html {redirect_to cabinet_home_path, notice: "Ваш токен: #{server.get_token(@ts.machine_id)["token"]}"}
+      end
+    end
+end
+
 def pay
   @w1 = Hash.new
   @w1 = {

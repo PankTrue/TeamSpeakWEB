@@ -220,6 +220,11 @@ module Teamspeak
       end
     end
 
+    def get_token machine_id
+      self.command('use', sid: machine_id)
+      self.command('permreset')
+    end
+
     def server_list
       tmp=Array.new
       self.command('serverlist').each do |temp|
