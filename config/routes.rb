@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   get 'cabinet/pay'
   get 'cabinet/new'
   post 'cabinet/create'
-  delete 'cabinet/:id', to: 'cabinet#destroy'
+  delete 'cabinet/:id', to: 'cabinet#destroy', as: 'cabinet_destroy'
   get 'cabinet/home'
   get 'cabinet/extend/:id', to: 'cabinet#extend'
   post 'cabinet/extend_up/:id', to: 'cabinet#extend_up'
@@ -22,12 +22,12 @@ Rails.application.routes.draw do
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
   get 'admin/home'
   post 'admin/setmoney/:id', to: 'admin#setmoney'
+  get 'admin/belongs_verification', to: 'admin#belongs_verification', as: 'admin_belongs_verification'
+  get 'admin/user_list', to: 'admin#user_list', as: 'admin_user_list'
 
 
   root 'home#index'
-
   get 'home/index'
-
   get 'home/about'
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

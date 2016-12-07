@@ -1,0 +1,28 @@
+<h2>User list</h2>
+
+<table class="server-list">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Email</th>
+    <th>Money</th>
+    <th>Дата регистрации</th>
+    <th>Всего потрачено</th>
+    <th>Авто-продление</th>
+  </tr>
+  </thead>
+
+  <% @users.each do |user| %>
+      <tbody>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.email %></td>
+        <td><%= user.money %></td>
+        <td><%= user.created_at %></td>
+        <td><%= user.spent %></td>
+        <td><%= user.auto_extension %></td>
+        <td><%= link_to 'Info', {controller: 'admin', action: 'info', id: user.id} %></td>
+      </tr>
+      </tbody>
+  <% end %>
+</table>

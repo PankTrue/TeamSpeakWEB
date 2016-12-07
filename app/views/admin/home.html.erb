@@ -1,21 +1,7 @@
-<div>
-<h2>User list</h2>
-<table class="server-list">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Email</th>
 
-  </tr>
-  </thead>
 
-<% @users.each do |user| %>
-  <tbody>
-    <tr>
-      <td><%= user.id %></td>
-      <td><%= user.email %></td>
-      <td><%= link_to 'Info', {controller: 'admin', action: 'info', id: user.id} %></td>
-    </tr>
-  </tbody>
-<% end %>
-</div>
+
+<%= link_to 'Belongs verification', admin_belongs_verification_path, class: "btn btn-primary" %>
+<%= link_to 'User list', admin_user_list_path, class: "btn btn-primary"  %>
+
+

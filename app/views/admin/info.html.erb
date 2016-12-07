@@ -10,9 +10,14 @@
   <thead>
   <tr>
     <th>ID</th>
-    <th>Доменное имя</th>
-    <th>Количество слотов</th>
+    <th>Домен</th>
+    <th>Кол-во слотов</th>
     <th>До какого оплачено</th>
+    <th>user_id</th>
+    <th>machine_id</th>
+    <th>Дата создания</th>
+    <th>Дата редактирования</th>
+    <th>state</th>
 
   </tr>
   </thead>
@@ -21,9 +26,27 @@
   <% @user.tsservers.each do |ts| %>
       <tr>
         <td><%= ts.id %></td>
-        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.nil? %></td>
+        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.empty? %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
+        <td><%= ts.user_id %></td>
+        <td><%= ts.machine_id %></td>
+        <td><%= ts.created_at %></td>
+        <td><%= ts.updated_at %></td>
+        <td><%= ts.state %></td>
+        <td><div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Функции
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
+            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
+            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
+            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
+          </ul>
+        </div></td>
+
       </tr>
   </tbody>
   <% end %>

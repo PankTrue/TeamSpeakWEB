@@ -1,0 +1,62 @@
+<h2>Список серверов не найденых в БД, но существующих на сервере</h2>
+<table class="server-list">
+  <thead>
+    <tr>
+      <th>machine_id</th>
+      <th>name</th>
+      <th>port</th>
+      <th>status</th>
+      <th>client_online</th>
+      <th>max_clients</th>
+      <th>auto_start</th>
+    </tr>
+  </thead>
+
+<% @physical.each do |p| %>
+  <tbody>
+    <tr>
+      <td><%= p["virtualserver_id"] %></td>
+      <td><%= p["virtualserver_name"] %></td>
+      <td><%= p["virtualserver_port"] %></td>
+      <td><%= p["virtualserver_status"] %></td>
+      <td><%= p["virtualserver_clientsonline"] %></td>
+      <td><%= p["virtualserver_maxclients"] %></td>
+      <td><%= p["virtualserver_autostart"] %></td>
+    </tr>
+  </tbody>
+<% end %>
+
+</table>
+
+
+
+<h2>Список серверов не найденых на сервере, но существующих в БД </h2>
+<table class="server-list">
+<thead>
+<tr>
+  <th>ID</th>
+  <th>port</th>
+  <th>dns</th>
+  <th>slots</th>
+  <th>time_payment</th>
+  <th>user_id</th>
+  <th>machine_id</th>
+  <th>state</th>
+</tr>
+</thead>
+<% @logic.each do |l| %>
+    <tbody>
+    <tr>
+      <td><%= l.id %></td>
+      <td><%= l.port %></td>
+      <td><%= l.dns %></td>
+      <td><%= l.slots %></td>
+      <td><%= l.time_payment %></td>
+      <td><%= l.user_id %></td>
+      <td><%= l.machine_id %></td>
+      <td><%= l.state %></td>
+    </tr>
+    </tbody>
+<% end %>
+
+</table>
