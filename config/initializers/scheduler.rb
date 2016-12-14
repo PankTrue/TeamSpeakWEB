@@ -2,6 +2,7 @@ require 'rufus-scheduler'
 require "#{Rails.root}/lib/teamspeak/teamspeak.rb"
 
 
+
 def sec2days(s)
   time = s.round
   time /= 60
@@ -11,12 +12,12 @@ def sec2days(s)
 end
 
 
-server = Teamspeak::Functions.new
 schedule = Rufus::Scheduler.singleton
 
 
 #schedule.every '10s' do    #for debug
 schedule.cron '0 0 * * *' do
+  server = Teamspeak::Functions.new
   ts = Tsserver.all
     ts.each do |t|
       if (sec2days(t.time_payment.to_time - Time.now) <= 0)
@@ -36,6 +37,7 @@ schedule.cron '0 0 * * *' do
         server.server_stop t.machine_id
       end
     end
+  server.disconnect
 end
 
 #schedule.every '1m' do

@@ -40,8 +40,9 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              <li><%= link_to 'Выдать токен', {controller: 'cabinet', action: 'get_token', id: ts}, method: :post %></li>
+              <li><%= link_to 'Токены', {controller: 'cabinet', action: 'token', id: ts} %></li>
               <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
+              <li><%= link_to 'Бекапы', {controller: 'cabinet', action: 'backups', id: ts} %></li>
               <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
               <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
               <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>

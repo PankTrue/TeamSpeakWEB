@@ -40,7 +40,7 @@ module Teamspeak
     #   connect('voice.domain.com', 88888)
     def initialize(host = 'localhost', port = 10_011)
       connect('localhost', 10_011)
-      login('serveradmin','fIKUs4uC')
+      login(Settings.teamspeak.login,Settings.teamspeak.password)
     end
 
     # Connects to a TeamSpeak 3 server
@@ -99,7 +99,6 @@ module Teamspeak
 
       loop do
         response += @sock.gets
-
         break if response.index(' msg=')
       end
 
@@ -118,6 +117,7 @@ module Teamspeak
 
       should_be_array.include?(cmd) ? parsed_response : parsed_response.first
     end
+
 
     def parse_response(response)
       out = []
@@ -163,7 +163,7 @@ module Teamspeak
       id = response.first['id'] || 0
       message = response.first['msg'] || 0
 
-      raise ServerError.new(id, message) unless id == 0
+      raise ServerError.new(id, message) unless id == 0 or id == 1281
     end
 
 
@@ -220,9 +220,44 @@ module Teamspeak
       end
     end
 
-    def get_token machine_id
+    def group_list machine_id
       self.command('use', sid: machine_id)
-      self.command('permreset')
+      self.command('servergrouplist')
+    end
+
+    def token_list machine_id
+      self.command('use', sid: machine_id)
+      self.command('privilegekeylist')
+    end
+
+    def create_token machine_id, group_id, description
+      self.command('use', sid: machine_id)
+      self.command('privilegekeyadd', {tokentype: 0, tokenid1: group_id, tokenid2: 0, tokendescription: description})
+    end
+
+    def delete_token machine_id, token
+      self.command('use', sid: machine_id)
+      self.command('privilegekeydelete', token: token)
+    end
+
+    def create_backup machine_id
+      self.command 'use', sid: machine_id
+      @sock.puts 'serversnapshotcreate'
+      data = @sock.gets
+      loop do
+        response = @sock.gets
+        break if response.index(' msg=')
+      end
+      data
+    end
+
+    def deploy_backup machine_id, data
+      self.command 'use', sid: machine_id
+      @sock.puts "serversnapshotdeploy #{data}"
+      loop do
+        response = @sock.gets
+        break if response.index(' msg=')
+      end
     end
 
     def server_list

@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161205173505) do
+ActiveRecord::Schema.define(version: 20161211081929) do
+
+  create_table "backups", force: :cascade do |t|
+    t.integer  "tsserver_id", null: false
+    t.text     "data",        null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index [nil], name: "index_backups_on_ts_id"
+  end
 
   create_table "tsservers", force: :cascade do |t|
     t.integer  "port",                        null: false

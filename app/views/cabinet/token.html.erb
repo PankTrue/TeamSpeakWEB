@@ -1,0 +1,34 @@
+<h2>Список токенов</h2>
+
+<%= form_tag cabinet_create_token_path, method: :post do %>
+
+    <table><tr>
+      <td><%= select_tag :group_id, options_for_select(@groups), class: 'select_group' %></td>
+      <td><%= text_field_tag :description %></td>
+      <td><%= hidden_field_tag :id, @ts.id %></td>
+      <td><%= submit_tag 'Создать' %></td>
+    </tr></table>
+<% end %>
+
+<table class="table">
+  <thead>
+  <tr>
+    <th>Токен</th>
+    <th>Описание</th>
+
+  </tr>
+  </thead>
+  <% @tokens.each do |t|%>
+  <tbody><% break if t['token'].blank? %>
+      <tr>
+        <td><%= t["token"] %></td>
+        <td><%= t["token_description"].force_encoding(Encoding::UTF_8) unless t["token_description"].blank? %></td>
+
+        <td> <%= link_to 'Удалить', {controller: 'cabinet', action: 'delete_token', token: t["token"], id: @ts.id}, method: :post  %> </td>
+
+
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+

@@ -8,17 +8,20 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
   </head>
-  <body class="container">
-    <header>
+  <body>
+  <div class="container">
+  <header>
       <%= render 'layouts/navigation' %>
     </header>
     <main role="main">
       <% if flash[:notice] %>
-
           <div class="alert alert-info"><%= flash[:notice] %></div>
       <% end %>
-       <%= yield %>
 
+      <%= render 'layouts/billing' %>
+        <%= yield %>
+      </div>
+      <%= render 'layouts/footer' %>
       <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
 
       <!-- VK Widget -->

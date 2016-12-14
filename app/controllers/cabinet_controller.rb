@@ -7,6 +7,7 @@ require 'base64'
   before_action :edit_params, only: [:update]
   before_action :extend_params, only: [:extend_up]
 
+
 def home
     @servers = Tsserver.where(user_id: current_user.id).select(:machine_id)
     servs = Array.new
@@ -193,14 +194,42 @@ def work
       end
 end
 
-def get_token
-  @ts = Tsserver.where(id: params[:id]).take!
-  server = Teamspeak::Functions.new
-    if current_user.id==@ts.user_id or Settings.other.admin_list.include?(current_user.email)
-      respond_to do |f|
-        f.html {redirect_to cabinet_home_path, notice: "Ваш токен: #{server.get_token(@ts.machine_id)["token"]}"}
-      end
+
+def token
+  @ts = Tsserver.where(id: params[:id]).select(:user_id, :id, :machine_id).take!
+    if current_user.id==@ts.user_id
+      server = Teamspeak::Functions.new
+      @tokens = server.token_list(@ts.machine_id)
+      @groups = {}
+      server.group_list(@ts.machine_id).each {|t| @groups.merge!({"#{t['name'].force_encoding(Encoding::UTF_8)}":t['sgid']}) if t["type"]==1}
+    else
+      redirect_to cabinet_home_path
     end
+  server.disconnect
+end
+
+def create_token
+  @ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take!
+  if current_user.id==@ts.user_id
+    server = Teamspeak::Functions.new
+    server.create_token(@ts.machine_id, params[:group_id], params[:description])
+    redirect_to cabinet_token_path(params[:id]), notice: 'Вы успешно создали токен'
+  else
+    redirect_to cabinet_home_path
+  end
+  server.disconnect
+end
+
+def delete_token
+  @ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take!
+  if current_user.id==@ts.user_id
+    server = Teamspeak::Functions.new
+    server.delete_token @ts.machine_id, params[:token]
+    redirect_to cabinet_token_path params[:id]
+  else
+    redirect_to cabinet_home_path
+  end
+  server.disconnect
 end
 
 def pay
@@ -222,12 +251,61 @@ def free_dns
 end
 
 def edit_auto_extension
-  current_user.update auto_extension: params[:auto_extension]
+  unless current_user.auto_extension == params[:auto_extension]
+    current_user.update auto_extension: params[:auto_extension]
+  end
 end
 
+def backups
+  @ts = Tsserver.where(id: params[:id]).select(:user_id, :id).take!
+  if current_user.id == @ts.user_id
+    @backups = Backup.where(tsserver_id: params[:id])
+  else
+    redirect_to cabinet_home_path
+  end
+end
 
+def create_backup
+  unless backup = Backup.where(tsserver_id: 41).count >= 3
+    ts = Tsserver.where(id: params[:tsserver_id]).select(:user_id, :machine_id).take!
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    backup = Backup.new(tsserver_id: params[:tsserver_id], data: server.create_backup(ts.machine_id).to_s)
+    if backup.save
+      redirect_to cabinet_backups_path(params[:tsserver_id]), notice: 'Вы успешно создали бекап!'
+    else
+      redirect_to cabinet_backups_path(params[:tsserver_id]), notice: 'Что-то пошло не так'
+    end
+  else
+    redirect_to cabinet_home_path
+  end
+  server.disconnect
+  else
+    redirect_to cabinet_backups_path(params[:tsserver_id]), notice: 'Вы превысили лимит бекапов'
+  end
+end
 
+def delete_backup
+  backup = Backup.find params[:id]
+  if current_user.id == Tsserver.where(id: backup.tsserver_id).select(:user_id).take.user_id
+    backup.destroy ? (redirect_to cabinet_backups_path(backup.tsserver_id), notice: 'Вы успешно удалили!' ):(redirect_to cabinet_backups_path(backup.tsserver_id), notice: 'Что-то пошло не так')
+  else
+    redirect_to cabinet_home_path
+  end
+end
 
+def apply_backup
+  backup = Backup.find params[:id]
+  ts = Tsserver.where(id: backup.tsserver_id).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    server.deploy_backup(ts.machine_id, backup.data)
+    redirect_to cabinet_backups_path(backup.tsserver_id), notice: 'Вы успешно применили бекап!'
+  else
+    redirect_to cabinet_home_path
+  end
+  server.disconnect
+end
 
 
 private

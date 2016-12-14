@@ -1,0 +1,29 @@
+<h1>Список бекапов</h1>
+
+
+
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Дата создания</th>
+
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @backups.each do |b| %>
+          <tr>
+              <td><%= b.created_at %></td>
+              <td><%= link_to 'Применить', cabinet_apply_backup_path(id: b.id), method: :post, class: "btn btn-success"  %></td>
+              <td><%= link_to 'Удалить', cabinet_delete_backup_path(id: b.id), method: :post, class: "btn btn-danger"  %></td>
+
+
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <td><%= link_to 'Создать', cabinet_create_backup_path(tsserver_id: @ts.id), method: :post, class: "btn btn-primary"  %></td>
+
+

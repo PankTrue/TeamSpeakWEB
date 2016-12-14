@@ -3,15 +3,18 @@ class W1Controller < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def callback
-    if @notification.acknowledge
-      # Получаем значение ID пользователя и номер заказа
-      user_id, order_no = @notification.item_id.split('_')
-      # Ищем подписку по номеру заказа
-      subscription = Subscription.where(order_no: order_no).first
-      #.... Ваши действия
-      render :text => @notification.success_response
-    else
-      head :bad_request
+    wm = Walletone::Middleware::Callback.new do |notify, env|
+      # notify is a Walletone::Notification instance
+
+      raise 'WARNING! Wrong signature!' unless notify.valid? W1_SECRET_KEY
+
+      if notify.accepted?
+        # Successful payed. Deliver your goods to the client
+      else
+        # Payment is failed. Notify you client.
+      end
+
+      'Return some message for OK response'
     end
   end
 
@@ -25,8 +28,6 @@ class W1Controller < ApplicationController
 
   private
 
-  def create_notification
-    @notification = W1::Notification.new(request.raw_post, :secret => Billing::W1.signature)
-  end
+
 
 end
