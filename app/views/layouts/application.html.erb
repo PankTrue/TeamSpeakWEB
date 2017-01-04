@@ -8,31 +8,38 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
   </head>
+
+
   <body>
-  <div class="container">
-  <header>
-      <%= render 'layouts/navigation' %>
+    <header>
+        <%= render 'layouts/navigation' %>
     </header>
-    <main role="main">
-      <% if flash[:notice] %>
-          <div class="alert alert-info"><%= flash[:notice] %></div>
-      <% end %>
-
-      <%= render 'layouts/billing' %>
-        <%= yield %>
-      </div>
-      <%= render 'layouts/footer' %>
-      <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
-
-      <!-- VK Widget -->
-      <div id="vk_community_messages"></div>
-      <script type="text/javascript">
-        VK.Widgets.CommunityMessages("vk_community_messages", 126399695, {});
-      </script>
-
-    </main>
 
 
+    <div class="container">
+      <main role="main">
+          <% flash.each do |name, message| %>
+              <div class="alert alert-<%= name %>">
+                  <%= message %>
+              </div>
+          <% end %>
+
+          <%= yield %>
+        <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
+
+        <!-- VK Widget -->
+        <div id="vk_community_messages"></div>
+        <script type="text/javascript">
+          VK.Widgets.CommunityMessages("vk_community_messages", 126399695, {});
+        </script>
+
+      </main>
+    </div>
+
+
+  <div class="footer">
+   <%= render 'layouts/footer' %>
+  </div>
 
   </body>
 

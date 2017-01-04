@@ -1,0 +1,40 @@
+<h2>Список банов</h2>
+
+<%= form_tag cabinet_ban_path, method: :post do %>
+
+    <table><tr>
+      <td><%= select_tag :param, options_for_select(Tsserver::Ban_Data), class: 'select_group' %></td>
+      <td><%= text_field_tag :name%></td>
+      <td><%= text_field_tag :reasons%></td>
+      <td><%= number_field_tag :duration, 0%></td>
+      <td><%= hidden_field_tag :id,params[:id] %></td>
+      <td><%= submit_tag 'Забанить' %></td>
+    </tr></table>
+<% end %>
+
+<table class="table">
+  <thead>
+  <tr>
+    <th>IP</th>
+    <th>Никнейм</th>
+    <th>uid</th>
+    <th>Причина</th>
+    <th>До</th>
+
+  </tr>
+  </thead>
+  <% @bans.each do |b|%>
+      <tbody><% break if b['banid'].blank? %>
+      <tr>
+        <td><%= b["ip"] %></td>
+        <td><%= b["name"] %></td>
+        <td><%= b["uid"] %></td>
+        <td><%= b["reason"] %></td>
+        <td><%= b["duration"].to_i==0 ? 'permanent':(Time.now + b["duration"].to_i) %></td>
+
+        <td><%= link_to 'Разбанить', cabinet_unban_path(banid: b['banid'],id: params[:id]), method: :post %></td>
+
+      </tr>
+  <% end %>
+  </tbody>
+</table>

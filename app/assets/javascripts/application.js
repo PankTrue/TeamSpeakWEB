@@ -16,5 +16,6 @@
 //= require jquery.turbolinks
 //= require bootstrap
 //= require simple-slider.min
+//= require clipboard.min
 //= require_tree .
 

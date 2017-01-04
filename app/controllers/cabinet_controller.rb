@@ -21,7 +21,7 @@ end
 
 def edit
   @ts = Tsserver.where(id: params[:id]).take!
-  redirect_to cabinet_home_path unless @ts.user_id == current_user.id or Settings.other.admin_list.include?(current_user.email)
+  redirect_to root_path unless @ts.user_id == current_user.id or Settings.other.admin_list.include?(current_user.email)
   @days = sec2days(@ts.time_payment.to_time - Time.now)
 end
 
@@ -29,7 +29,6 @@ def update
   @ts = Tsserver.where(id: params[:id]).take!
   unless edit_params[:dns]==@ts.dns and edit_params[:slots]==@ts.slots
     if current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
-      server = Teamspeak::Functions.new
       other = Teamspeak::Other.new
       days = sec2days(@ts.time_payment.to_time - Time.now)
       old_dns = @ts.dns
@@ -38,7 +37,9 @@ def update
       if current_user.money >= cost
         if @ts.valid?
           if @ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+            server = Teamspeak::Functions.new
             current_user.update! money: ((current_user.money - cost).round 2), spent: current_user.spent+=cost
+            referall_system cost, current_user.ref
             server.server_edit_slots @ts.machine_id, edit_params[:slots]
             if !old_dns.empty? and !edit_params[:dns].empty?
               other.edit_dns(old_dns, @ts.port,edit_params[:dns],@ts.port)
@@ -47,20 +48,20 @@ def update
             elsif old_dns.empty? and !edit_params[:dns].empty?
               other.new_dns(edit_params[:dns],@ts.port)
             end
-            redirect_to cabinet_home_path, notice: 'Вы успешно редактировали сервер'
+            redirect_to cabinet_home_path, success: 'Вы успешно редактировали сервер'
+            server.disconnect
           else
             render 'cabinet/edit'
           end
         end
       else
-        redirect_to cabinet_home_path, notice: 'Недостаточно средст'
+        redirect_to cabinet_home_path, danger: 'Недостаточно средст'
       end
     else
-      redirect_to cabinet_home_path
+      redirect_to root_path
     end
-    server.disconnect
   else
-    redirect_to cabinet_home_path, notice: 'Вы ничего не изменили'
+    redirect_to cabinet_home_path, info: 'Вы ничего не изменили'
   end
 end
 
@@ -93,22 +94,21 @@ def create
             @token=data['token']
             other.new_dns(@ts.dns, @ts.port) unless @ts.dns.empty?
             @ts.save
-              flash[:notice] = "Ваш ключ: #{@token}"
-              redirect_to cabinet_home_path
             user.money = user.money - cost
             user.save
+            referall_system cost, current_user.ref
+            redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"
+            server.disconnect
           else
              render cabinet_new_path
           end
         else
-          flash[:notice]='Недостаточно средств'
-          redirect_to cabinet_home_path
+          redirect_to cabinet_home_path, danger:'Недостаточно средств'
         end
     else
       render 'new'
     end
 
-server.disconnect
 end
 
 
@@ -123,18 +123,18 @@ def destroy
         server.server_destroy(@ts.machine_id)
         other.del_dns(dns, port) unless dns.empty?
         if @ts.destroy
-          redirect_to cabinet_home_path
+          redirect_to cabinet_home_path, success: 'Вы успешно удалили сервер'
         end
+        server.disconnect
       else
-        redirect_to cabinet_home_path
+        redirect_to root_path
       end
 
-server.disconnect
 end
 
 def extend
   @ts = Tsserver.where(id: params[:id]).take!
-  redirect_to cabinet_home_path unless @ts.user_id == current_user.id or Settings.other.admin_list.include?(current_user.email)
+  redirect_to root_path unless @ts.user_id == current_user.id or Settings.other.admin_list.include?(current_user.email)
 end
 
 def extend_up
@@ -156,20 +156,20 @@ def extend_up
           cab.server_autostart s.machine_id, 1
         end
         if s.save validate:false and user.save
-          flash[:notice] = 'Вы успешно продлил'
-          redirect_to cabinet_home_path
+          referall_system cost, current_user.ref
+          redirect_to cabinet_home_path, success:'Вы успешно продлил'
         end
+        cab.disconnect
+
       else
-        redirect_to cabinet_home_path
+        redirect_to root_path
       end
     else
-      flash[:notice] = 'Недостаточно средств'
-      redirect_to cabinet_home_path
+      redirect_to cabinet_home_path, danger: 'Недостаточно средств'
     end
   else
     redirect_to cabinet_home_path
   end
-  cab.disconnect
 end
 
 def work
@@ -180,17 +180,17 @@ def work
           server=Teamspeak::Functions.new
           if server.server_status(id)
             server.server_stop id
-            redirect_to cabinet_home_path
+            redirect_to cabinet_home_path, success: 'Вы успешно выключили сервер'
           else
             server.server_start id
-            redirect_to cabinet_home_path
+            redirect_to cabinet_home_path, success: 'Вы успешно включили сервер'
           end
           server.disconnect
         else
-          redirect_to cabinet_home_path, notice: 'Продлите сервер'
+          redirect_to cabinet_home_path, warning: 'Продлите сервер'
         end
       else
-        redirect_to cabinet_home_path
+        redirect_to root_path
       end
 end
 
@@ -201,11 +201,11 @@ def token
       server = Teamspeak::Functions.new
       @tokens = server.token_list(@ts.machine_id)
       @groups = {}
-      server.group_list(@ts.machine_id).each {|t| @groups.merge!({"#{t['name'].force_encoding(Encoding::UTF_8)}":t['sgid']}) if t["type"]==1}
+      server.group_list(@ts.machine_id).each {|t| @groups.merge!({"#{t['name']}":t['sgid']}) if t["type"]==1}
+      server.disconnect
     else
-      redirect_to cabinet_home_path
+      redirect_to root_path
     end
-  server.disconnect
 end
 
 def create_token
@@ -213,11 +213,11 @@ def create_token
   if current_user.id==@ts.user_id
     server = Teamspeak::Functions.new
     server.create_token(@ts.machine_id, params[:group_id], params[:description])
-    redirect_to cabinet_token_path(params[:id]), notice: 'Вы успешно создали токен'
+    redirect_to cabinet_token_path(params[:id]), success: 'Вы успешно создали токен'
+    server.disconnect
   else
-    redirect_to cabinet_home_path
+    redirect_to root_path
   end
-  server.disconnect
 end
 
 def delete_token
@@ -226,10 +226,10 @@ def delete_token
     server = Teamspeak::Functions.new
     server.delete_token @ts.machine_id, params[:token]
     redirect_to cabinet_token_path params[:id]
+    server.disconnect
   else
-    redirect_to cabinet_home_path
+    redirect_to root_path
   end
-  server.disconnect
 end
 
 def pay
@@ -261,7 +261,7 @@ def backups
   if current_user.id == @ts.user_id
     @backups = Backup.where(tsserver_id: params[:id])
   else
-    redirect_to cabinet_home_path
+    redirect_to root_path
   end
 end
 
@@ -271,26 +271,26 @@ def create_backup
   if current_user.id == ts.user_id
     server = Teamspeak::Functions.new
     backup = Backup.new(tsserver_id: params[:tsserver_id], data: server.create_backup(ts.machine_id).to_s)
+    server.disconnect
     if backup.save
-      redirect_to cabinet_backups_path(params[:tsserver_id]), notice: 'Вы успешно создали бекап!'
+      redirect_to cabinet_backups_path(params[:tsserver_id]), success: 'Вы успешно создали бекап!'
     else
-      redirect_to cabinet_backups_path(params[:tsserver_id]), notice: 'Что-то пошло не так'
+      redirect_to cabinet_backups_path(params[:tsserver_id]), danger: 'Что-то пошло не так'
     end
   else
-    redirect_to cabinet_home_path
+    redirect_to root_path
   end
-  server.disconnect
   else
-    redirect_to cabinet_backups_path(params[:tsserver_id]), notice: 'Вы превысили лимит бекапов'
+    redirect_to cabinet_backups_path(params[:tsserver_id]), warning: 'Вы превысили лимит бекапов'
   end
 end
 
 def delete_backup
   backup = Backup.find params[:id]
   if current_user.id == Tsserver.where(id: backup.tsserver_id).select(:user_id).take.user_id
-    backup.destroy ? (redirect_to cabinet_backups_path(backup.tsserver_id), notice: 'Вы успешно удалили!' ):(redirect_to cabinet_backups_path(backup.tsserver_id), notice: 'Что-то пошло не так')
+    backup.destroy ? (redirect_to cabinet_backups_path(backup.tsserver_id), success: 'Вы успешно удалили!' ):(redirect_to cabinet_backups_path(backup.tsserver_id), danger: 'Что-то пошло не так')
   else
-    redirect_to cabinet_home_path
+    redirect_to root_path
   end
 end
 
@@ -300,13 +300,101 @@ def apply_backup
   if current_user.id == ts.user_id
     server = Teamspeak::Functions.new
     server.deploy_backup(ts.machine_id, backup.data)
-    redirect_to cabinet_backups_path(backup.tsserver_id), notice: 'Вы успешно применили бекап!'
+    redirect_to cabinet_backups_path(backup.tsserver_id), success: 'Вы успешно применили бекап!'
+    server.disconnect
   else
-    redirect_to cabinet_home_path
+    redirect_to root_path
   end
-  server.disconnect
 end
 
+def reset_permissions
+  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    server.reset_permissions ts.machine_id
+    redirect_to cabinet_home_path, success: 'Вы успешно сбросили права'
+    server.disconnect
+  else
+    redirect_to root_path
+  end
+end
+
+def settings
+  @ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == @ts.user_id
+    server = Teamspeak::Functions.new
+    info = server.server_info @ts.machine_id
+    @name, @welcome_message = info['virtualserver_name'], info['virtualserver_welcomemessage']
+    server.disconnect
+  else
+    redirect_to root_path
+  end
+end
+
+def settings_edit
+  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    server.set_settings ts.machine_id, params[:name], params[:welcome_message], params[:pass]
+    redirect_to cabinet_home_path, success: 'Вы успешно изменили настройки сервера'
+    server.disconnect
+  else
+    redirect_to root_path
+  end
+end
+
+def bans
+  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    @bans = server.bans_list ts.machine_id
+    server.disconnect
+  else
+    redirect_to root_path
+  end
+end
+
+def unban
+  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    server.unban ts.machine_id, params[:banid]
+    redirect_to cabinet_bans_path(params[:id]), success: 'Вы успешно разбанили пользователя'
+    server.disconnect
+  else
+    redirect_to root_path
+  end
+end
+
+def unbanall
+  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    server = Teamspeak::Functions.new
+    server.unbanall ts.machine_id
+    redirect_to cabinet_bans_path(params[:id]), success: 'Вы успешно разбанили всех'
+    server.disconnect
+  else
+    redirect_to root_path
+  end
+
+end
+
+def ban
+  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+  if current_user.id == ts.user_id
+    unless params[:param].blank? or params[:name].blank?
+      server = Teamspeak::Functions.new
+      server.ban(ts.machine_id, [params[:param],params[:name]], params[:reasons],params[:duration])
+      redirect_to cabinet_bans_path params[:id]
+      server.disconnect
+    else
+      redirect_to cabinet_bans_path params[:id], warning: 'Не правильно заполнена форма'
+    end
+  else
+    redirect_to root_path
+  end
+
+end
 
 private
 
@@ -378,5 +466,14 @@ private
     time /= 24
     time+=2
   end
+
+  def referall_system cost, user_id
+    if user_id != 0
+      u = User.find user_id
+      u.update money: (u.money+(cost*0.1).round(2))
+    end
+  end
+
+
 
 end

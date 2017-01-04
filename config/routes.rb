@@ -26,17 +26,29 @@ Rails.application.routes.draw do
   get 'cabinet/token/:id', to: 'cabinet#token', as: 'cabinet_token'
   post 'cabinet/create_token', to: 'cabinet#create_token', as: 'cabinet_create_token'
   post 'cabinet/delete_token', to: 'cabinet#delete_token', as: 'cabinet_delete_token'
+  post 'cabinet/reset_permissions', to: 'cabinet#reset_permissions', as: 'cabinet_reset_permissions'
+  get 'cabinet/settings/:id', to: 'cabinet#settings', as: 'cabinet_settings'
+  post 'cabinet/settings_edit', to: 'cabinet#settings_edit', as: 'cabinet_settings_edit'
+  get 'cabinet/bans/:id', to: 'cabinet#bans', as: 'cabinet_bans'
+  post 'cabinet/ban', to: 'cabinet#ban', as: 'cabinet_ban'
+  post 'cabinet/unban', to: 'cabinet#unban', as: 'cabinet_unban'
+  post 'cabinet/unbanall', to: 'cabinet#unbanall', as: 'cabinet_unbanall'
 
+
+  match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
   get 'admin/home'
   post 'admin/setmoney/:id', to: 'admin#setmoney'
   get 'admin/belongs_verification', to: 'admin#belongs_verification', as: 'admin_belongs_verification'
   get 'admin/user_list', to: 'admin#user_list', as: 'admin_user_list'
+  get 'admin/servers', to: 'admin#servers', as: 'admin_servers'
 
 
   root 'home#index'
   get 'home/index'
   get 'home/about'
-  devise_for :users
+
+
+  devise_for :users, :controllers => {:registrations => "registrations"}
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

@@ -98,7 +98,7 @@ module Teamspeak
       end
 
       loop do
-        response += @sock.gets
+        response += @sock.gets.force_encoding(Encoding::UTF_8)
         break if response.index(' msg=')
       end
 
@@ -260,6 +260,36 @@ module Teamspeak
       end
     end
 
+    def reset_permissions machine_id
+      self.command 'use', sid: machine_id
+      self.command 'permreset'
+    end
+
+    def set_settings machine_id, name,welcome_message, password
+      self.command 'use', sid: machine_id
+      self.command 'serveredit', {virtualserver_name: name,virtualserver_welcomemessage: welcome_message, virtualserver_password: password }
+    end
+
+    def bans_list machine_id
+      self.command 'use', sid: machine_id
+      self.command 'banlist'
+    end
+
+    def ban machine_id, param, time, reason
+      self.command 'use', sid: machine_id
+      self.command "banadd #{param[0]}=#{param[1]}", {time:time+' sec', banreason: reason}
+    end
+
+    def unban machine_id, id
+      self.command 'use', sid: machine_id
+      self.command 'bandel', banid: id
+    end
+
+    def unbanall machine_id
+      self.command 'use', sid: machine_id
+      self.command 'bandelall'
+    end
+
     def server_list
       tmp=Array.new
       self.command('serverlist').each do |temp|
@@ -269,6 +299,10 @@ module Teamspeak
       return tmp
     end
 
+    def server_info machine_id
+      self.command 'use', sid: machine_id
+      self.command 'serverinfo'
+    end
 
 
   end

@@ -33,6 +33,10 @@ class AdminController < ApplicationController
     end
   end
 
+  def servers
+    @ts = Tsserver.all
+  end
+
 private
   def admin?
     unless Settings.other.admin_list.include?(current_user.email)

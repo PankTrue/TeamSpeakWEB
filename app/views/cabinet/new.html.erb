@@ -3,14 +3,12 @@
 
   <%= form_for @ts, url: {controller: "cabinet", action: "create"}, method: :post do |f| %>
       <% if @ts.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(@ts.errors.count, "ошибка") %> prohibited this ts from being saved:</h2>
+          <div class="alert alert-danger">
+            <h2><%= pluralize(@ts.errors.count, "Ошибка") %></h2>
 
-            <ul>
               <% @ts.errors.full_messages.each do |message| %>
                   <li><%= message %></li>
               <% end %>
-            </ul>
           </div>
       <% end %>
 

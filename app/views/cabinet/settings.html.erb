@@ -1,0 +1,15 @@
+<h2>Настройки</h2>
+
+<div>
+  <%= form_tag cabinet_settings_edit_path, method: :post do %>
+      <%= label_tag 'Название сервера' %> <br>
+      <%= text_field_tag  :name, @name %><br>
+      <%= label_tag 'Сообщение приветствия' %><br>
+      <%= text_area_tag :welcome_message, @welcome_message, style:"margin: 0px; width: 300px; height: 300px;" %><br>
+      <%= label_tag 'Пароль' %><br>
+      <%= text_field_tag :pass %><br>
+      <%= hidden_field_tag :id, params[:id] %>
+      <%= submit_tag 'Сохранить' %><br>
+
+  <% end %>
+</div>

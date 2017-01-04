@@ -1,10 +1,4 @@
-<h2><%= @user.email %></h2>
-
-<%= form_tag "/admin/setmoney/#{@user.id}", method: :post do %>
-    Баланс:<%= number_field_tag 'money', @user.money, class: :text_field, step: :any  %>
-    <%= submit_tag 'Save', id: @user.id, remote:true %>
-<% end %>
-Всего потрачего пользователем: <%= @user.spent %> руб.
+<h2>Server list</h2>
 
 <table class="server-list">
   <thead>
@@ -18,12 +12,11 @@
     <th>Дата создания</th>
     <th>Дата редактирования</th>
     <th>state</th>
-
   </tr>
   </thead>
 
-  <tbody>
-  <% @user.tsservers.each do |ts| %>
+  <% @ts.each do |ts| %>
+      <tbody>
       <tr>
         <td><%= ts.id %></td>
         <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.empty? %></td>
@@ -40,13 +33,13 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
-            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
-            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
-            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
+            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts.id}, data: { turbolinks: false }  %></li>
+            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts.id}, method: :post %></li>
+            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts.id}%></li>
+            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts.id}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
           </ul>
         </div></td>
-
       </tr>
-  </tbody>
+      </tbody>
   <% end %>
+</table>
