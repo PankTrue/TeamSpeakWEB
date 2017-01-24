@@ -6,6 +6,12 @@ Rails.application.routes.draw do
     match :fail, on: :collection, via: [:get, :post]
   end
 
+  scope :unitpay do
+    get :success, to: 'unitpay#success'
+    get :fail, to: 'unitpay#fail'
+    get :notify, to: 'unitpay#notify'
+  end
+
   post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension'
   post 'cabinet/free_dns', to: 'cabinet#free_dns'
   get 'cabinet/pay'
@@ -33,7 +39,8 @@ Rails.application.routes.draw do
   post 'cabinet/ban', to: 'cabinet#ban', as: 'cabinet_ban'
   post 'cabinet/unban', to: 'cabinet#unban', as: 'cabinet_unban'
   post 'cabinet/unbanall', to: 'cabinet#unbanall', as: 'cabinet_unbanall'
-
+  get 'cabinet/pay_redirect', to: 'cabinet#pay_redirect', as: 'cabinet_pay_redirect'
+  get 'cabinet/ref', to: 'cabinet#ref', as: 'cabinet_ref'
 
   match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
@@ -42,6 +49,8 @@ Rails.application.routes.draw do
   get 'admin/belongs_verification', to: 'admin#belongs_verification', as: 'admin_belongs_verification'
   get 'admin/user_list', to: 'admin#user_list', as: 'admin_user_list'
   get 'admin/servers', to: 'admin#servers', as: 'admin_servers'
+
+
 
 
   root 'home#index'

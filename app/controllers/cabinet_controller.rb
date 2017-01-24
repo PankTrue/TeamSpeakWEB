@@ -142,11 +142,12 @@ def extend_up
   user = current_user
   time = extend_params[:time_payment].to_i
   cab = Teamspeak::Functions.new
+  cost = s.slots * 3 * time
   if [1,2,3,6,12].include?(time)
-    if user.money >= (s.slots * 3 * time)
+    if user.money >= cost
       if user.id == s.user_id or Settings.other.admin_list.include?(current_user.email)
-        user.spent+=(s.slots * 3 * time)
-        user.money = user.money - (s.slots * 3 * time)
+        user.spent+= cost
+        user.money = user.money - cost
         s.state = true
         if Date.today < s.time_payment
           s.time_payment = s.time_payment + time * 30
@@ -233,13 +234,27 @@ def delete_token
 end
 
 def pay
-  @w1 = Hash.new
-  @w1 = {
-      merchant_id: Settings_Walletone.merchant_id,
-      description: "BASE64:#{Base64.encode64("Пополнение баланса user_id: #{current_user.id}")}",
-      signature: generate_signature
-  }
 
+end
+
+def pay_redirect
+  if params[:money].to_i >= 5
+    payment = Walletone::Payment.new(
+        WMI_MERCHANT_ID:    Settings.w1.merchant_id,
+        WMI_PAYMENT_AMOUNT:  params[:money], # Сумма
+        WMI_CURRENCY_ID:     643, # ISO номер валюты (По умолчанию 643 - Рубль),
+        WMI_DESCRIPTION: current_user.id.to_s
+    )
+    payment.sign! Settings.w1.signature
+
+    @form = payment.form
+  else
+    redirect_to cabinet_pay_path, warning: 'Сумма должна быть больше 5 рублей'
+  end
+end
+
+def pay_unitpay
+  redirect_to ''
 end
 
 def free_dns
@@ -394,6 +409,17 @@ def ban
     redirect_to root_path
   end
 
+end
+
+def ref
+  @refs = 0
+  @sum = 0
+  User.all().each do |r|
+    if r.ref == current_user.id
+      @refs += 1
+      @sum += r.spent * 0.1
+    end
+  end
 end
 
 private

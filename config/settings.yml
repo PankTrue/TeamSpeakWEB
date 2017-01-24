@@ -1,8 +1,7 @@
 development: &defaults
   w1:
-    merchant_id: '123456789012'
+    merchant_id: '123641701293'
     signature: 'longsignature'
-    service_url: 'https://merchant.w1.ru/checkout/default.aspx'
   teamspeak:
     login: 'serveradmin'
     password: 'fIKUs4uC'
@@ -10,6 +9,9 @@ development: &defaults
   other:
     admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
     ip: '127.0.0.1'
+  unitpay:
+    public_key: 'key'
+    secret_key: 'key'
 
 
 

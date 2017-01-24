@@ -1,6 +1,7 @@
 <div>
 На вашем счету: <%= current_user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
-
+<%= link_to 'Пополнить', cabinet_pay_path %>
+<%= link_to 'Реферальная программа', cabinet_ref_path %>
 </div>
 <h4>Авто-продление</h4>
 <div class="btn-group" id="toggle_event_editing">

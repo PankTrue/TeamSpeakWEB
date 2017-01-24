@@ -3,43 +3,43 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>easy-ts3</title>
-    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "lol" %>">
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
+
   </head>
 
 
   <body>
+    <!-- VK Widget -->
+    <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
+    <div id="vk_community_messages"></div>
+    <script type="text/javascript">
+        VK.Widgets.CommunityMessages("vk_community_messages", 126399695, {});
+    </script>
+    <!-- VK END -->
+
     <header>
-        <%= render 'layouts/navigation' %>
+      <%= render 'layouts/navigation' %>
     </header>
 
 
-    <div class="container">
-      <main role="main">
-          <% flash.each do |name, message| %>
-              <div class="alert alert-<%= name %>">
-                  <%= message %>
-              </div>
-          <% end %>
+    <main role="main" class="container">
+      <% flash.each do |name, message| %>
+          <div class="alert alert-<%= name %>">
+            <%= message %>
+          </div>
+      <% end %>
 
-          <%= yield %>
-        <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
+      <%= yield %>
 
-        <!-- VK Widget -->
-        <div id="vk_community_messages"></div>
-        <script type="text/javascript">
-          VK.Widgets.CommunityMessages("vk_community_messages", 126399695, {});
-        </script>
+    </main>
 
-      </main>
+
+
+    <div class="footer">
+      <%= render 'layouts/footer' %>
     </div>
-
-
-  <div class="footer">
-   <%= render 'layouts/footer' %>
-  </div>
 
   </body>
 
