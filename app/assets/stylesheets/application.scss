@@ -17,12 +17,52 @@
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "font-awesome";
 
 main {
   background-color: #eee;
   padding-bottom: 0px;
   width: 100%;
   margin-top: 51px; // accommodate the navbar
+}
+
+#vk_groups{
+  display: block;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  top: 250px;
+  right: 0;
+}
+
+.footer{
+  height: 225px;
+  background-image: url("footer.jpg");
+}
+
+
+.footerlinks{
+  margin-top: 30px;
+  p{
+    color: white;
   }
+
+  div ul li{
+    list-style-type: none;
+    a{
+      color: white;
+    }
+  }
+}
+
+.copyright{
+margin-top: 20px;
+  p{
+    color: white;
+    font-size: 16px;
+  }
+}
+
+
 
 

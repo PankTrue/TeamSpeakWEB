@@ -1,14 +1,114 @@
-<div class="vkgroup">
-  <script type="text/javascript" src="//vk.com/js/api/openapi.js?137"></script>
+<div class="main">
+<!-- slider -->
 
-  <!-- VK Widget -->
-  <div id="vk_groups"></div>
-  <script type="text/javascript">
-      VK.Widgets.Group("vk_groups", {mode: 4, width: "220", height: "400", color1: 'F4F4F2', color2: '120C0C'}, 126399695);
-  </script>
+  <div id="myCarousel" class="carousel slide" data-interval="3000" data-ride="carousel">
+    <!-- Индикаторы для карусели -->
+    <ol class="carousel-indicators">
+      <!-- Перейти к 0 слайду карусели с помощью соответствующего индекса data-slide-to="0" -->
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <!-- Перейти к 1 слайду карусели с помощью соответствующего индекса data-slide-to="1" -->
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <!-- Перейти к 2 слайду карусели с помощью соответствующего индекса data-slide-to="2" -->
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <!-- Слайды карусели -->
+    <div class="carousel-inner">
+      <!-- Слайды создаются с помощью контейнера с классом item, внутри которого помещается содержимое слайда -->
+      <div class="active item">
+        <h2>Слайд №1</h2>
+        <div class="carousel-caption">
+          <h3>Заголовок 1 слайда</h3>
+          <p>Текст (описание) 1 слайда...</p>
+        </div>
+      </div>
+      <!-- Слайд №2 -->
+      <div class="item">
+        <h2>Slide 2</h2>
+        <div class="carousel-caption">
+          <h3>Second slide label</h3>
+          <p>Aliquam sit amet gravida nibh, facilisis gravida odio.</p>
+        </div>
+      </div>
+      <!-- Слайд №3 -->
+      <div class="item">
+        <h2>Slide 3</h2>
+        <div class="carousel-caption">
+          <h3>Third slide label</h3>
+          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Навигация для карусели -->
+    <!-- Кнопка, осуществляющая переход на предыдущий слайд с помощью атрибута data-slide="prev" -->
+    <a class="carousel-control left" href="#myCarousel" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    <!-- Кнопка, осуществляющая переход на следующий слайд с помощью атрибута data-slide="next" -->
+    <a class="carousel-control right" href="#myCarousel" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
+  </div>
+
+
+
+<!-- description -->
+  <div class="row center-block col-md-12">
+
+    <div class="col-sm-6 col-md-4 desc">
+      <%= fa_stacked_icon "rocket inverse", base: "circle", class: "fa-3x" %>
+      <div class="whyme">
+        <h4>Быстрая скорость</h4>
+        <p>Моментальная выдача сервера сразу после оплаты. Работоспособность серверов 24/7 </p>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4">
+      <%= fa_stacked_icon "cog inverse", base: "circle", class: "fa-3x" %>
+      <div class="whyme">
+        <h4>Простая панель управления</h4>
+        <p>В личном кабинете вы с легкостью можете управлять сервером. </p>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4">
+      <%= fa_stacked_icon "rub  inverse", base: "circle", class: "fa-3x" %>
+      <div class="whyme">
+        <h4>Низкие Цены</h4>
+        <p>У нас у нас самые низкие цены на аренду сервера TeamSpeak 3, 3 руб/слот.</p>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4">
+      <%= fa_stacked_icon "handshake-o inverse", base: "circle", class: "fa-3x" %>
+      <div class="whyme">
+        <h4>Сотрудничество</h4>
+        <p>Наше сотрудничество предлагает спонсирования ваших проектов на определенных условиях. Обращаться в официальную группу Вконтакте.  </p>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4">
+      <%= fa_stacked_icon "money inverse", base: "circle", class: "fa-3x" %>
+      <div class="whyme">
+        <h4>Партнерская программа</h4>
+        <p>Наша партнерская программа поможет Вам заработать средства для оплаты сервера. Приглашайте новых пользователей и получайте бонусы</p>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4">
+      <%= fa_stacked_icon "refresh inverse", base: "circle", class: "fa-3x" %>
+      <div class="whyme">
+        <h4>Снимки сервера </h4>
+        <p>Автоматическое создание бэкапов сервера - Вы можете откатить изменения на Вашем сервере из личного кабинета.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+<div class="test">
 
 </div>
 
-<div>
-  <h1>НАШ САЙТ ХУЙНЯ</h1>
+
 </div>
+

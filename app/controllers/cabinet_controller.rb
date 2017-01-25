@@ -114,7 +114,6 @@ end
 
 
 def destroy
-
     @ts = Tsserver.find(params[:id])
       if @ts.user_id == current_user.id or Settings.other.admin_list.include?(current_user.email)
         server=Teamspeak::Functions.new
@@ -122,6 +121,8 @@ def destroy
         dns, port = @ts.dns, @ts.port
         server.server_destroy(@ts.machine_id)
         other.del_dns(dns, port) unless dns.empty?
+        b = Backup.where tsserver_id: @ts.id
+        b.destroy_all
         if @ts.destroy
           redirect_to cabinet_home_path, success: 'Вы успешно удалили сервер'
         end

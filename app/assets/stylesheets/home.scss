@@ -4,6 +4,41 @@
 
 
 
-.vkgroup{
- float: right;
+
+
+.mainimage{
+  width: 64px;
+}
+.icon{
+  width: 64px;
+  height: 64px;
+  margin: 25%;
+}
+
+
+h2{
+  margin: 0;
+  color: #333;
+  padding-top: 90px;
+  font-size: 52px;
+  font-family: "trebuchet ms", sans-serif;
+}
+.item{
+  background: #333;
+  text-align: center;
+  height: 300px !important;
+}
+.carousel{
+  margin-top: 20px;
+}
+
+
+
+
+.circle{
+  display: inline-block;
+  font-size: 4em;
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
 }
