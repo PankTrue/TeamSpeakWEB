@@ -11,6 +11,7 @@
 
 
   <body>
+
     <!-- VK Widget -->
     <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
     <div id="vk_community_messages"></div>
@@ -24,7 +25,7 @@
     </header>
 
 
-    <main role="main" class="container">
+    <main role="main" class="container main clearfix" id="wrap">
       <% flash.each do |name, message| %>
           <div class="alert alert-<%= name %>">
             <%= message %>
@@ -42,6 +43,10 @@
             VK.Widgets.Group("vk_groups", {mode: 4, width: "220", height: "400", color1: 'F4F4F2', color2: '120C0C'}, 126399695);
         </script>
       </div>
+
+    <div class="test">
+
+    </div>
 
 
     <div class="footer">
