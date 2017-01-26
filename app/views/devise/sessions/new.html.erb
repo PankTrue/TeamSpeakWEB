@@ -123,10 +123,10 @@
         $('#rules').change(function(){
             if(this.checked){
                 $('#register-submit').attr('disabled',false);
-                $('#register-submit').attr('style','background-color: red ');
+                $('#register-submit').attr('style','background-color:green ');
             }else{
                 $('#register-submit').attr('disabled',true);
-                $('#register-submit').attr('style','background-color:green ');
+                $('#register-submit').attr('style','background-color: red ');
             };
         });
 
@@ -199,6 +199,10 @@
                     </div>
                     <div class="form-group">
                       <input type="password" name="user[password_confirmation]" id="confirm-password" tabindex="2" class="form-control" placeholder="Подтверждение пароля">
+                    </div>
+                    <div class="form-group">
+                      <input type="checkbox" tabindex="4" name="user[rules]" id="rules">
+                      <label for="rules">Соглашаюсь с правилами сайта.</label>
                     </div>
                     <div class="form-group">
                       <div class="row">

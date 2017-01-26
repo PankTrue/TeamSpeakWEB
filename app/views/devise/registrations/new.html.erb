@@ -122,9 +122,11 @@
 
         $('#rules').change(function(){
             if(this.checked){
-              $('#register-submit').attr('disabled',false);
+                $('#register-submit').attr('disabled',false);
+                $('#register-submit').attr('style','background-color:green ');
             }else{
-              $('#register-submit').attr('disabled',true);
+                $('#register-submit').attr('disabled',true);
+                $('#register-submit').attr('style','background-color: red ');
             };
         });
 
@@ -207,7 +209,7 @@
                     <div class="form-group">
                       <div class="row">
                         <div class="col-sm-6 col-sm-offset-3">
-                          <input type="submit" name="commit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Зарегистрироваться" disabled="true">
+                          <input type="submit" name="commit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Зарегистрироваться" disabled="true" style="background-color: red">
                         </div>
                       </div>
                     </div>
