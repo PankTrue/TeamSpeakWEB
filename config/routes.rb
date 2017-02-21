@@ -12,17 +12,16 @@ Rails.application.routes.draw do
     get :notify, to: 'unitpay#notify'
   end
 
-  post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension'
-  post 'cabinet/free_dns', to: 'cabinet#free_dns'
-  get 'cabinet/pay'
-  get 'cabinet/new'
-  post 'cabinet/create'
+  post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension', as: 'cabinet_edit_auto_extension'
+  post 'cabinet/free_dns', to: 'cabinet#free_dns', as: 'cabinet_free_dns'
+  get 'cabinet/pay', to: 'cabinet#pay', as: 'cabinet_pay'
+  get 'cabinet/new', to: 'cabinet#new', as: 'cabinet_new'
+  post 'cabinet/create', to: 'cabinet#create', as: 'cabinet_create'
   delete 'cabinet/:id', to: 'cabinet#destroy', as: 'cabinet_destroy'
-  get 'cabinet/home'
-  get 'cabinet/extend/:id', to: 'cabinet#extend'
+  get 'cabinet/home', to: 'cabinet#home', as: 'cabinet_home'
+  get 'cabinet/extend/:id', to: 'cabinet#extend', as: 'cabinet_extend'
   post 'cabinet/extend_up/:id', to: 'cabinet#extend_up'
-  post 'cabinet/work/:id', to: 'cabinet#work'
-  get 'cabinet', to: 'cabinet#home'
+  post 'cabinet/work/:id', to: 'cabinet#work', as: 'cabinet_work'
   get 'cabinet/edit/:id', to: 'cabinet#edit', as: 'cabinet_edit'
   post 'cabinet/update/:id', to: 'cabinet#update', as: 'cabinet_update'
   get 'cabinet/backups/:id', to: 'cabinet#backups', as: 'cabinet_backups'
@@ -41,6 +40,7 @@ Rails.application.routes.draw do
   post 'cabinet/unbanall', to: 'cabinet#unbanall', as: 'cabinet_unbanall'
   get 'cabinet/pay_redirect', to: 'cabinet#pay_redirect', as: 'cabinet_pay_redirect'
   get 'cabinet/ref', to: 'cabinet#ref', as: 'cabinet_ref'
+  get 'cabinet/panel/:id', to: 'cabinet#panel', as: 'cabinet_panel'
 
   match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
@@ -52,7 +52,7 @@ Rails.application.routes.draw do
 
 
 
-
+  get '/home/regulations' => 'home#regulations', as: 'home_regulations'
   root 'home#index'
   get 'home/index'
   get 'home/about'

@@ -1,4 +1,4 @@
-<h2>Server list</h2>
+<h2>Server list in database</h2>
 
 <table class="server-list">
   <thead>
@@ -42,4 +42,36 @@
       </tr>
       </tbody>
   <% end %>
+</table>
+
+
+<h2>Server list physical</h2>
+
+<table class="server-list">
+  <thead>
+  <tr>
+    <th>machine_id</th>
+    <th>name</th>
+    <th>port</th>
+    <th>status</th>
+    <th>client_online</th>
+    <th>max_clients</th>
+    <th>auto_start</th>
+  </tr>
+  </thead>
+
+  <% @physical.each do |p| %>
+      <tbody>
+      <tr>
+        <td><%= p["virtualserver_id"] %></td>
+        <td><%= p["virtualserver_name"] %></td>
+        <td><%= p["virtualserver_port"] %></td>
+        <td><%= p["virtualserver_status"] %></td>
+        <td><%= p["virtualserver_clientsonline"] %></td>
+        <td><%= p["virtualserver_maxclients"] %></td>
+        <td><%= p["virtualserver_autostart"] %></td>
+      </tr>
+      </tbody>
+  <% end %>
+
 </table>

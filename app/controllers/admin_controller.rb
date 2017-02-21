@@ -4,6 +4,11 @@ class AdminController < ApplicationController
 
   def home
     @users = User.all
+    @count_users = @users.count
+    @count_spent=0
+    @users.each do |u|
+      @count_spent+=u.spent
+    end
   end
 
   def info
@@ -34,7 +39,10 @@ class AdminController < ApplicationController
   end
 
   def servers
+    server = Teamspeak::Functions.new
     @ts = Tsserver.all
+    @physical = server.server_list
+    server.disconnect
   end
 
 private

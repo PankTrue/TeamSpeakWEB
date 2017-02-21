@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="turbolinks-cache-control" content="no-cache">
     <title>easy-ts3</title>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
@@ -16,7 +17,8 @@
     <script type="text/javascript" src="//vk.com/js/api/openapi.js?136"></script>
     <div id="vk_community_messages"></div>
     <script type="text/javascript">
-        VK.Widgets.CommunityMessages("vk_community_messages", 126399695, {});
+            VK.Widgets.CommunityMessages("vk_community_messages", 126399695, {});
+
     </script>
     <!-- VK END -->
 
@@ -38,11 +40,13 @@
 
 
     <!-- VK Widget -->
-      <div id="vk_groups" class="hidden-xs">
-        <script type="text/javascript">
-            VK.Widgets.Group("vk_groups", {mode: 4, width: "220", height: "400", color1: 'F4F4F2', color2: '120C0C'}, 126399695);
-        </script>
-      </div>
+     # <div id="vk_groups" class="hidden-xs hidden-sm">
+     #   <script type="text/javascript">
+     #           VK.Widgets.Group("vk_groups", {mode: 4, width: "220", height: "400", color1: 'F4F4F2', color2: '120C0C'}, 126399695);
+     #  </script>
+     # </div>
+
+
 
     <div class="test">
 

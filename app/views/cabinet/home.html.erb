@@ -1,7 +1,7 @@
 <div>
-На вашем счету: <%= current_user.money %> руб.<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
-<%= link_to 'Пополнить', cabinet_pay_path %>
-<%= link_to 'Реферальная программа', cabinet_ref_path %>
+На вашем счету: <%= current_user.money %> руб.<%= link_to 'Пополнить', cabinet_pay_path, class: 'btn btn-default' %>
+<%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
+<%= link_to 'Реферальная программа', cabinet_ref_path, class: 'btn btn-default' %>
 </div>
 <h4>Авто-продление</h4>
 <div class="btn-group" id="toggle_event_editing">
@@ -10,63 +10,63 @@
 </div>
 
 <h2>Список серверов</h2>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Доменное имя</th>
-      <th>IP</th>
-      <th>Количество слотов</th>
-      <th>Дата следующего платежа</th>
-      <th>Остаток дней</th>
-      <th>Статус</th>
-
-    </tr>
-  </thead>
-
-  <tbody>
-    <% current_user.tsservers.each do |ts| %>
+<div>
+  <table class="table">
+    <thead>
       <tr>
-        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns == '' %></td>
-        <td><%= Settings.other.ip + ':' + ts.port.to_s %></td>
-        <td><%= ts.slots %></td>
-        <td><%= ts.time_payment %></td>
-        <td><%= sec2days(ts.time_payment.to_time - Time.now) %></td>
-        <td><%= (@status[@status.index(ts.machine_id)+1]=='online') ? 'Online':'Offline' %></td>
-
-
-        <td>
-            <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              Функции
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              <li><%= link_to 'Токены', {controller: 'cabinet', action: 'token', id: ts} %></li>
-              <li><%= link_to 'Настройки', {controller: 'cabinet', action: 'settings', id: ts} %></li>
-              <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
-              <li><%= link_to 'Бекапы', {controller: 'cabinet', action: 'backups', id: ts} %></li>
-              <li><%= link_to 'Баны', {controller: 'cabinet', action: 'bans', id: ts} %></li>
-              <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
-              <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
-              <li><%= link_to 'Сбросить права', {controller: 'cabinet', action: 'reset_permissions', id: ts}, data: {confirm: 'Вы уверены?'}, method: :post%></li>
-              <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
-            </ul>
-            </div>
-        </td>
-
+        <th>Доменное имя</th>
+        <th>IP</th>
+        <th>Количество слотов</th>
+        <th>Дата следующего платежа</th>
+        <th>Остаток дней</th>
+        <th>Статус</th>
 
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% current_user.tsservers.each do |ts| %>
+        <tr>
+          <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns == '' %></td>
+          <td><%= Settings.other.ip + ':' + ts.port.to_s %></td>
+          <td><%= ts.slots %></td>
+          <td><%= ts.time_payment %></td>
+          <td><%= sec2days(ts.time_payment.to_time - Time.now) %></td>
+          <td><%= (@status[@status.index(ts.machine_id).to_i+1]=='online') ? 'Online':'Offline' unless @status.blank? %></td>
 
 
+          <td>
+
+            <%= link_to 'Панель', cabinet_panel_path(ts), class: 'btn btn-default' %>
+            <!--
+              <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Функции
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><%= link_to 'Токены', {controller: 'cabinet', action: 'token', id: ts} %></li>
+                <li><%= link_to 'Настройки', {controller: 'cabinet', action: 'settings', id: ts} %></li>
+                <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
+                <li><%= link_to 'Бекапы', {controller: 'cabinet', action: 'backups', id: ts} %></li>
+                <li><%= link_to 'Баны', {controller: 'cabinet', action: 'bans', id: ts} %></li>
+                <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
+                <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
+                <li><%= link_to 'Сбросить права', {controller: 'cabinet', action: 'reset_permissions', id: ts}, data: {confirm: 'Вы уверены?'}, method: :post%></li>
+                <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
+              </ul>
+              </div>
+              -->
+          </td>
 
 
-<div hidden="true">
-<%= request.remote_ip %>
-
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
+
+
 
 
 <script type="text/javascript" charset="utf-8">

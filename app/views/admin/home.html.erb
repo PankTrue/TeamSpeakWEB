@@ -1,6 +1,6 @@
-
-<%= link_to 'Belongs verification', admin_belongs_verification_path, class: "btn btn-primary" %> <br>
-<%= link_to 'User list', admin_user_list_path, class: "btn btn-primary"  %> <br>
+<%= link_to 'Belongs verification', admin_belongs_verification_path, class: "btn btn-primary" %>
+<%= link_to 'User list', admin_user_list_path, class: "btn btn-primary"  %>
 <%= link_to 'Server list', admin_servers_path, class: "btn btn-primary"  %>
 
-
+<h3>Всего пользователей: <%= @count_users %></h3>
+<h3>Всего потрачено денег: <%= @count_spent %> руб.</h3>

@@ -423,7 +423,27 @@ def ref
   end
 end
 
+def panel
+  @ts = Tsserver.find params[:id]
+  if current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
+    server=Teamspeak::Functions.new
+    server.command('use', {sid: @ts.machine_id})
+    @info=server.command('serverinfo')
+    @channel=server.command('channellist', sid: '-flags -topic -voice -limits')
+    @client=server.command('clientlist', sid: '-uid -away -voice -groups')
+    @server_group_list = server.command('servergrouplist')
+    @channel_group_list = server.command('channelgrouplist')
+
+    server.disconnect
+  else
+    redirect_to cabinet_home_path, danger: 'Нет доступа'
+  end
+end
+
 private
+
+
+
 
 
 

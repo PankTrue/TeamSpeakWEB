@@ -248,7 +248,7 @@ module Teamspeak
         response = @sock.gets
         break if response.index(' msg=')
       end
-      data
+      data.force_encoding(Encoding::UTF_8)
     end
 
     def deploy_backup machine_id, data
@@ -302,6 +302,16 @@ module Teamspeak
     def server_info machine_id
       self.command 'use', sid: machine_id
       self.command 'serverinfo'
+    end
+
+    def client_list machine_id
+      self.command 'use', sid: machine_id
+      self.command 'clientlist'
+    end
+
+    def channel_list machine_id
+      self.command 'use', sid: machine_id
+      self.command 'channellist'
     end
 
 

@@ -1,0 +1,18 @@
+<div class="functions">
+  <ul style="list-style-type: none">
+    <li><%= link_to 'Токены', cabinet_token_path(@ts), class: 'btn btn-primary'%></li>
+    <li><%= link_to 'Настройки', cabinet_settings_path(@ts), class: 'btn btn-primary' %></li>
+    <li><%= link_to 'Редактировать', cabinet_edit_path(@ts), data: { turbolinks: false }, class: 'btn btn-primary'%></li>
+    <li><%= link_to 'Бекапы', cabinet_backups_path(@ts), class: 'btn btn-primary' %></li>
+    <li><%= link_to 'Баны', cabinet_bans_path(@ts), class: 'btn btn-primary' %></li>
+    <li><%= link_to 'Вкл/Выкл', cabinet_work_path(@ts), method: :post, class: 'btn btn-primary' %></li>
+    <li><%= link_to 'Продлить', cabinet_extend_path(@ts), class: 'btn btn-primary'%></li>
+    <li><%= link_to 'Сбросить права', cabinet_reset_permissions_path(@ts), data: {confirm: 'Вы уверены?'}, method: :post, class: 'btn btn-danger'%></li>
+    <li><%= link_to 'Удалить',  cabinet_destroy_path(@ts), method: :delete, data: { confirm: 'Вы уверены?' }, class: 'btn btn-danger' %></li>
+  </ul>
+</div>
+
+<%= raw panel_gen %>
+
+
+

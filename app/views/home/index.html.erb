@@ -1,3 +1,10 @@
+<style>
+  .desc{
+    text-align: center;
+  }
+</style>
+
+
 <div class="main">
 <!-- slider -->
 
@@ -23,11 +30,11 @@
       </div>
 
       <div class="item">
-        <img src="img_flower.jpg" alt="Flower">
+        <%= image_tag 'downmoney.jpg', class: "center-block img-responsive"%>
       </div>
 
       <div class="item">
-        <img src="img_flower2.jpg" alt="Flower">
+        <%= image_tag 'implementicon.png', class: "center-block img-responsive"%>
       </div>
     </div>
 
@@ -45,7 +52,7 @@
 <!-- slider end -->
 
 <!-- description -->
-  <div class="row center-block col-md-12">
+  <div class="row center-block col-md-10 col-lg-11">
 
     <div class="col-sm-6 col-md-4 desc">
       <%= fa_stacked_icon "rocket inverse", base: "circle", class: "fa-3x" %>
@@ -55,7 +62,7 @@
       </div>
     </div>
 
-    <div class="col-sm-6 col-md-4">
+    <div class="col-sm-6 col-md-4 desc">
       <%= fa_stacked_icon "cog inverse", base: "circle", class: "fa-3x" %>
       <div class="whyme">
         <h4>Простая панель управления</h4>
@@ -63,7 +70,7 @@
       </div>
     </div>
 
-    <div class="col-sm-6 col-md-4">
+    <div class="col-sm-6 col-md-4 desc">
       <%= fa_stacked_icon "rub  inverse", base: "circle", class: "fa-3x" %>
       <div class="whyme">
         <h4>Низкие Цены</h4>
@@ -71,7 +78,7 @@
       </div>
     </div>
 
-    <div class="col-sm-6 col-md-4">
+    <div class="col-sm-6 col-md-4 desc">
       <%= fa_stacked_icon "handshake-o inverse", base: "circle", class: "fa-3x" %>
       <div class="whyme">
         <h4>Сотрудничество</h4>
@@ -79,7 +86,7 @@
       </div>
     </div>
 
-    <div class="col-sm-6 col-md-4">
+    <div class="col-sm-6 col-md-4 desc">
       <%= fa_stacked_icon "money inverse", base: "circle", class: "fa-3x" %>
       <div class="whyme">
         <h4>Партнерская программа</h4>
@@ -87,7 +94,7 @@
       </div>
     </div>
 
-    <div class="col-sm-6 col-md-4">
+    <div class="col-sm-6 col-md-4 desc">
       <%= fa_stacked_icon "refresh inverse", base: "circle", class: "fa-3x" %>
       <div class="whyme">
         <h4>Снимки сервера </h4>
@@ -98,9 +105,7 @@
   </div>
 
 
-<div class="test">
 
-</div>
 
 
 </div>

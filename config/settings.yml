@@ -4,7 +4,7 @@ development: &defaults
     signature: 'longsignature'
   teamspeak:
     login: 'serveradmin'
-    password: 'fIKUs4uC'
+    password: 'ZsXajlhE'
     ts_path: '/home/pank/Desktop/teamspeak'
   other:
     admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
