@@ -11,8 +11,9 @@
     <li><%= link_to 'Удалить',  cabinet_destroy_path(@ts), method: :delete, data: { confirm: 'Вы уверены?' }, class: 'btn btn-danger' %></li>
   </ul>
 </div>
-
-<%= raw panel_gen %>
+<div class="tsstatus">
+  <%= raw panel_gen %>
+</div>
 
 
 

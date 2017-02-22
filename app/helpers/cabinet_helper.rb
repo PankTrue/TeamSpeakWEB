@@ -9,8 +9,10 @@ module CabinetHelper
 	end
 
 	def panel_gen
-
-		renderChannels 0
+    content = ''
+    content += image_tag 'teamspeak/16x16_server_green.png'
+    content += @info['virtualserver_name']
+		content += renderChannels 0
 	end
 
 	def renderChannels channelID
@@ -28,18 +30,23 @@ module CabinetHelper
 						end
 
 						flags = Array.new
-						flags = '16x16_default.png' if channel['channel_flag_default'] == 1
-						flags = '16x16_moderated.png' if channel['channel_needed_talk_power'] > 0
-						flags = '16x16_register.png' if channel['channel_flag_password'] == 1
+						flags << '16x16_default.png' if channel['channel_flag_default'] == 1
+						flags << '16x16_moderated.png' if channel['channel_needed_talk_power'] > 0
+						flags << '16x16_register.png' if channel['channel_flag_password'] == 1
 						flags = renderFlags flags
 
-						users = renderUsers channel['cid']
+						users = renderUsers channel['cid'] unless @client.blank?
 						childs = renderChannels(channel['cid'])
 						cid = channel['cid']
 
 
 
-					content += "<div class='tsstatusItem'>" + "<img src='teamspeak/#{icon}' /> #{name}" + "<div class="tsstatusFlags">" + flags + "</div>" + childs + "</div>"
+					content += "<div class='tsstatusItem'>"
+					content += image_tag "teamspeak/#{icon}"
+					content += name
+					content += "<div class='tsstatusFlags'>"
+					content += flags
+					content += "</div> #{users} #{childs} </div>"
 				end
 			end
 			return content
@@ -48,15 +55,16 @@ module CabinetHelper
 	def renderFlags flags
 		content = ''
 		flags.each do |flag|
-			content += image_tag "teamspeak/flag"
+			content += image_tag "teamspeak/#{flag}"
 		end
 		return content
 	end
 
 	def renderUsers channelID
 		content=''
-		if channelID
-			@client.each do |user|
+
+    @client.each do |user|
+      if user['cid']==channelID
 				if user['client_type'] == 0
 					name = user['client_nickname']
 					icon = '16x16_player_off.png'
@@ -67,12 +75,12 @@ module CabinetHelper
 					elsif(user['client_input_hardware'] == 0) then icon = '16x16_hardware_input_muted.png'
 					elsif(user['client_input_muted'] == 1) then icon = '16x16_input_muted.png'
 					end
-					flags = Array.new
 
-					flags = renderFlags flags
 
-					content += "<div class="tsstatusItem"> #{image_tag "teamspeak/"+name} <div class="tsstatusFlags"> #{flags} </div></div>"
-
+					content += "<div class='tsstatusItem'>"
+					content += image_tag "teamspeak/#{icon}"
+					content += name
+					content += "</div>"
 				end
 
 			end

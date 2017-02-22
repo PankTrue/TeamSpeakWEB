@@ -202,7 +202,7 @@ module Teamspeak
     end
 
     def server_autostart machine_id, state
-      self.command('use', sid: machine_id )
+      self.command('use', {sid: machine_id}, '-virtual' )
       self.command('serveredit', 'virtualserver_autostart': state)
     end
 
@@ -292,7 +292,7 @@ module Teamspeak
 
     def server_list
       tmp=Array.new
-      self.command('serverlist').each do |temp|
+      self.command('serverlist', {}, '-short').each do |temp|
         break if temp.blank?
         tmp << temp
       end

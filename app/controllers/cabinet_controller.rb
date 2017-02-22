@@ -4,8 +4,7 @@ require 'date'
 require 'base64'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
-  before_action :edit_params, only: [:update]
-  before_action :extend_params, only: [:extend_up]
+  before_action :own_server, only: [:panel]
 
 
 def home
@@ -27,26 +26,26 @@ end
 
 def update
   @ts = Tsserver.where(id: params[:id]).take!
-  unless edit_params[:dns]==@ts.dns and edit_params[:slots]==@ts.slots
+  unless params[:dns]==@ts.dns and params[:slots]==@ts.slots
     if current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
       other = Teamspeak::Other.new
       days = sec2days(@ts.time_payment.to_time - Time.now)
       old_dns = @ts.dns
-      cost = (((edit_params[:slots].to_i - @ts.slots) * (3.to_f/30*days))).round 2
-      cost += 10 if old_dns != edit_params[:dns]
+      cost = (((params[:slots].to_i - @ts.slots) * (3.to_f/30*days))).round 2
+      cost += 10 if old_dns != params[:dns]
       if current_user.money >= cost
         if @ts.valid?
-          if @ts.update dns: edit_params[:dns], slots: edit_params[:slots]
+          if @ts.update dns: params[:dns], slots: params[:slots]
             server = Teamspeak::Functions.new
             current_user.update! money: ((current_user.money - cost).round 2), spent: current_user.spent+=cost
             referall_system cost, current_user.ref
-            server.server_edit_slots @ts.machine_id, edit_params[:slots]
-            if !old_dns.empty? and !edit_params[:dns].empty?
-              other.edit_dns(old_dns, @ts.port,edit_params[:dns],@ts.port)
-            elsif !old_dns.empty? and edit_params[:dns].empty?
+            server.server_edit_slots @ts.machine_id, params[:slots]
+            if !old_dns.empty? and !params[:dns].empty?
+              other.edit_dns(old_dns, @ts.port,params[:dns],@ts.port)
+            elsif !old_dns.empty? and params[:dns].empty?
               other.del_dns(old_dns, @ts.port)
-            elsif old_dns.empty? and !edit_params[:dns].empty?
-              other.new_dns(edit_params[:dns],@ts.port)
+            elsif old_dns.empty? and !params[:dns].empty?
+              other.new_dns(params[:dns],@ts.port)
             end
             redirect_to cabinet_home_path, success: 'Вы успешно редактировали сервер'
             server.disconnect
@@ -141,7 +140,7 @@ end
 def extend_up
   s = Tsserver.where(id: params[:id]).take!
   user = current_user
-  time = extend_params[:time_payment].to_i
+  time = params[:time_payment].to_i
   cab = Teamspeak::Functions.new
   cost = s.slots * 3 * time
   if [1,2,3,6,12].include?(time)
@@ -424,40 +423,27 @@ def ref
 end
 
 def panel
-  @ts = Tsserver.find params[:id]
-  if current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
     server=Teamspeak::Functions.new
-    server.command('use', {sid: @ts.machine_id})
-    @info=server.command('serverinfo')
-    @channel=server.command('channellist', sid: '-flags -topic -voice -limits')
-    @client=server.command('clientlist', sid: '-uid -away -voice -groups')
-    @server_group_list = server.command('servergrouplist')
-    @channel_group_list = server.command('channelgrouplist')
-
+    server.command('use', {sid: @ts.machine_id}, '-virtual')
+    @info=server.command('serverinfo', {}, '-virtual')
+    @channel=server.command('channellist', {}, '-topic -flags -voice -limits -virtual')
+    @client=server.command('clientlist', {}, '-uid -away -voice -groups -virtual')
+    @server_group_list = server.command('servergrouplist', {}, '-virtual')
+    @channel_group_list = server.command('channelgrouplist', {}, '-virtual')
     server.disconnect
-  else
-    redirect_to cabinet_home_path, danger: 'Нет доступа'
-  end
 end
 
 private
 
-
-
-
-
-
-  def edit_params
-    params.require(:tsserver).permit(:slots, :dns)
+  def own_server
+     @ts = Tsserver.find params[:id]
+     redirect_to cabinet_home_path, danger: 'Нет доступа' unless current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
   end
 
 	def ts_params
 		params.require(:tsserver).permit(:slots, :dns, :time_payment)
   end
 
-  def extend_params
-    params.require(:tsserver).permit(:time_payment)
-  end
 
 
 

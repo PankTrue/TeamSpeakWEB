@@ -13,7 +13,6 @@
 .tsstatus, .tsstatus *, .tsstatuserror{
     color: #00000;
     font-family: Verdana;
-    font-size: 10px;
 }
 
 .tsstatus label{
