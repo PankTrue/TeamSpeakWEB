@@ -31,7 +31,7 @@ Rails.application.routes.draw do
   get 'cabinet/token/:id', to: 'cabinet#token', as: 'cabinet_token'
   post 'cabinet/create_token', to: 'cabinet#create_token', as: 'cabinet_create_token'
   post 'cabinet/delete_token', to: 'cabinet#delete_token', as: 'cabinet_delete_token'
-  post 'cabinet/reset_permissions', to: 'cabinet#reset_permissions', as: 'cabinet_reset_permissions'
+  post 'cabinet/reset_permissions/:id', to: 'cabinet#reset_permissions', as: 'cabinet_reset_permissions'
   get 'cabinet/settings/:id', to: 'cabinet#settings', as: 'cabinet_settings'
   post 'cabinet/settings_edit', to: 'cabinet#settings_edit', as: 'cabinet_settings_edit'
   get 'cabinet/bans/:id', to: 'cabinet#bans', as: 'cabinet_bans'

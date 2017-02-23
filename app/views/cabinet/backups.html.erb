@@ -15,8 +15,8 @@
       <% @backups.each do |b| %>
           <tr>
               <td><%= b.created_at %></td>
-              <td><%= link_to 'Применить', cabinet_apply_backup_path(id: b.id), method: :post, class: "btn btn-success"  %></td>
-              <td><%= link_to 'Удалить', cabinet_delete_backup_path(id: b.id), method: :post, class: "btn btn-danger"  %></td>
+              <td><%= link_to 'Применить', cabinet_apply_backup_path(backup_id: b.id, id: @ts.id), method: :post, class: "btn btn-success"  %></td>
+              <td><%= link_to 'Удалить', cabinet_delete_backup_path(backup_id: b.id, id: @ts.id), method: :post, class: "btn btn-danger"  %></td>
 
 
           </tr>
@@ -24,6 +24,6 @@
       </tbody>
     </table>
 
-    <td><%= link_to 'Создать', cabinet_create_backup_path(tsserver_id: @ts.id), method: :post, class: "btn btn-primary"  %></td>
+    <td><%= link_to 'Создать', cabinet_create_backup_path(id: @ts.id), method: :post, class: "btn btn-primary"  %></td>
 
 
