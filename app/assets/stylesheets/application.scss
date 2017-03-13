@@ -38,8 +38,7 @@ main {
 
 .footer{
   height: 200px;
-  background-image: url("footer.jpg");
-
+  background-image: image_url('footer.jpg');
 }
 
 
@@ -91,6 +90,12 @@ body > #wrap {height: auto; min-height: 100%;}
 .clearfix {display: block;}
 /* End hide from IE-mac */
 
+
+.alert-notice{
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
 
 
 

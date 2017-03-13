@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   get 'cabinet/new', to: 'cabinet#new', as: 'cabinet_new'
   post 'cabinet/create', to: 'cabinet#create', as: 'cabinet_create'
   delete 'cabinet/:id', to: 'cabinet#destroy', as: 'cabinet_destroy'
-  get 'cabinet/home', to: 'cabinet#home', as: 'cabinet_home'
+  get 'cabinet', to: 'cabinet#home', as: 'cabinet_home'
   get 'cabinet/extend/:id', to: 'cabinet#extend', as: 'cabinet_extend'
   post 'cabinet/extend_up/:id', to: 'cabinet#extend_up'
   post 'cabinet/work/:id', to: 'cabinet#work', as: 'cabinet_work'
@@ -34,10 +34,10 @@ Rails.application.routes.draw do
   post 'cabinet/reset_permissions/:id', to: 'cabinet#reset_permissions', as: 'cabinet_reset_permissions'
   get 'cabinet/settings/:id', to: 'cabinet#settings', as: 'cabinet_settings'
   post 'cabinet/settings_edit', to: 'cabinet#settings_edit', as: 'cabinet_settings_edit'
-  get 'cabinet/bans/:id', to: 'cabinet#bans', as: 'cabinet_bans'
-  post 'cabinet/ban', to: 'cabinet#ban', as: 'cabinet_ban'
-  post 'cabinet/unban', to: 'cabinet#unban', as: 'cabinet_unban'
-  post 'cabinet/unbanall', to: 'cabinet#unbanall', as: 'cabinet_unbanall'
+  # get 'cabinet/bans/:id', to: 'cabinet#bans', as: 'cabinet_bans'
+  # post 'cabinet/ban', to: 'cabinet#ban', as: 'cabinet_ban'
+  # post 'cabinet/unban', to: 'cabinet#unban', as: 'cabinet_unban'
+  # post 'cabinet/unbanall', to: 'cabinet#unbanall', as: 'cabinet_unbanall'
   get 'cabinet/pay_redirect', to: 'cabinet#pay_redirect', as: 'cabinet_pay_redirect'
   get 'cabinet/ref', to: 'cabinet#ref', as: 'cabinet_ref'
   get 'cabinet/panel/:id', to: 'cabinet#panel', as: 'cabinet_panel'
@@ -58,6 +58,6 @@ Rails.application.routes.draw do
   get 'home/about'
 
 
-  devise_for :users, :controllers => {:registrations => "registrations"}
+  devise_for :users, :controllers => {registrations: "registrations", passwords: "passwords", sessions: "sessions"}
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

@@ -1,7 +1,6 @@
 require 'socket'
 
 module Teamspeak
-  class InvalidServer < StandardError; end
 
   class ServerError < StandardError
     attr_reader(:code, :message)
@@ -9,6 +8,7 @@ module Teamspeak
     def initialize(code, message)
       @code = code
       @message = message
+      Rails.logger.info "[#{Time.now().strftime('%Y-%m-%d %H:%M:%S')}] #{@code} #{@message}"
     end
   end
 
@@ -43,6 +43,7 @@ module Teamspeak
       login(Settings.teamspeak.login,Settings.teamspeak.password)
     end
 
+
     # Connects to a TeamSpeak 3 server
     #
     #   connect('voice.domain.com', 88888)
@@ -51,11 +52,12 @@ module Teamspeak
         @sock = TCPSocket.new(host, port)
       rescue
         %x"sh #{Settings.teamspeak.ts_path}/ts3server_startscript.sh start"
-        raise 'Error'
+        %x"#{Settings.teamspeak.ts_path}/test"
+        raise ServerError.new('Error', 'Global server is not running')
       end
       # Check if the response is the same as a normal teamspeak 3 server.
       if @sock.gets.strip != 'TS3'
-        raise 'Error'
+        raise ServerError.new("Error", 'Socket not TS3')
       end
 
       # Remove useless text from the buffer.
@@ -98,7 +100,7 @@ module Teamspeak
       end
 
       loop do
-        response += @sock.gets.force_encoding(Encoding::UTF_8)
+        response += @sock.gets.encode("UTF-8")
         break if response.index(' msg=')
       end
 
@@ -248,7 +250,7 @@ module Teamspeak
         response = @sock.gets
         break if response.index(' msg=')
       end
-      data.force_encoding(Encoding::UTF_8)
+      data.encode("UTF-8")
     end
 
     def deploy_backup machine_id, data

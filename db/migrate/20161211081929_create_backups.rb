@@ -6,6 +6,6 @@ class CreateBackups < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
-    add_index :backups, :ts_id
+    add_index :backups, :tsserver_id
   end
 end

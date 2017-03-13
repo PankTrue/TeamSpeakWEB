@@ -5,8 +5,8 @@ require 'base64'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
   before_action :own_server, only: [:panel, :settings_edit, :settings, :reset_permissions, :apply_backup, :delete_backup, :create_backup, :backups, :delete_token, :create_token, :token, :work, :extend_up, :extend, :destroy, :update, :edit]
-
-
+  rescue_from Teamspeak::ServerError, :with => :invalid_server
+  
 def home
     @servers = Tsserver.where(user_id: current_user.id).select(:machine_id)
     servs = Array.new
@@ -17,31 +17,30 @@ def home
     @status = server_status(server.server_list, servs)
     server.disconnect
 end
-
 def edit
   @days = sec2days(@ts.time_payment.to_time - Time.now)
 end
 
 def update
-  unless params[:dns]==@ts.dns and params[:slots]==@ts.slots
+  unless params[:tsserver][:dns]==@ts.dns and params[:tsserver][:slots]==@ts.slots
       other = Teamspeak::Other.new
       days = sec2days(@ts.time_payment.to_time - Time.now)
       old_dns = @ts.dns
-      cost = (((params[:slots].to_i - @ts.slots) * (3.to_f/30*days))).round 2
-      cost += 10 if old_dns != params[:dns]
+      cost = (((params[:tsserver][:slots].to_i - @ts.slots) * (3.to_f/30*days))).round 2
+      cost += 10 if old_dns != params[:tsserver][:dns]
       if current_user.money >= cost
         if @ts.valid?
-          if @ts.update dns: params[:dns], slots: params[:slots]
+          if @ts.update dns: params[:tsserver][:dns], slots: params[:tsserver][:slots]
             server = Teamspeak::Functions.new
             current_user.update! money: ((current_user.money - cost).round 2), spent: current_user.spent+=cost
             referall_system cost, current_user.ref
-            server.server_edit_slots @ts.machine_id, params[:slots]
-            if !old_dns.empty? and !params[:dns].empty?
-              other.edit_dns(old_dns, @ts.port,params[:dns],@ts.port)
-            elsif !old_dns.empty? and params[:dns].empty?
+            server.server_edit_slots @ts.machine_id, params[:tsserver][:slots]
+            if !old_dns.empty? and !params[:tsserver][:dns].empty?
+              other.edit_dns(old_dns, @ts.port,params[:tsserver][:dns],@ts.port)
+            elsif !old_dns.empty? and params[:tsserver][:dns].empty?
               other.del_dns(old_dns, @ts.port)
-            elsif old_dns.empty? and !params[:dns].empty?
-              other.new_dns(params[:dns],@ts.port)
+            elsif old_dns.empty? and !params[:tsserver][:dns].empty?
+              other.new_dns(params[:tsserver][:dns],@ts.port)
             end
             redirect_to cabinet_home_path, success: 'Вы успешно редактировали сервер'
             server.disconnect
@@ -83,7 +82,7 @@ def create
             @ts.time_payment = Date.today + 30*time
             data=server.server_create(free_port,@ts.slots)
             @ts.machine_id=data['sid']
-            @ts.port =data['virtualserver_port']
+            @ts.port=data['virtualserver_port']
             @token=data['token']
             other.new_dns(@ts.dns, @ts.port) unless @ts.dns.empty?
             @ts.save
@@ -93,7 +92,7 @@ def create
             redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"
             server.disconnect
           else
-             render cabinet_new_path
+             render cabinet_new_path @ts
           end
         else
           redirect_to cabinet_home_path, danger:'Недостаточно средств'
@@ -152,7 +151,7 @@ def extend_up
       redirect_to cabinet_home_path, danger: 'Недостаточно средств'
     end
   else
-    redirect_to cabinet_home_path, danger: 'Ты пидр'
+    redirect_to cabinet_home_path
   end
 end
 
@@ -161,10 +160,10 @@ def work
           server=Teamspeak::Functions.new
           if server.server_status(@ts.machine_id)
             server.server_stop @ts.machine_id
-            redirect_to cabinet_home_path, success: 'Вы успешно выключили сервер'
+            redirect_to cabinet_panel_path, success: 'Вы успешно выключили сервер'
           else
             server.server_start @ts.machine_id
-            redirect_to cabinet_home_path, success: 'Вы успешно включили сервер'
+            redirect_to cabinet_panel_path, success: 'Вы успешно включили сервер'
           end
           server.disconnect
         else
@@ -283,47 +282,45 @@ end
 def settings_edit
     server = Teamspeak::Functions.new
     server.set_settings @ts.machine_id, params[:name], params[:welcome_message], params[:pass]
-    redirect_to cabinet_home_path, success: 'Вы успешно изменили настройки сервера'
+    redirect_to cabinet_panel_path(@ts.id), success: 'Вы успешно изменили настройки сервера'
     server.disconnect
 end
 
-=begin
-def bans
-  ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
-  if current_user.id == ts.user_id
-    server = Teamspeak::Functions.new
-    @bans = server.bans_list ts.machine_id
-    server.disconnect
-  else
-    redirect_to root_path
-  end
-end
-=end
+# def bans
+#   ts = Tsserver.where(id: params[:id]).select(:user_id, :machine_id).take
+#   if current_user.id == ts.user_id
+#     server = Teamspeak::Functions.new
+#     @bans = server.bans_list ts.machine_id
+#     server.disconnect
+#   else
+#     redirect_to root_path
+#   end
+# end
 
-def unban
-    server = Teamspeak::Functions.new
-    server.unban @ts.machine_id, params[:banid]
-    redirect_to cabinet_bans_path(params[:id]), success: 'Вы успешно разбанили пользователя'
-    server.disconnect
-end
-
-def unbanall
-    server = Teamspeak::Functions.new
-    server.unbanall @ts.machine_id
-    redirect_to cabinet_bans_path(params[:id]), success: 'Вы успешно разбанили всех'
-    server.disconnect
-end
-
-def ban
-    unless params[:param].blank? or params[:name].blank?
-      server = Teamspeak::Functions.new
-      server.ban(@ts.machine_id, [params[:param],params[:name]], params[:reasons],params[:duration])
-      redirect_to cabinet_bans_path params[:id]
-      server.disconnect
-    else
-      redirect_to cabinet_bans_path params[:id], warning: 'Не правильно заполнена форма'
-    end
-end
+# def unban
+#     server = Teamspeak::Functions.new
+#     server.unban @ts.machine_id, params[:banid]
+#     redirect_to cabinet_bans_path(params[:id]), success: 'Вы успешно разбанили пользователя'
+#     server.disconnect
+# end
+#
+# def unbanall
+#     server = Teamspeak::Functions.new
+#     server.unbanall @ts.machine_id
+#     redirect_to cabinet_bans_path(params[:id]), success: 'Вы успешно разбанили всех'
+#     server.disconnect
+# end
+#
+# def ban
+#     unless params[:param].blank? or params[:name].blank?
+#       server = Teamspeak::Functions.new
+#       server.ban(@ts.machine_id, [params[:param],params[:name]], params[:reasons],params[:duration])
+#       redirect_to cabinet_bans_path params[:id]
+#       server.disconnect
+#     else
+#       redirect_to cabinet_bans_path params[:id], warning: 'Не правильно заполнена форма'
+#     end
+# end
 
 def ref
   @refs = 0
@@ -337,17 +334,22 @@ def ref
 end
 
 def panel
+    @count_users = 0
     server=Teamspeak::Functions.new
     server.command('use', {sid: @ts.machine_id}, '-virtual')
     @info=server.command('serverinfo', {}, '-virtual')
-    @channel=server.command('channellist', {}, '-topic -flags -voice -limits -virtual')
-    @client=server.command('clientlist', {}, '-uid -away -voice -groups -virtual')
-    @server_group_list = server.command('servergrouplist', {}, '-virtual')
-    @channel_group_list = server.command('channelgrouplist', {}, '-virtual')
+    @channel=server.command('channellist', {}, '-flags -voice -limits -virtual')
+    @client=server.command('clientlist', {}, '-voice -virtual')
+    # @server_group_list = server.command('servergrouplist', {}, '-virtual')
+    #@channel_group_list = server.command('channelgrouplist', {}, '-virtual')
     server.disconnect
 end
 
 private
+  
+  def invalid_server
+    redirect_to cabinet_home_path, danger:'Проблемы с сервером, побробуйте позже'
+  end
 
   def own_server
      @ts = Tsserver.find params[:id]
@@ -420,6 +422,7 @@ private
       u.update money: (u.money+(cost*0.1).round(2))
     end
   end
+  
 
 
 

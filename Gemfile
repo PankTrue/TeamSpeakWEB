@@ -48,6 +48,12 @@ group :development do
   gem 'meta_request'
 end
 
+group :test do
+  gem 'cucumber-rails', :require => false
+  # database_cleaner is not required, but highly recommended
+  gem 'database_cleaner'
+end
+
 
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -57,9 +63,12 @@ gem 'font-awesome-rails'
 gem 'devise'
 #gem 'unicorn'
 #gem 'nginx'
-#gem 'pg'
+gem 'pg'
 gem 'rufus-scheduler'
 gem 'settingslogic'
 gem 'rack-attack'
 gem 'walletone', git: 'https://github.com/BrandyMint/walletone'
 gem 'unitpay'
+gem 'dalli'
+gem 'bcrypt'
+gem "recaptcha", require: "recaptcha/rails"
