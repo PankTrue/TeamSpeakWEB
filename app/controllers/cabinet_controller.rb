@@ -348,7 +348,7 @@ end
 private
   
   def invalid_server
-    redirect_to cabinet_home_path, danger:'Проблемы с сервером, побробуйте позже'
+    redirect_to home_index_path, danger:'Проблемы с сервером, побробуйте позже'
   end
 
   def own_server

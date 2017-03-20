@@ -23,3 +23,7 @@
 /config/database.yml
 /config/secrets.yml
 /config/settings.yml
+#other
+.git
+.dockerignore
+Gemfile.lock
