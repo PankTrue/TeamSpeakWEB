@@ -56,13 +56,14 @@ end
 
 
 
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap-sass'
 gem 'font-awesome-rails'
 gem 'devise'
 #gem 'unicorn'
-#gem 'nginx'
+gem 'nginx'
 gem 'pg'
 gem 'rufus-scheduler'
 gem 'settingslogic'
@@ -73,6 +74,4 @@ gem 'dalli'
 gem 'bcrypt'
 gem "recaptcha", require: "recaptcha/rails"
 gem 'passenger'
-gem 'capistrano', '~> 3.7', '>= 3.7.1'
-gem 'capistrano-rails', '~> 1.2'
-gem 'capistrano-passenger', '~> 0.2.0'
+

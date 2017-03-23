@@ -4,7 +4,7 @@ development: &defaults
     signature: 'longsignature'
   teamspeak:
     login: 'serveradmin'
-    password: 'ZsXajlhE'
+    password: 'noIma+u2'
     #password: '3Z9OOU5e'
     ts_path: '~/teamspeak'
   other:
