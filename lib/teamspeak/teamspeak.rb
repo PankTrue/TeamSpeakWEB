@@ -39,7 +39,7 @@ module Teamspeak
     #
     #   connect('voice.domain.com', 88888)
     def initialize(host = 'localhost', port = 10_011)
-      connect(Settings.other.ip, 10_011)
+      connect('localhost', 10_011)
       login(Settings.teamspeak.login,Settings.teamspeak.password)
     end
 

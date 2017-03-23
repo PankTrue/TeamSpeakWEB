@@ -6,10 +6,10 @@ development: &defaults
     login: 'serveradmin'
     password: 'ZsXajlhE'
     #password: '3Z9OOU5e'
-    ts_path: '/var/www/tsserver'
+    ts_path: '~/teamspeak'
   other:
     admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
-    ip: 'localhost'
+    ip: 'panktrue.ddns.net'
   unitpay:
     public_key: 'key'
     secret_key: 'key'
