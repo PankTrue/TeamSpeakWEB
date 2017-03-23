@@ -179,6 +179,9 @@ GEM
     nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     orm_adapter (0.5.0)
+    passenger (5.1.2)
+      rack
+      rake (>= 0.8.1)
     pg (0.20.0)
     public_suffix (2.0.5)
     puma (3.8.2)
@@ -300,6 +303,7 @@ DEPENDENCIES
   jquery-turbolinks
   listen (~> 3.0.5)
   meta_request
+  passenger
   pg
   puma
   rack (~> 2.0.1)
