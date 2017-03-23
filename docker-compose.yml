@@ -18,7 +18,8 @@ services:
     build: .
     command: bundle exec puma -C config/puma.rb
     volumes:
-      - /var/www/teamspeak
+        ['.:/var/www/teamspeak',
+        '/home/pank/Desktop/teamspeak:/var/www/tsserver']
     links:
       - db
     expose:

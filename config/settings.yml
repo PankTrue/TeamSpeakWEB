@@ -5,10 +5,11 @@ development: &defaults
   teamspeak:
     login: 'serveradmin'
     password: 'ZsXajlhE'
-    ts_path: '/home/pank/Desktop/teamspeak'
+    #password: '3Z9OOU5e'
+    ts_path: '/var/www/tsserver'
   other:
     admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
-    ip: '127.0.0.1'
+    ip: 'localhost'
   unitpay:
     public_key: 'key'
     secret_key: 'key'

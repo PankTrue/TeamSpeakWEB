@@ -39,7 +39,7 @@ module Teamspeak
     #
     #   connect('voice.domain.com', 88888)
     def initialize(host = 'localhost', port = 10_011)
-      connect('localhost', 10_011)
+      connect(Settings.other.ip, 10_011)
       login(Settings.teamspeak.login,Settings.teamspeak.password)
     end
 
@@ -51,8 +51,8 @@ module Teamspeak
       begin
         @sock = TCPSocket.new(host, port)
       rescue
-        %x"sh #{Settings.teamspeak.ts_path}/ts3server_startscript.sh start"
-        %x"#{Settings.teamspeak.ts_path}/test"
+        #%x"sh #{Settings.teamspeak.ts_path}/ts3server_startscript.sh start"
+        #%x"#{Settings.teamspeak.ts_path}/test"
         raise ServerError.new('Error', 'Global server is not running')
       end
       # Check if the response is the same as a normal teamspeak 3 server.

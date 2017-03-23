@@ -1,3 +1,12 @@
+<style>
+  a.btn{
+    width: 200px;
+  }
+</style>
+
+<div class="row">
+  <div class="col-md-6">
+
 <div class="functions">
   <ul style="list-style-type: none">
     <li><%= link_to 'Токены', cabinet_token_path(@ts), class: 'btn btn-primary'%></li>
@@ -10,8 +19,12 @@
     <li><%= link_to 'Удалить',  cabinet_destroy_path(@ts), method: :delete, data: { confirm: 'Вы уверены?' }, class: 'btn btn-danger' %></li>
   </ul>
 </div>
+  </div>
 
-<div class="tsstatus">
+
+  <div class="col-md-6">
+
+  <div class="tsstatus">
   <%= @count_users %>/<%= @info['virtualserver_maxclients'] %> <br>
   <%= raw panel_gen %>
   </div>
@@ -21,6 +34,7 @@
 <!-- Packet loss: <%= @info['virtualserver_total_packetloss_total'] %> -->
 <!--</div>-->
 
+  </div>
 
 
-
+</div>
