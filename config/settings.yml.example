@@ -4,9 +4,9 @@ development: &defaults
     signature: 'longsignature'
   teamspeak:
     login: 'serveradmin'
-    password: 'V9Hz5tyH'
+    password: 'noIma+u2'
     #password: '3Z9OOU5e'
-    ts_path: '~/ёteamspeak'
+    ts_path: '~/teamspeak'
   other:
     admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
     ip: 'panktrue.ddns.net'
