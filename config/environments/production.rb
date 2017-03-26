@@ -52,14 +52,14 @@ Rails.application.configure do
   config.log_tags = [ :request_id ]
 
   # Use a different cache store in production.
-    config.cache_store = :dalli_store
+  # config.cache_store = :dalli_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "teamspeak_#{Rails.env}"
   config.action_mailer.perform_caching = false
   config.action_mailer.default_options = {from: 'info@easy-ts.ru'}
-  config.action_mailer.default_url_options = { host: 'panktrue.ddns.net', port: 3000 }
+  config.action_mailer.default_url_options = { host: 'easy-ts.ru', port: 3000 }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

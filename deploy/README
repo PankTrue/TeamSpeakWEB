@@ -1,5 +1,3 @@
-#!/bin/bash
-
 sudo apt-get update
 sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev nodejs
 
@@ -16,6 +14,7 @@ exec $SHELL
 rbenv install 2.4.0
 rbenv global 2.4.0
 ruby -v
+gem install bundle
 
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
@@ -30,3 +29,20 @@ sudo apt-get install -y nginx-extras passenger
 
 #Install Postgres
 sudo apt-get install postgresql postgresql-contrib libpq-dev
+
+
+#Setting postgres
+sudo su postgres
+psql
+CREATE USER ts WITH PASSWORD 'pank0211';
+CREATE DATABASE "teamspeak" WITH OWNER = ts;
+
+#Bundle
+bundle install --without test development
+bundle exec rake db:migrate RAILS_ENV=production
+bundle exec rake assets:precompile RAILS_ENV=production
+
+#Setting nginx
+#Раскоментировать строчку с passenger
+#/etc/nginx/passenger.conf - поменять на passenger.conf
+#/etx/nginx/sites-enabled/teamspeak - создать и вставить teamspeak.conf
