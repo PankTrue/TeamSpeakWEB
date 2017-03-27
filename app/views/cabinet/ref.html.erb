@@ -1,6 +1,6 @@
 <h3>Количество рефералов: <%= @refs %> </h3>
 <h3>Всего получено с рефералов: <%= @sum %> руб.</h3>
-<h3>Реферальная ссылка: </h3><input type="text" id="ref" value="<%="easy-ts.ru/ref/"+current_user.id.to_s %>">
+<h3>Реферальная ссылка: </h3><input type="text" id="ref" value="<%="#{Settings.other.dns}/ref/"+current_user.id.to_s %>">
 
 
 <button id="copy" data-clipboard-target="#ref">
