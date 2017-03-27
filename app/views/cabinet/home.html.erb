@@ -27,7 +27,7 @@
     <tbody>
       <% current_user.tsservers.each do |ts| %>
         <tr>
-          <td><%= ts.dns+Settings.other.dns unless ts.dns == '' %></td>
+          <td><%= ts.dns+'.'+Settings.other.dns unless ts.dns == '' %></td>
           <td><%= Settings.other.ip + ':' + ts.port.to_s %></td>
           <td><%= ts.slots %></td>
           <td><%= ts.time_payment %></td>
