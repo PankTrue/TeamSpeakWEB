@@ -100,7 +100,7 @@ module Teamspeak
       end
 
       loop do
-        response += @sock.gets.encode("UTF-8")
+        response += @sock.gets.force_encoding('ASCII-8BIT').encode('UTF-8')
         break if response.index(' msg=')
       end
 
@@ -250,7 +250,7 @@ module Teamspeak
         response = @sock.gets
         break if response.index(' msg=')
       end
-      data.encode("UTF-8")
+      data.force_encoding('ASCII-8BIT').encode('UTF-8')
     end
 
     def deploy_backup machine_id, data
