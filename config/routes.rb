@@ -1,10 +1,17 @@
 Rails.application.routes.draw do
 
-  resources :w1, only: [] do
-    post :callback, on: :collection
-    match :success, on: :collection, via: [:get, :post]
-    match :fail, on: :collection, via: [:get, :post]
+
+  class WalletoneMiddleware < Walletone::Middleware::Base
+    def perform notify, env
+      raise notify unless notify.valid? Settings.w1.signature
+
+
+      'Return some message for OK response'
+    end
   end
+
+
+  mount WalletoneMiddleware.new => '/w1_callback'
 
   scope :unitpay do
     get :success, to: 'unitpay#success'
