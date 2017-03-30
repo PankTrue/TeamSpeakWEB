@@ -214,6 +214,7 @@ module Teamspeak
     end
 
     def server_destroy machine_id
+      machine_id = machine_id.to_i
       if server_status machine_id
         self.command('serverstop',sid: machine_id)
         self.command('serverdelete',sid: machine_id)

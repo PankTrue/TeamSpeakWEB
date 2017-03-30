@@ -27,18 +27,7 @@
         <td><%= ts.created_at %></td>
         <td><%= ts.updated_at %></td>
         <td><%= ts.state %></td>
-        <td><div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Функции
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts.id}, data: { turbolinks: false }  %></li>
-            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts.id}, method: :post %></li>
-            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts.id}%></li>
-            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts.id}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
-          </ul>
-        </div></td>
+        <td><%= link_to 'Панель', cabinet_panel_path(ts), class: 'btn btn-default' %></td>
       </tr>
       </tbody>
   <% end %>
@@ -70,6 +59,7 @@
         <td><%= p["virtualserver_clientsonline"] %></td>
         <td><%= p["virtualserver_maxclients"] %></td>
         <td><%= p["virtualserver_autostart"] %></td>
+        <td><%= link_to 'Delete', admin_del_physical_server_path(id: p["virtualserver_id"]), class: 'btn btn-default' %></td>
       </tr>
       </tbody>
   <% end %>

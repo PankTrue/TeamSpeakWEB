@@ -45,6 +45,12 @@ class AdminController < ApplicationController
     server.disconnect
   end
 
+  def del_physical_server
+    server=Teamspeak::Functions.new
+    server.server_destroy(params[:id])
+    redirect_to admin_servers_path
+  end
+
 private
   def admin?
     unless Settings.other.admin_list.include?(current_user.email)

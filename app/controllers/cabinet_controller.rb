@@ -237,7 +237,7 @@ def backups
 end
 
 def create_backup
-  unless backup = Backup.where(tsserver_id: 41).count >= 3
+  unless backup = Backup.where(tsserver_id: params[:id]).count >= 3
     server = Teamspeak::Functions.new
     backup = Backup.new(tsserver_id: params[:id], data: server.create_backup(@ts.machine_id).to_s)
     server.disconnect

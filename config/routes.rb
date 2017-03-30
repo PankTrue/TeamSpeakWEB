@@ -49,6 +49,7 @@ Rails.application.routes.draw do
   get 'admin/belongs_verification', to: 'admin#belongs_verification', as: 'admin_belongs_verification'
   get 'admin/user_list', to: 'admin#user_list', as: 'admin_user_list'
   get 'admin/servers', to: 'admin#servers', as: 'admin_servers'
+  get 'admin/del_physical_server', to: 'admin#del_physical_server', as: 'admin_del_physical_server'
 
 
 

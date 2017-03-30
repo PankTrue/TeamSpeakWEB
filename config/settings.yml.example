@@ -9,7 +9,8 @@ development: &defaults
     ts_path: '~/teamspeak'
   other:
     admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
-    ip: 'panktrue.ddns.net'
+    dns: 'panktrue.ddns.net'
+    ip: '109.62.238.42'
   unitpay:
     public_key: 'key'
     secret_key: 'key'
