@@ -9,7 +9,7 @@ class Rack::Attack
     # increments the count) so request below the limit are not blocked until
     # they hit the limit.  At that point, filter will return true and block.
     Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 20, :findtime => 1.minute, :bantime => 1.hour) do
-      # The count for the IP is incremented if the return value is truthy.
+      return true
     end
   end
 
