@@ -14,6 +14,8 @@ class Rack::Attack
   end
 
 
+
+
   Rack::Attack.whitelist('allow from localhost') do |req|
     # Requests are allowed if the return value is truthy
     '127.0.0.1' == req.ip
