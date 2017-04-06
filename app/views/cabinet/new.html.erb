@@ -18,7 +18,7 @@
   <ul class="hr">
 
     <li><%= f.label 'Доменное имя' %></li>
-        <br>
+
 
 
 
@@ -63,7 +63,7 @@
 
 
       <div class="actions">
-        <%= f.submit "Купить сервер"%>
+        <%= f.submit "Купить сервер", class: 'btn btn-default'%>
       </div>
   <% end %>
 
@@ -89,8 +89,10 @@
             success:function(data){
               if ((data.status) == true){
                 $('#dns_status').text('Домен занят');
+                  $('#dns_status').attr('style','color: red');
               }else{
                 $('#dns_status').text('Домен свободен');
+                $('#dns_status').attr('style','color: green');
               }
             },
             error:function(data){
@@ -102,6 +104,7 @@
           $('#dns_status').text('Введите домен(необязательно)');
         }else{
           $('#dns_status').text('Недопустимый домен');
+            $('#dns_status').attr('style','color: red');
         }
     });
 
