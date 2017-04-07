@@ -4,11 +4,11 @@ class Rack::Attack
 
   # Lockout IP addresses that are hammering your login page.
   # After 20 requests in 1 minute, block all requests from that IP for 1 hour.
-  Rack::Attack.blacklist('allow2ban login scrapers') do |req|
+  Rack::Attack.blocklist('allow2ban login scrapers') do |req|
     # `filter` returns false value if request is to your login page (but still
     # increments the count) so request below the limit are not blocked until
     # they hit the limit.  At that point, filter will return true and block.
-    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 20, :findtime => 1.minute, :bantime => 1.hour) do
+    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 300, :findtime => 5.minute, :bantime => 1.hour) do
       req.ip == '127.0.0.1' ? false:true
     end
   end
@@ -16,7 +16,7 @@ class Rack::Attack
 
 
 
-  Rack::Attack.whitelist('allow from localhost') do |req|
+  Rack::Attack.safelist('allow from localhost') do |req|
     # Requests are allowed if the return value is truthy
     '127.0.0.1' == req.ip
   end
@@ -45,7 +45,7 @@ class Rack::Attack
   # Throttle all requests by IP (60rpm)
   #
   # Key: "rack::attack:#{Time.now.to_i/:period}:req/ip:#{req.ip}"
-  throttle('req/ip', :limit => 5, :period => 300.second) do |req|
+  throttle('req/ip', :limit => 300, :period => 300.second) do |req|
     req.ip # unless req.path.start_with?('/assets')
   end
 
@@ -61,7 +61,7 @@ class Rack::Attack
   # Throttle POST requests to /login by IP address
   #
   # Key: "rack::attack:#{Time.now.to_i/:period}:logins/ip:#{req.ip}"
-  throttle('logins/ip', :limit => 5, :period => 20.seconds) do |req|
+  throttle('logins/ip', :limit => 10, :period => 20.seconds) do |req|
     if req.path == 'users/sign_in' && req.post?
       req.ip
     end
@@ -75,7 +75,7 @@ class Rack::Attack
   # throttle logins for another user and force their login requests to be
   # denied, but that's not very common and shouldn't happen to you. (Knock
   # on wood!)
-  throttle("logins/email", :limit => 5, :period => 20.seconds) do |req|
+  throttle("logins/email", :limit => 10, :period => 20.seconds) do |req|
     if req.path == 'users/sign_in' && req.post?
       # return the email if present, nil otherwise
       req.params['email'].presence
