@@ -25,8 +25,9 @@
   <div class="col-md-6">
 
   <div class="tsstatus">
+  <% panel = panel_gen %>
   <%= @count_users %>/<%= @info['virtualserver_maxclients'] %> <br>
-  <%= raw panel_gen %>
+  <%= raw panel%>
   </div>
 
 <!--<div class="tsinfo">-->

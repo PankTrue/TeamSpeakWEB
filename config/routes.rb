@@ -63,7 +63,7 @@ Rails.application.routes.draw do
   get '/home/regulations' => 'home#regulations', as: 'home_regulations'
   root 'home#index'
   get 'home/index'
-  get 'home/about'
+  get 'home/news'
 
 
   devise_for :users, :controllers => {registrations: "registrations", passwords: "passwords", sessions: "sessions"}
