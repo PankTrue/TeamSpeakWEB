@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   class WalletoneMiddleware < Walletone::Middleware::Base
     def perform notify, env
       raise notify unless notify.valid? Settings.w1.signature
-      notify
       'Return some message for OK response'
     end
   end
