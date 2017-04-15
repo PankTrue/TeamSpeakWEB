@@ -1,0 +1,36 @@
+#!/bin/sh
+# chkconfig: 2345 99 01
+# description: Teamspeak 3 TSDNS-Server
+### BEGIN INIT INFO
+# Provides: teamspeak3dns
+# Required-Start: $all
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Description: Teamspeak 3 TSDNS-Server
+### END INIT INFO
+
+USER="ts"
+DIR="~/tsserver"
+
+
+
+case "$1" in
+start)
+su $USER -c "${DIR}/tsdns/tsdns_startscript.sh start"
+;;
+stop)
+su $USER -c "${DIR}/tsdns/tsdns_startscript.sh stop"
+;;
+restart)
+su $USER -c "${DIR}/tsdns/tsdns_startscript.sh restart"
+;;
+status)
+su $USER -c "${DIR}/tsdns/tsdns_startscript.sh status"
+;;
+*)
+echo "Benutze: `basename $0` {start|stop|restart|status}" >&2
+exit 1
+;;
+esac
+exit 0

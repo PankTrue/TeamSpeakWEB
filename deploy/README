@@ -46,3 +46,8 @@ bundle exec rake assets:precompile RAILS_ENV=production
 #Раскоментировать строчку с passenger
 #/etc/nginx/passenger.conf - поменять на passenger.conf
 #/etx/nginx/sites-enabled/teamspeak - создать и вставить teamspeak.conf
+
+#Setting daemon
+#Paste ts3 and tsdns in /etc/init.d/
+#update-rc.d /etc/init.d/tsdns defaults
+#update-rc.d /etc/init.d/ts3 defaults
