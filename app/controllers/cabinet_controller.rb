@@ -86,7 +86,7 @@ def create
             @token=data['token']
             other.new_dns(@ts.dns, @ts.port) unless @ts.dns.empty?
             @ts.save
-            user.money = user.money - cost
+            user.money = (user.money - cost).round(2)
             user.save
             referall_system cost, current_user.ref
             redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"

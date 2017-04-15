@@ -3,7 +3,16 @@ class RegistrationsController < Devise::RegistrationsController
 
   def create
     build_resource(sign_up_params)
-    resource.ref = cookies[:ref] if cookies[:ref]
+    resource.ref = 0
+    if cookies[:ref]
+      c = cookies[:ref].to_i
+      User.select(:id).each do |u|
+          if c==u and resource.id!=u
+            resource.ref=u
+            break
+          end
+        end
+    end
     resource.save
     yield resource if block_given?
     if resource.persisted?
