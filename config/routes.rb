@@ -6,11 +6,11 @@ Rails.application.routes.draw do
       raise 'Wrong signature' unless notify.valid? Settings.w1.signature
         u = User.find(notify.WMI_DESCRIPTION.to_i)
         u.money = u.money+notify.WMI_PAYMENT_AMOUNT.to_i
-        pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_f, order_id: 'test'
+        pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_f, order_id: 0
         if pay.save and u.save
-          return 'OK'
+          'Return some message for OK response'
         else
-         return 'RETRY'
+         raise 'Not saved'
         end
     end
   end
