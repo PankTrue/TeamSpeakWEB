@@ -1,0 +1,28 @@
+#limit_req_zone $binary_remote_addr zone=one:10m rate=300r/s;
+#limit_conn_zone $binary_remote_addr zone=addr:10m;
+
+server{
+    listen 0.0.0.0:80;
+
+    server_name panktrue.ddns.net;
+
+    access_log /var/log/nginx/teamspeak.access.log;
+    error_log /var/log/nginx/teamspeak.error.log;
+
+    passenger_enabled on;
+    rails_env production;
+    root /home/ts/teamspeakweb/public;
+
+
+	if ($http_user_agent ~* LWP::Simple|BBBike|wget|curl|msnbot|scrapbot) {
+            return 403;
+        }
+
+
+	#ddos protection
+	#limit_req zone=one;	
+	#limit_conn addr 10;
+	client_body_timeout 8s;
+    	client_header_timeout 8s;
+
+}
