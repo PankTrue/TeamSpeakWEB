@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 USER="ts"
-DIR="~/tsserver"
+DIR="/home/ts/tsserver"
 
 
 

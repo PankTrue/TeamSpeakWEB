@@ -204,13 +204,13 @@ def pay_redirect
         WMI_MERCHANT_ID:    Settings.w1.merchant_id,
         WMI_PAYMENT_AMOUNT:  params[:money], # Сумма
         WMI_CURRENCY_ID:     643, # ISO номер валюты (По умолчанию 643 - Рубль),
-        WMI_DESCRIPTION: "BASE64:#{Base64.strict_encode64(current_user.id.to_s)}"
+        WMI_DESCRIPTION: current_user.id
     )
     payment.sign! Settings.w1.signature
 
     @form = payment.form
   else
-    redirect_to cabinet_pay_path, warning: 'Сумма должна быть больше 5 рублей'
+    redirect_to cabinet_pay_path, warning: 'Сумма должна быть больше или равна 5 рублей'
   end
 end
 

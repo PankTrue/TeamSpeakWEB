@@ -11,11 +11,11 @@ Rails.application.routes.draw do
 
   mount WalletoneMiddleware.new => '/w1_callback'
 
-  scope :unitpay do
-    get :success, to: 'unitpay#success'
-    get :fail, to: 'unitpay#fail'
-    get :notify, to: 'unitpay#notify'
-  end
+  # scope :unitpay do
+  #   get :success, to: 'unitpay#success'
+  #   get :fail, to: 'unitpay#fail'
+  #   get :notify, to: 'unitpay#notify'
+  # end
 
   post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension', as: 'cabinet_edit_auto_extension'
   post 'cabinet/free_dns', to: 'cabinet#free_dns', as: 'cabinet_free_dns'
