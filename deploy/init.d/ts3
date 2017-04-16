@@ -1,0 +1,111 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          teamspeak
+# Required-Start:    networking
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      S 0 1 6
+# Short-Description: TeamSpeak Server Daemon
+# Description:       Starts/Stops/Restarts the TeamSpeak Server Daemon
+### END INIT INFO
+
+#
+#  Init script for TS3.
+#  The server configuration will be written to the
+#  SERVER_CONFIG_FILE .ini file on first start to avoid
+#  display of server parameters in process listings; Thus
+#  in order for changes to the config in this file to
+#  be applied, stop the server, delete the .ini file
+#  and run this script afterwards;
+#  Do *not* apply config changes to the .ini directly!
+#
+
+## TS3 Config END
+
+# path to ts3 root directory
+SERVER_PATH=/home/ts/tsserver
+# full path to ts3 server binary
+SERVER_BINARY=$SERVER_PATH/ts3server
+# user running ts3 server
+TEAMSPEAK_SYSTEM_USER=ts
+# group running ts3 server
+TEAMSPEAK_SYSTEM_GROUP=ts
+
+# server .ini config file
+SERVER_CONFIG_FILE=$SERVER_PATH/ts3server.ini
+
+# full path to pid file for start-stop-daemon
+PID_FILE=$SERVER_PATH/server.pid
+
+DAEMON_COMMAND_PARAMS=""
+if [ -f $SERVER_CONFIG_FILE ]
+then
+	DAEMON_COMMAND_PARAMS="inifile=$SERVER_CONFIG_FILE"
+else
+        DAEMON_COMMAND_PARAMS="createinifile=1 inifile=$SERVER_CONFIG_FILE"
+fi
+
+"${SERVER_PATH}/test"
+
+case "$1" in
+ start)
+	echo "Starting TS3 server..."
+	export LD_LIBRARY_PATH="${SERVER_PATH}:${LD_LIBRARY_PATH}"
+	start-stop-daemon --start --quiet --exec "$SERVER_BINARY" --chdir "$SERVER_PATH" \
+			  --chuid "$TEAMSPEAK_SYSTEM_USER" --group "$TEAMSPEAK_SYSTEM_GROUP" \
+			  --background --make-pidfile --pidfile "$PID_FILE" \
+			  $DAEMON_COMMAND_PARAMS
+	if [ $? != 0 ]; then
+		echo "! Failed. (Server already running?)"
+		exit 1
+	else
+		echo "done."
+	fi
+ ;;
+ stop)
+ 	echo "Stopping TS3 server..."
+	start-stop-daemon --stop --quiet --pidfile "$PID_FILE"
+	if [ $? != 0 ]; then
+		echo "! Failed."
+		exit 1
+	else
+		echo "done."
+	fi
+ ;;
+ status)
+	if [ -e $PID_FILE ]; then
+		if ( kill -0 $(cat $PID_FILE) 2&gt; /dev/null ); then
+			echo "Server is running"
+		else
+			echo "Server not running"
+		fi
+	else
+		echo "Server PID file not found"
+	fi
+ ;;
+ backup)
+     echo "Backup SQLite TeamSpeak"
+     LDATE=`date +%Y-%m-%d`
+     sqlite3 ${SERVER_PATH}/ts3server.sqlitedb .dump | bzip2 --best > ${SERVER_PATH}/ts3server-${LDATE}.sqlitedb
+ ;;
+ reload|force-reload)
+    echo "Reloading configuration files"
+    start-stop-daemon --stop --pidfile $PIDFILE --signal 1 --exec $SERVER_BINARY -- $PARAMS
+    echo "."
+ ;;
+ update-config)
+ 	echo "Deleting $SERVER_CONFIG_FILE..."
+ 	rm -f $SERVER_CONFIG_FILE
+	$0 restart
+ ;;
+ restart)
+	$0 stop && $0 start || exit 1
+ ;;
+ *)
+	echo "Usage: $0 {start|stop|restart|reload|force-reload|backup}"
+    exit 1
+ ;;
+esac
+
+exit 0
+Sign up for free
