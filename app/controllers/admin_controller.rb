@@ -51,6 +51,10 @@ class AdminController < ApplicationController
     redirect_to admin_servers_path
   end
 
+  def amounts
+    @amounts = Payment.all
+  end
+
 private
   def admin?
     unless Settings.other.admin_list.include?(current_user.email)

@@ -6,7 +6,7 @@ Rails.application.routes.draw do
       raise 'Wrong signature' unless notify.valid? Settings.w1.signature
         u = User.find(notify.WMI_DESCRIPTION.to_i)
         u.money = u.money+notify.WMI_PAYMENT_AMOUNT.to_i
-        pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_i
+        pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_i, order_id: notify.WMI_ORDER_ID
         if pay.save and u.save
           return 'OK'
         else
@@ -62,6 +62,7 @@ Rails.application.routes.draw do
   get 'admin/user_list', to: 'admin#user_list', as: 'admin_user_list'
   get 'admin/servers', to: 'admin#servers', as: 'admin_servers'
   get 'admin/del_physical_server', to: 'admin#del_physical_server', as: 'admin_del_physical_server'
+  get 'admin/amounts', to: 'admin#amounts', as: 'admin_amounts'
 
 
 

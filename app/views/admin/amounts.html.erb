@@ -1,0 +1,25 @@
+<table class="server-list">
+  <thead>
+  <tr>
+    <th>id</th>
+    <th>user_id</th>
+    <th>amount</th>
+    <th>created_at</th>
+    <th>order_id</th>
+
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @amounts.each do |amounts| %>
+      <tr>
+        <td><%= amounts.id %></td>
+        <td><%= amounts.user_id %></td>
+        <td><%= amounts.amount %>руб.</td>
+        <td><%= amounts.created_at %></td>
+        <td><%= amounts.order_id %></td>
+      </tr>
+  <% end %>
+
+  </tbody>
+</table>
