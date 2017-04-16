@@ -199,7 +199,7 @@ def pay
 end
 
 def pay_redirect
-  if params[:money].to_i >= 5
+  if params[:money].to_i >= 1
     payment = Walletone::Payment.new(
         WMI_MERCHANT_ID:    Settings.w1.merchant_id,
         WMI_PAYMENT_AMOUNT:  params[:money], # Сумма
