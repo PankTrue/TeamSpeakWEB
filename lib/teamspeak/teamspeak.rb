@@ -51,8 +51,8 @@ module Teamspeak
       begin
         @sock = TCPSocket.new(host, port)
       rescue
-        %x"sh #{Settings.teamspeak.ts_path}/ts3server_startscript.sh start"
-        %x"#{Settings.teamspeak.ts_path}/test"
+        # %x"sh #{Settings.teamspeak.ts_path}/ts3server_startscript.sh start"
+        # %x"#{Settings.teamspeak.ts_path}/test"
         raise ServerError.new('Error', 'Global server is not running')
       end
       # Check if the response is the same as a normal teamspeak 3 server.
