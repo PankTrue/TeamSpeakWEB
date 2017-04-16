@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170103150435) do
+ActiveRecord::Schema.define(version: 20170416205938) do
 
   create_table "backups", force: :cascade do |t|
     t.integer  "tsserver_id", null: false
@@ -18,6 +18,13 @@ ActiveRecord::Schema.define(version: 20170103150435) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.index ["tsserver_id"], name: "index_backups_on_tsserver_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer  "user_id"
+    t.float    "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tsservers", force: :cascade do |t|
