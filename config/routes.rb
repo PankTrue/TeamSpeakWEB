@@ -4,14 +4,14 @@ Rails.application.routes.draw do
   class WalletoneMiddleware < Walletone::Middleware::Base
     def perform notify, env
       raise 'Wrong signature' unless notify.valid? Settings.w1.signature
-      if u = User.find(notify.WMI_DESCRIPTION.to_i)
-        u.update(money:u.money+notify.WMI_PAYMENT_AMOUNT.to_i)
+        u = User.find(notify.WMI_DESCRIPTION.to_i)
+        u.money = u.money+notify.WMI_PAYMENT_AMOUNT.to_i
         pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_i
-        pay.save
-        render text: WalletoneMiddleware::OK
-      else
-        render text: WalletoneMiddleware::RETRY
-      end
+        if pay.save and u.save
+          return 'OK'
+        else
+         return 'RETRY'
+        end
     end
   end
 
