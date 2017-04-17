@@ -26,7 +26,7 @@
   <% @user.tsservers.each do |ts| %>
       <tr>
         <td><%= ts.id %></td>
-        <td><%= ts.dns+'.easy-ts3.ru' unless ts.dns.empty? %></td>
+        <td><%= ts.dns+'.'+Settings.other.dns unless ts.dns.empty? %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><%= ts.user_id %></td>
