@@ -27,3 +27,4 @@ config/settings.yml
 .git
 .dockerignore
 Gemfile.lock
+/public/assets/*
