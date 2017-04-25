@@ -20,7 +20,7 @@ class Rack::Attack
 
 
   throttle('panel', :limit => 5, :period => 10.second) do |req|
-    req.ip if req.path == '/cabinet/panel/*'
+    req.ip if req.path == "/cabinet/panel/#{req.path.split('/').last}"
   end
 
 
