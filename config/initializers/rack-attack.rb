@@ -1,14 +1,26 @@
 class Rack::Attack
 
-
+  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new # defaults to Rails.cache
 
   # Lockout IP addresses that are hammering your login page.
   # After 20 requests in 1 minute, block all requests from that IP for 1 hour.
-  Rack::Attack.blocklist('allow2ban login scrapers') do |req|
+  Rack::Attack.blocklist('allow2ban') do |req|
     # `filter` returns false value if request is to your login page (but still
     # increments the count) so request below the limit are not blocked until
     # they hit the limit.  At that point, filter will return true and block.
-    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 300, :findtime => 5.minute, :bantime => 1.hour) do
+    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 60, :findtime => 1.minute, :bantime => 5.minute) do
+      req.ip == '127.0.0.1' ? false:true
+    end
+  end
+
+
+
+  # Block suspicious requests for '/etc/password' or wordpress specific paths.
+  # After 3 blocked requests in 10 minutes, block all requests from that IP for 5 minutes.
+  Rack::Attack.blocklist('fail2ban pentesters') do |req|
+    # `filter` returns truthy value if request fails, or if it's from a previously banned IP
+    # so the request is blocked
+    Rack::Attack::Fail2Ban.filter(req.ip, :maxretry => 120, :findtime => 1.minutes, :bantime => 60.minutes) do
       req.ip == '127.0.0.1' ? false:true
     end
   end
@@ -16,10 +28,10 @@ class Rack::Attack
 
 
 
-  Rack::Attack.safelist('allow from localhost') do |req|
+  # Rack::Attack.safelist('allow from localhost') do |req|
     # Requests are allowed if the return value is truthy
-    '127.0.0.1' == req.ip
-  end
+    # '127.0.0.1' == req.ip
+  # end
 
   ### Configure Cache ###
 
@@ -29,7 +41,7 @@ class Rack::Attack
   # Note: The store is only used for throttling (not blacklisting and
   # whitelisting). It must implement .increment and .write like
   # ActiveSupport::Cache::Store
-  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+
   # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
   ### Throttle Spammy Clients ###
