@@ -9,20 +9,20 @@ class Rack::Attack
     end
     end
   
-  Rack::Attack.blocklist('iptable') do |req|
-    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
-      %x"iptables -A INPUT -s #{req.ip} -p tcp --destination-port 80 -j DROP"
-    end
-  end
+  # Rack::Attack.blocklist('iptable') do |req|
+  #   Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
+  #     %x"iptables -A INPUT -s #{req.ip} -p tcp --destination-port 80 -j DROP"
+  #   end
+  # end
 
   
 
   Rack::Attack.blocklisted_response = lambda do |env|
-    [ 403, {}, ['Вы забанены за большое количество запросов']]
+    [ 403, {}, ['You are banned for a large number of requests']]
   end
 
   Rack::Attack.throttled_response = lambda do |env|
-    [ 503, {}, ["Превышен лимит запросов!"]]
+    [ 503, {}, ['Query limit exceeded!']]
   end
 
 
