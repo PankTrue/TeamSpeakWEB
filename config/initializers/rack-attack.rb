@@ -16,14 +16,14 @@ class Rack::Attack
 
 
   # Block suspicious requests for '/etc/password' or wordpress specific paths.
-  # After 3 blocked requests in 10 minutes, block all requests from that IP for 5 minutes.
-  Rack::Attack.blocklist('fail2ban pentesters') do |req|
-    # `filter` returns truthy value if request fails, or if it's from a previously banned IP
-    # so the request is blocked
-    Rack::Attack::Fail2Ban.filter(req.ip, :maxretry => 120, :findtime => 1.minutes, :bantime => 60.minutes) do
-      req.ip == '127.0.0.1' ? false:true
-    end
-  end
+  # # After 3 blocked requests in 10 minutes, block all requests from that IP for 5 minutes.
+  # Rack::Attack.blocklist('fail2ban pentesters') do |req|
+  #   # `filter` returns truthy value if request fails, or if it's from a previously banned IP
+  #   # so the request is blocked
+  #   Rack::Attack::Fail2Ban.filter(req.ip, :maxretry => 120, :findtime => 1.minutes, :bantime => 60.minutes) do
+  #     req.ip == '127.0.0.1' ? false:true
+  #   end
+  # end
 
 
 
