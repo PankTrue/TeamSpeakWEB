@@ -176,7 +176,7 @@ def token
       server = Teamspeak::Functions.new
       @tokens = server.token_list(@ts.machine_id)
       @groups = {}
-      server.group_list(@ts.machine_id).each {|t| @groups.merge!({"#{t['name'].force_encoding("UTF-8")}":t['sgid']}) if t["type"]==1}
+      server.group_list(@ts.machine_id).each {|t| @groups.merge!({"#{t['name'].force_encoding("UTF-8")}":t['sgid']}) if t["type"]=='1'}
       server.disconnect
 end
 
