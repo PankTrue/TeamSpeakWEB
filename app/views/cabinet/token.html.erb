@@ -21,10 +21,10 @@
   <% @tokens.each do |t|%>
   <tbody><% break if t['token'].blank? %>
       <tr>
-        <td><%= t["token"] %></td>
-        <td><%= t["token_description"] unless t["token_description"].blank? %></td>
+        <td><%= t["token"].force_encoding("UTF-8") %></td>
+        <td><%= t["token_description"].force_encoding("UTF-8") unless t["token_description"].blank? %></td>
 
-        <td> <%= link_to 'Удалить', {controller: 'cabinet', action: 'delete_token', token: t["token"], id: @ts.id}, method: :post  %> </td>
+        <td> <%= link_to 'Удалить', {controller: 'cabinet', action: 'delete_token', token: t["token"].force_encoding("UTF-8"), id: @ts.id}, method: :post  %> </td>
 
 
       </tr>

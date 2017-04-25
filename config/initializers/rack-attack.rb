@@ -11,9 +11,11 @@ class Rack::Attack
 
 
   Rack::Attack.blocklisted_response = lambda do |env|
-    # Using 503 because it may make attacker think that they have successfully
-    # DOSed the site. Rack::Attack returns 403 for blocklists by default
-    [ 403, {}, ['Blocked']]
+    [ 403, {}, ['Вы забанены за большое количество запросов']]
+  end
+
+  Rack::Attack.throttled_response = lambda do |env|
+    [ 503, {}, ["Превышен лимит запросов!"]]
   end
 
 
