@@ -14,6 +14,24 @@ class Rack::Attack
   end
 
 
+  Rack::Attack.blocklisted_response = lambda do |env|
+    # Using 503 because it may make attacker think that they have successfully
+    # DOSed the site. Rack::Attack returns 403 for blocklists by default
+    [ 403, {}, ['Blocked']]
+  end
+
+  Rack::Attack.throttled_response = lambda do |env|
+    # NB: you have access to the name and other data about the matched throttle
+    #  env['rack.attack.matched'],
+    #  env['rack.attack.match_type'],
+    #  env['rack.attack.match_data']
+
+    # Using 503 because it may make attacker think that they have successfully
+    # DOSed the site. Rack::Attack returns 429 for throttling by default
+    [ 500, {}, ["Server Error\n"]]
+  end
+
+
 
   # Block suspicious requests for '/etc/password' or wordpress specific paths.
   # # After 3 blocked requests in 10 minutes, block all requests from that IP for 5 minutes.
