@@ -7,8 +7,15 @@ class Rack::Attack
     Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 60, :findtime => 1.minute, :bantime => 10.minute) do
       req.ip == '127.0.0.1' ? false:true
     end
+    end
+  
+  Rack::Attack.blocklist('iptable') do |req|
+    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
+      %x"iptables -A INPUT -s #{req.ip} -p tcp --destination-port 80 -j DROP"
+    end
   end
 
+  
 
   Rack::Attack.blocklisted_response = lambda do |env|
     [ 403, {}, ['Вы забанены за большое количество запросов']]
