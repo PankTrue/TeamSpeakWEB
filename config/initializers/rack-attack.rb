@@ -9,9 +9,13 @@ class Rack::Attack
     end
     end
   
-  Rack::Attack.blocklist('iptable') do |req|
+  Rack::Attack.blocklist('iptables') do |req|
     Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
-      system "ruby #{Rails.root}/scripts/iptables.rb #{req.ip}"
+      if system "ruby #{Rails.root}/scripts/iptables.rb #{req.ip}"
+        File.open("#{Rails.root}/log/iptables_debug.log") {|f| f.puts "Script return true"}
+      else
+        File.open("#{Rails.root}/log/iptables_debug.log") {|f| f.puts "Script return false"}
+      end
     end
   end
 
