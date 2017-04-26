@@ -9,11 +9,14 @@ class Rack::Attack
     end
     end
   
-  # Rack::Attack.blocklist('iptable') do |req|
-  #   Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
-  #     %x"iptables -A INPUT -s #{req.ip} -p tcp --destination-port 80 -j DROP"
-  #   end
-  # end
+  Rack::Attack.blocklist('iptable') do |req|
+    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
+      s = system "iptables -A INPUT -s #{req.ip} -p tcp --destination-port 80 -j DROP"
+      File.open('/home/ts/answer', 'a') do |f|
+        f.puts s.to_s
+      end
+    end
+  end
 
   
 
