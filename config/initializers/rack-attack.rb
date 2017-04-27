@@ -1,19 +1,20 @@
 class Rack::Attack
 
-  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new # defaults to Rails.cache
 
 
   Rack::Attack.blocklist('allow2ban') do |req|
     Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 60, :findtime => 1.minute, :bantime => 10.minute) do
       req.ip == '127.0.0.1' ? false:true
     end
-    end
-  
-  Rack::Attack.blocklist('iptables') do |req|
-    Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
-        req.ip
-    end
   end
+
+
+  # Rack::Attack.blocklist('iptables') do |req|
+  #   Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 600, :findtime => 1.minute, :bantime => 10.minute) do
+  #       Rails.logger("Ban: #{req.ip}")
+  #       return true
+  #   end
+  # end
 
 
 
