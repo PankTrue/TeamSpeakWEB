@@ -7,10 +7,10 @@ Rails.application.routes.draw do
         u = User.find(notify.WMI_DESCRIPTION.to_i)
         u.money = u.money+notify.WMI_PAYMENT_AMOUNT.to_i
         pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_f, order_id: 0
-        File.open "#{Rails.root}/log/w1.log", 'a' do |f|
-          f.puts "notify: #{notify}"
-          f.puts "env: #{env}"
-        end
+        # File.open "#{Rails.root}/log/w1.log", 'a' do |f|
+        #   f.puts "notify: #{notify}"
+        #   f.puts "env: #{env}"
+        # end
         if pay.save and u.save
           'Return some message for OK response'
         else
