@@ -1,11 +1,16 @@
 class Rack::Attack
-
+  
+  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new # defaults to Rails.cache
   
   
   Rack::Attack.blocklist('allow2ban') do |req|
     Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 60, :findtime => 1.minute, :bantime => 10.minute) do
       req.ip == '127.0.0.1' ? false:true
     end
+
+    end
+  
+
 
 
   # Rack::Attack.blocklist('iptables') do |req|
@@ -32,3 +37,6 @@ class Rack::Attack
     req.ip if req.path == "/cabinet/panel/#{req.path.split('/').last}" or
               req.path == '/cabinet'
   end
+
+
+end
