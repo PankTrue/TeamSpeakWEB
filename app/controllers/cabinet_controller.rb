@@ -205,8 +205,8 @@ def pay_redirect
         WMI_PAYMENT_AMOUNT:  params[:money], # Сумма
         WMI_CURRENCY_ID:     643, # ISO номер валюты (По умолчанию 643 - Рубль),
         WMI_DESCRIPTION: current_user.id.to_s,
-        WMI_SUCCESS_URL: 'easy-ts.ru/cabinet',
-        WMI_FAIL_URL: 'easy-ts.ru/cabinet'
+        WMI_SUCCESS_URL: 'https://easy-ts.ru/cabinet',
+        WMI_FAIL_URL: 'https://easy-ts.ru/cabinet'
     )
     payment.sign! Settings.w1.signature
 
