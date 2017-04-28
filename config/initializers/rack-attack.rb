@@ -32,6 +32,3 @@ class Rack::Attack
     req.ip if req.path == "/cabinet/panel/#{req.path.split('/').last}" or
               req.path == '/cabinet'
   end
-
-
-end
