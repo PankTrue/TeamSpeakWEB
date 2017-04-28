@@ -69,9 +69,10 @@ gem 'rufus-scheduler'
 gem 'settingslogic'
 gem 'rack-attack'
 gem 'walletone', git: 'https://github.com/BrandyMint/walletone'
-gem 'unitpay'
+#gem 'unitpay'
 gem 'dalli'
 gem 'bcrypt'
 gem "recaptcha", require: "recaptcha/rails"
 gem 'passenger'
+gem 'rb-inotify'
 
