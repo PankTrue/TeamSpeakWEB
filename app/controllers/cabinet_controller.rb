@@ -134,7 +134,7 @@ def extend_up
         user.spent+= cost
         user.money = user.money - cost
         @ts.state = true
-        if Date.today < @ts.time_payment
+        if Date.today <= @ts.time_payment
           @ts.time_payment = @ts.time_payment + time * 30
         else
           @ts.time_payment = Date.today + time * 30
