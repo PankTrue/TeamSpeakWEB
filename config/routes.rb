@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-
+  
   class WalletoneMiddleware < Walletone::Middleware::Base
     def perform notify, env
       raise 'Wrong signature' unless notify.valid? Settings.w1.signature
@@ -54,18 +54,20 @@ Rails.application.routes.draw do
   get 'cabinet/ref', to: 'cabinet#ref', as: 'cabinet_ref'
   get 'cabinet/panel/:id', to: 'cabinet#panel', as: 'cabinet_panel'
 
-  match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
-  get 'admin/home'
+  get 'admin/home', to: 'admin#home', as: 'admin_home'
   post 'admin/setmoney/:id', to: 'admin#setmoney'
   get 'admin/belongs_verification', to: 'admin#belongs_verification', as: 'admin_belongs_verification'
   get 'admin/user_list', to: 'admin#user_list', as: 'admin_user_list'
   get 'admin/servers', to: 'admin#servers', as: 'admin_servers'
   get 'admin/del_physical_server', to: 'admin#del_physical_server', as: 'admin_del_physical_server'
   get 'admin/amounts', to: 'admin#amounts', as: 'admin_amounts'
+  get 'admin/panel', to: 'admin#panel', as: 'admin_panel'
+  get 'admin/print_data', to: 'admin#print_data', as: 'admin_print_data'
+  get 'admin/panel_info', to: 'admin#panel_info', as: 'admin_panel_info'
 
 
-
+  match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get '/home/regulations' => 'home#regulations', as: 'home_regulations'
   root 'home#index'
   get 'home/index'

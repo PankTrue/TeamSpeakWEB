@@ -1,0 +1,32 @@
+<table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Port</th>
+          <th>Slots</th>
+          <th>Uptime</th>
+          <th>Autostart</th>
+          <th>Status</th>
+          <th>ServerID</th>
+        </tr>
+      
+      </thead>
+      
+
+      <tbody>
+      <% @server_list.each do |server| %>
+        <tr>
+          <td><%= server['virtualserver_name'] %></td>
+          <td><%= server['virtualserver_port'] %></td>
+          <td><%= "#{server['virtualserver_clientsonline']-server['virtualserver_queryclientsonline']}#{'+'+server['virtualserver_queryclientsonline'].to_s unless server['virtualserver_queryclientsonline']==0}/#{server['virtualserver_maxclients']}"%></td>
+          <td><%= server['virtualserver_uptime'] %></td>
+          <td><%= server['virtualserver_autostart'] %></td>
+          <td><%= server['virtualserver_status'] %></td>
+          <td><%= server['virtualserver_id'] %></td>
+          <td><%= link_to 'Print data', admin_panel_info_path(id: server['virtualserver_id']), class: 'btn btn-default'  %></td>
+
+        </tr>
+      <% end %>
+      </tbody>
+
+    </table>

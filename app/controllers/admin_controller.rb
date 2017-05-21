@@ -1,6 +1,7 @@
 class AdminController < ApplicationController
   before_action :authenticate_user!
   before_action :admin?
+  include CabinetHelper
 
   def home
     @users = User.all
@@ -55,6 +56,38 @@ class AdminController < ApplicationController
     @amounts = Payment.all
   end
 
+
+  def panel
+    server = Teamspeak::Functions.new
+    @server_list = server.command('serverlist',{},'-all')
+    server.disconnect
+    
+
+  end
+
+  def panel_info
+    @count_users = 0
+    server=Teamspeak::Functions.new
+    server.command('use', {sid: params[:id].to_i}, '-virtual')
+    @info=server.command('serverinfo', {}, '-virtual')
+    @channel=server.command('channellist', {}, '-flags -voice -limits -virtual')
+    @client=server.command('clientlist', {}, '-voice -virtual')
+    server.disconnect
+  end
+
+
+  # def print_data
+      # @count_users = 0
+      # server=Teamspeak::Functions.new
+      # server.command('use', {sid: params[:id].to_i}, '-virtual')
+      # @info=server.command('serverinfo', {}, '-virtual')
+      # @channel=server.command('channellist', {}, '-flags -voice -limits -virtual')
+      # @client=server.command('clientlist', {}, '-voice -virtual')
+      # server.disconnect
+      # render layout: false
+  # end
+  
+
 private
   def admin?
     unless Settings.other.admin_list.include?(current_user.email)
@@ -91,5 +124,7 @@ private
     end
     return arr_no_logic
   end
+
+
 
 end
