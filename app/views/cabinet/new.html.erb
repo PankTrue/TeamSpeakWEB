@@ -24,7 +24,7 @@
 
     <li><div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
         <%= f.text_field :dns, class: 'form-control', id: 'dns_input' , placeholder: "Введите доменное имя", allow_nil: true %>
-        <span class="input-group-addon" id="basic-addon2"><%= Settings.other.dns %></span>
+        <span class="input-group-addon" id="basic-addon2">.<%= Settings.other.dns %></span>
       </div></li>
 
     <li><span id="dns_status">Введите домен(необязательно)</span></li>
@@ -74,7 +74,7 @@
     function SetCost() {
       var data2 = parseInt($('#tsserver_time_payment').val());
       var data1 = parseInt($("#tsserver_slots").val());
-      var data = data1 * 3 * data2;
+      var data = data1 * <%= Settings.other.slot_cost.to_json %> * data2;
       $('span.cost').text(data);
     }
     

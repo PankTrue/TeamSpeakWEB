@@ -99,7 +99,7 @@ dns1 = false
       var def = parseInt(<%= @ts.slots %>);
       var current = parseInt($('#tsserver_slots').val());
       var days = parseInt(<%= @days %>)
-      $('span.cost').text((((current-def)*(3/30*days))+addmoney).toFixed(2));
+      $('span.cost').text((((current-def)*(<%=Settings.other.slot_cost.to_json %>/30*days))+addmoney).toFixed(2));
     }
 
     $('#tsserver_time_payment').bind('click', function(event){

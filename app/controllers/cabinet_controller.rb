@@ -26,7 +26,7 @@ def update
       other = Teamspeak::Other.new
       days = sec2days(@ts.time_payment.to_time - Time.now)
       old_dns = @ts.dns
-      cost = (((params[:tsserver][:slots].to_i - @ts.slots) * (3.to_f/30*days))).round 2
+      cost = (((params[:tsserver][:slots].to_i - @ts.slots) * (Settings.other.slot_cost.to_f/30*days))).round 2
       cost += 10 if old_dns != params[:tsserver][:dns]
       if current_user.money >= cost
         if @ts.valid?
@@ -74,7 +74,7 @@ def create
       @ts.time_payment = time
       @ts.user_id = user.id
 
-      cost = time * 3 * @ts.slots
+      cost = time * Settings.other.slot_cost.to_i * @ts.slots
 
         if user.money >= cost
           if @ts.valid?
@@ -128,7 +128,7 @@ def extend_up
   user = current_user
   time = params[:tsserver][:time_payment].to_i
   cab = Teamspeak::Functions.new
-  cost = @ts.slots * 3 * time
+  cost = @ts.slots * Settings.other.slot_cost.to_i * time
   if [1,2,3,6,12].include?(time)
     if user.money >= cost
         user.spent+= cost
