@@ -138,7 +138,7 @@ def extend_up
           @ts.time_payment = @ts.time_payment + time * 30
         else
           @ts.time_payment = Date.today + time * 30
-          cab.server_start(@ts.machine_id)
+          #cab.server_start(@ts.machine_id)
           cab.server_autostart @ts.machine_id, 1
         end
         if @ts.save validate:false and user.save
