@@ -54,11 +54,9 @@
 </div>
 
 <div class="border">
-      <ul class="hr">
-        <li>Стоимость:</li>
-        <li><span class="cost">30</span></li>
-        <li>руб.</li>
-      </ul>
+     <h4>Стоимость: <span class="cost"></span>руб.</h4>
+     <h5><span class="lacks"></span></h5>
+     <h5>На вашем счету: <%= current_user.money %>руб. <%= link_to 'Пополнить', cabinet_pay_path %></h5>
 </div>
 
 
@@ -74,10 +72,20 @@
     function SetCost() {
       var data2 = parseInt($('#tsserver_time_payment').val());
       var data1 = parseInt($("#tsserver_slots").val());
+      var money = parseInt(<%= current_user.money.to_json %>);
       var data = data1 * <%= Settings.other.slot_cost.to_json %> * data2;
+      if(data>money){
+          var lacks = "Нехватает: " + (data-money).toString() + "руб.";
+      }else{
+          var lacks = "";
+      }
+
       $('span.cost').text(data);
+      $('span.lacks').text(lacks);
+
+
     }
-    
+
 
     $('#dns_input').bind('change', function (event) {
       var dns = $('#dns_input').val();

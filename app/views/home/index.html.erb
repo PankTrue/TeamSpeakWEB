@@ -20,7 +20,10 @@
         <div class="row">
           <div class="col-sm-2 col-md-2 col-lg-2"></div>
           <div class="col-sm-3 col-md-3 col-lg-3"><%= image_tag 'teamspeak.png', class: "center-block img-responsive", style: 'width: 150;' %></div>
-          <div class="col-sm-5 col-md-5 col-lg-5" style="color: white; font-size: 20px; text-align: center;"><br>TeamSpeak - программа предназначенная для голосового общения между людьми, находящиеся на одном сервере, в одной комнате. Мы предлагаем вам сервер по цене <%= Settings.other.slot_cost %>р/слот в месяц, а также стабильную работу.</div>
+          <div class="col-sm-5 col-md-5 col-lg-5" style="color: white; font-size: 20px; text-align: center;">
+            <br>TeamSpeak - программа предназначенная для голосового общения между людьми, находящиеся на одном сервере, в одной комнате. Мы предлагаем вам сервер по цене <%= Settings.other.slot_cost %>р/слот в месяц, а также стабильную работу.
+            <%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-primary', style: 'margin-top: 10px; width: 200px;', data: { turbolinks: false } %>
+          </div>
           <div class="col-sm-2 col-md-2 col-lg-2"></div>
         </div>
       </div>
@@ -29,7 +32,7 @@
           <div class="row">
             <div class="col-md-3 col-sm-3 col-lg-3"></div>
             <div class="col-md-3 col-sm-3 col-lg-3"><%= image_tag 'Turbo_Stream.png', class: "img-responsive", style: 'width:350px;'%></div>
-            <div class="col-md-3 col-sm-3 col-lg-3"><span style="color: white;"></span></div>
+            <div class="col-md-3 col-sm-3 col-lg-3"></div>
             <div class="col-md-3 col-sm-3 col-lg-3"></div>
           </div>
       </div>
@@ -72,7 +75,7 @@
       <%= fa_stacked_icon "rub  inverse", base: "circle", class: "fa-3x" %>
       <div class="whyme">
         <h4>Низкие Цены</h4>
-        <p>У нас у нас самые низкие цены на аренду сервера TeamSpeak 3, 3 руб/слот.</p>
+        <p>У нас у нас самые низкие цены на аренду сервера TeamSpeak 3, <%= Settings.other.slot_cost %>руб/слот.</p>
       </div>
     </div>
 
@@ -105,6 +108,9 @@
 
 
 
-
 </div>
 
+<div class="text-center"">
+
+
+</div>
