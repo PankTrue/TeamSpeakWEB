@@ -8,7 +8,7 @@ module Teamspeak
     def initialize(code, message)
       @code = code
       @message = message
-      Rails.logger.info "[#{Time.now().strftime('%Y-%m-%d %H:%M:%S')}] #{@code} #{@message}"
+      Rails.logger.error "TeamspeakError - [#{Time.now().strftime('%Y-%m-%d %H:%M:%S')}] #{@code} #{@message}"
     end
   end
 
