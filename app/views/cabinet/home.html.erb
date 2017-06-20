@@ -31,7 +31,18 @@
           <td><%= Settings.other.ip + ':' + ts.port.to_s %></td>
           <td><%= ts.slots %></td>
           <td><%= ts.time_payment %></td>
-          <td><%= sec2days(ts.time_payment.to_time - Time.now) %></td>
+          <td><span id="left_time-<%=ts.id %>">
+            <script>
+                var left_time = parseInt(<%= sec2days(ts.time_payment.to_time - Time.now).to_json %>);
+                  if(left_time > 7){
+                      $('span#left_time-<%=ts.id %>').html(left_time).attr('style', 'color: green');
+                  }else if(left_time < 0){
+                      $('span#left_time-<%=ts.id %>').html(left_time).attr('style', 'color: red');
+                  }else{
+                      $('span#left_time-<%=ts.id %>').html(left_time).attr('style', 'color: yellow');
+                  };
+            </script>
+          </span></td>
           <td><%= (@status[@status.index(ts.machine_id).to_i+1]=='online') ? 'Online':'Offline' unless @status.blank? %></td>
 
 
