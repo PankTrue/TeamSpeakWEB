@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170428182617) do
+ActiveRecord::Schema.define(version: 20170621182233) do
 
   create_table "backups", force: :cascade do |t|
     t.integer  "tsserver_id", null: false
@@ -58,7 +58,10 @@ ActiveRecord::Schema.define(version: 20170428182617) do
     t.float    "spent",                  default: 0.0
     t.boolean  "auto_extension",         default: true
     t.integer  "ref",                    default: 0
+    t.string   "provider"
+    t.string   "uid"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["provider"], name: "index_users_on_provider"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

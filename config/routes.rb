@@ -71,7 +71,9 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'home/news'
 
+  get 'auth/get_email' => 'home#write_email', as: 'auth_get_email'
 
-  devise_for :users, :controllers => {registrations: "registrations", passwords: "passwords", sessions: "sessions"}
+
+  devise_for :users, :controllers => {registrations: "registrations", passwords: "passwords", sessions: "sessions", omniauth_callbacks: 'omniauth_callbacks'}
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

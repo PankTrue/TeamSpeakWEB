@@ -269,6 +269,13 @@ Devise.setup do |config|
   # config.router_name = :my_engine
   #
   # When using OmniAuth, Devise cannot automatically set OmniAuth path,
-  # so you need to do it manually. For the users scope, it would be:
+  # so you need to do it manuallya. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
+
+  # config.omniauth :vkontakte, "6084681", "hsuHY7YEBJziLM4tPfxC", callback_url: 'http://panktrue1337:3000/users/auth/vkontakte/callback'
+  config.omniauth :vkontakte, "6084681", "hsuHY7YEBJziLM4tPfxC", scope: 'email', info_fields: 'email,name', callback_url: 'http://panktrue1337:3000/users/auth/vkontakte/callback'
+
+  # config.omniauth :vkontakte, Settings.oauth.key, Settings.oauth.private
 end
+
+

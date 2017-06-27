@@ -9,4 +9,9 @@ class HomeController < ApplicationController
     cookies[:ref]={value: params[:ref], expires: 1.month.from_now,} if params[:ref] and params[:ref].to_i!=0 and current_user.blank?
     redirect_to root_path
   end
+
+  def write_email
+
+  end
+
 end

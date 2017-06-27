@@ -75,4 +75,5 @@ gem 'bcrypt'
 gem "recaptcha", require: "recaptcha/rails"
 gem 'passenger'
 gem 'rb-inotify'
+gem 'omniauth-vkontakte'
 
