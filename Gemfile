@@ -76,4 +76,7 @@ gem "recaptcha", require: "recaptcha/rails"
 gem 'passenger'
 gem 'rb-inotify'
 gem 'omniauth-vkontakte'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
 

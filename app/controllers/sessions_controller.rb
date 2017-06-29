@@ -1,5 +1,5 @@
 class SessionsController < Devise::SessionsController
-  prepend_before_action :check_captcha, only: [:create]
+  # prepend_before_action :check_captcha, only: [:create]
   
   
   
@@ -9,12 +9,12 @@ class SessionsController < Devise::SessionsController
   
   private
 
-  def check_captcha
-    unless verify_recaptcha
-      self.resource = resource_class.new
-      respond_with_navigational(resource) { render :new }
-    end
-  end
+  # def check_captcha
+  #   unless verify_recaptcha
+  #     self.resource = resource_class.new
+  #     respond_with_navigational(resource) { render :new }
+  #   end
+  # end
   
   
 end

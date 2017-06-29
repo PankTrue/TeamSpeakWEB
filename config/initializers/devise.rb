@@ -272,10 +272,10 @@ Devise.setup do |config|
   # so you need to do it manuallya. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 
-  # config.omniauth :vkontakte, "6084681", "hsuHY7YEBJziLM4tPfxC", callback_url: 'http://panktrue1337:3000/users/auth/vkontakte/callback'
-  config.omniauth :vkontakte, "6084681", "hsuHY7YEBJziLM4tPfxC", scope: 'email', info_fields: 'email,name', callback_url: 'http://panktrue1337:3000/users/auth/vkontakte/callback'
-
-  # config.omniauth :vkontakte, Settings.oauth.key, Settings.oauth.private
+  config.omniauth :vkontakte, Settings.oauth.vkontakte.key, Settings.oauth.vkontakte.private, scope: 'email', info_fields: 'email,name'
+  config.omniauth :facebook, Settings.oauth.facebook.key, Settings.oauth.facebook.private
+  config.omniauth :google_oauth2, Settings.oauth.google_oauth2.key, Settings.oauth.google_oauth2.private
+  config.omniauth :twitter, Settings.oauth.twitter.key, Settings.oauth.twitter.private, callback_url: ''
 end
 
 

@@ -171,8 +171,23 @@
                         </div>
                       </div>
                     </div>
-                    <%= link_to "Sign in with Vkontakte", auth_get_email_path %>
                   <% end %>
+
+                <div class="form-group">
+                  <div class="text-center">
+                    <h5>ИЛИ</h5>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="socials-buttons">
+                    <%= link_to (image_tag 'VK.svg', height: 64), user_vkontakte_omniauth_authorize_path %>
+                    <%= link_to (image_tag 'facebook.svg', height: 64), user_facebook_omniauth_authorize_path %>
+                    <%= link_to (image_tag 'twitter.svg', height: 64), user_twitter_omniauth_authorize_path %>
+                    <%= link_to (image_tag 'google-plus.svg', height: 64), user_google_oauth2_omniauth_authorize_path %>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
