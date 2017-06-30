@@ -12,7 +12,7 @@ class AdminController < ApplicationController
   end
 
   def info
-    @user = User.where(id: params[:id]).take!
+    @user = User.where(id: params[:id]).first
   end
 
   def belongs_verification
@@ -25,8 +25,7 @@ class AdminController < ApplicationController
   end
 
   def user_list
-    @users = User.all
-    @server =Tsserver.all
+    @users = User.all.sort
   end
 
   def setmoney
@@ -39,7 +38,7 @@ class AdminController < ApplicationController
 
   def servers
     server = Teamspeak::Functions.new
-    @ts = Tsserver.all
+    @ts = Tsserver.all.sort
     @physical = server.server_list
     server.disconnect
   end
@@ -52,6 +51,11 @@ class AdminController < ApplicationController
 
   def amounts
     @amounts = Payment.all
+  end
+
+  def destroy_payment
+    Payment.delete(params[:id])
+    redirect_to admin_amounts_path
   end
 
 private

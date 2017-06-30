@@ -21,7 +21,7 @@
         <td><%= user.created_at %></td>
         <td><%= user.spent %></td>
         <td><%= user.auto_extension %></td>
-        <td><%= link_to 'Info', {controller: 'admin', action: 'info', id: user.id} %></td>
+        <td><%= link_to 'Info', admin_info_path(id: user.id), class: 'btn btn-default' %></td>
       </tr>
       </tbody>
   <% end %>

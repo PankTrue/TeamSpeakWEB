@@ -18,6 +18,7 @@
         <td><%= amounts.amount %>руб.</td>
         <td><%= amounts.created_at %></td>
         <td><%= amounts.order_id %></td>
+        <td><%= link_to 'Удалить', admin_destroy_payment_path(id: amounts.id), class: 'btn btn-danger', method: :post%></td>
       </tr>
   <% end %>
 

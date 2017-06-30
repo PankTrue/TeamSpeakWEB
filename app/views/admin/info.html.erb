@@ -34,18 +34,7 @@
         <td><%= ts.created_at %></td>
         <td><%= ts.updated_at %></td>
         <td><%= ts.state %></td>
-        <td><div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Функции
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <li><%= link_to 'Редактировать', {controller: 'cabinet', action: 'edit', id: ts}, data: { turbolinks: false }  %></li>
-            <li><%= link_to 'Вкл/Выкл', {controller: 'cabinet', action: 'work', id: ts}, method: :post %></li>
-            <li><%= link_to 'Продлить', {controller: 'cabinet', action: 'extend', id: ts}%></li>
-            <li><%= link_to 'Удалить',  {controller: 'cabinet', action: 'destroy', id: ts}, method: :delete, data: { confirm: 'Вы уверены?' }  %></li>
-          </ul>
-        </div></td>
+        <td><%= link_to 'Панель', cabinet_panel_path(id: ts.id), class: 'btn btn-default' %></td>
 
       </tr>
   </tbody>

@@ -8,8 +8,8 @@ Rails.application.routes.draw do
         u.money = u.money+notify.WMI_PAYMENT_AMOUNT.to_i
         pay=Payment.new user_id: notify.WMI_DESCRIPTION.to_i, amount: notify.WMI_PAYMENT_AMOUNT.to_f, order_id: notify.fetch(:WMI_ORDER_ID)
         if pay.valid? and u.valid?
-          pay.save
-          u.save
+          pay.save!
+          u.save!
           'Return some message for OK response'
         else
          raise 'Not saved'
@@ -65,6 +65,7 @@ Rails.application.routes.draw do
   get 'admin/servers', to: 'admin#servers', as: 'admin_servers'
   get 'admin/del_physical_server', to: 'admin#del_physical_server', as: 'admin_del_physical_server'
   get 'admin/amounts', to: 'admin#amounts', as: 'admin_amounts'
+  post 'admin/destroy_payment', to: 'admin#destroy_payment', as: 'admin_destroy_payment'
 
 
 
