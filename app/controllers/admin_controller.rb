@@ -30,9 +30,8 @@ class AdminController < ApplicationController
   end
 
   def setmoney
-    @user = User.where(id: params[:id]).take!
+    @user = User.where(id: params[:id]).first
     @user.update money: params[:money]
-    @user.save
     respond_to do |format|
       format.html { redirect_to admin_info_path @user.id  }
     end
