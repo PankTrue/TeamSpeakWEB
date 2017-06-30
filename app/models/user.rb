@@ -9,7 +9,7 @@ class User < ApplicationRecord
   TEMP_EMAIL_PREFIX = 'change@me'
   TEMP_EMAIL_REGEX = /\Achange@me/
 
-  validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
+  #validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
 
   def self.from_omniauth(auth, signed_in_resource = nil)
 
