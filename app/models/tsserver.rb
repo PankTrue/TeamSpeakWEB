@@ -32,8 +32,4 @@ class Tsserver < ApplicationRecord
 			server.disconnect
 		end
 
-		def self.sample
-			Rails.logger.info 'WORKED!!!!!!'
-		end
-
 end
