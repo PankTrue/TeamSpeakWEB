@@ -20,3 +20,5 @@ class Settings < Settingslogic
   namespace Rails.env
 end
 
+
+

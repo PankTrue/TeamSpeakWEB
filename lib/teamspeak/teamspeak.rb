@@ -334,6 +334,14 @@ module Teamspeak
       time+=2
     end
 
+    def self.sec2days(s)
+      time = s.round
+      time /= 60
+      time /= 60
+      time /= 24
+      time+=2
+    end
+
     def new_dns dns, port
       File.open("#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", 'a') do |f|
         f.puts dns_to_dnscfg(dns, port)
