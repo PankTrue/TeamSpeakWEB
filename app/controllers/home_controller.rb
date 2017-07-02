@@ -16,8 +16,5 @@ class HomeController < ApplicationController
 
   end
 
-  def vk_callback
-      render text: '4eccf9b9'
-  end
 
 end
