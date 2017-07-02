@@ -32,4 +32,20 @@ class Tsserver < ApplicationRecord
 			server.disconnect
 		end
 
+		def self.spam_info_for_extend
+			Tsserver.all.each do  |ts|
+				if (0..4) === (Teamspeak::Other.sec2days(ts.time_payment.to_time - Time.now))
+					user = User.where(id: ts.user_id).first
+					if (!user.auto_extension) or (user.money < ts.slots * Settings.other.slot_cost)
+						if (user.email !~ User::TEMP_EMAIL_REGEX)
+							UserMailer.info_for_extend_server(user,ts).deliver_now
+						else
+							#TODO отправка писем в соц сеть
+						end
+					end
+				end
+			end
+		end
+
+
 end
