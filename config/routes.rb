@@ -56,6 +56,7 @@ Rails.application.routes.draw do
   get 'cabinet/ref', to: 'cabinet#ref', as: 'cabinet_ref'
   get 'cabinet/panel/:id', to: 'cabinet#panel', as: 'cabinet_panel'
 
+
   match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
   get 'admin/home'
@@ -68,11 +69,11 @@ Rails.application.routes.draw do
   post 'admin/destroy_payment', to: 'admin#destroy_payment', as: 'admin_destroy_payment'
 
 
-
   get '/home/regulations' => 'home#regulations', as: 'home_regulations'
   root 'home#index'
   get 'home/index'
   get 'home/news'
+  post 'vkontakte/callback', to: 'home#vk_callback'
 
 
 

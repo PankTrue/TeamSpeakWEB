@@ -14,4 +14,10 @@ class HomeController < ApplicationController
 
   end
 
+  def vk_callback
+    respond_to do |format|
+      format.text {render text: '4eccf9b9'}
+    end
+  end
+
 end
