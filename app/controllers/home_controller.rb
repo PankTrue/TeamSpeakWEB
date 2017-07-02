@@ -1,4 +1,6 @@
 class HomeController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:vk_callback]
+
   def index
   end
 
@@ -15,9 +17,7 @@ class HomeController < ApplicationController
   end
 
   def vk_callback
-    respond_to do |format|
-      format.text {render text: '4eccf9b9'}
-    end
+      render text: '4eccf9b9'
   end
 
 end
