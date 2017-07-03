@@ -4,7 +4,7 @@ class OmniauthCallbacksController < ApplicationController
     class_eval %Q{
       def #{provider}
         @user = User.from_omniauth(env["omniauth.auth"], current_user)
-        Rails.logger.info "DATA: #{@user}"
+        Rails.logger.info env["omniauth.auth"]
         if @user.persisted?
           flash[:success] = 'Вы успешно авторизовались!'
           sign_in_and_redirect @user, event: :authentication

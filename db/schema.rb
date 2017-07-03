@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170628110337) do
+ActiveRecord::Schema.define(version: 20170703124123) do
 
   create_table "backups", force: :cascade do |t|
     t.integer  "tsserver_id", null: false
@@ -64,6 +64,8 @@ ActiveRecord::Schema.define(version: 20170628110337) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
+    t.string   "url"
+    t.string   "name"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider"], name: "index_users_on_provider"
