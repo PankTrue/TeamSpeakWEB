@@ -4,7 +4,6 @@
     Баланс:<%= number_field_tag 'money', @user.money, class: :text_field, step: :any  %>
     <%= submit_tag 'Save', id: @user.id, remote:true %>
 <% end %>
-Всего потрачего пользователем: <%= @user.spent %> руб.
 
 <table class="server-list">
   <thead>
@@ -40,4 +39,25 @@
   </tbody>
   <% end %>
 </table>
+
+<h2>Full info: </h2>
+
+<ul>
+  <li>email: <%= @user.email %></li>
+  <li>name: <%= @user.name %></li>
+  <li>url: <%= @user.url %></li>
+  <li>provider: <%= @user.provider %></li>
+  <li>uid: <%= @user.uid %></li>
+  <li>money: <%= @user.money %></li>
+  <li>spent: <%= @user.spent %></li>
+  <li>auto_extension: <%= @user.auto_extension %></li>
+  <li>ref: <%= @user.ref %></li>
+  <li>sign_in_count: <%= @user.sign_in_count %></li>
+  <li>last_sign_in_ip: <%= @user.last_sign_in_ip %></li>
+  <li>current_sign_in_ip: <%= @user.current_sign_in_ip %></li>
+  <li>last_sign_in_at: <%= @user.last_sign_in_at %></li>
+  <li>created_at: <%= @user.created_at %></li>
+
+</ul>
+
 

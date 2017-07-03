@@ -6,9 +6,9 @@
     <th>ID</th>
     <th>Email</th>
     <th>Money</th>
-    <th>Дата регистрации</th>
     <th>Всего потрачено</th>
-    <th>Авто-продление</th>
+    <th>Name</th>
+    <th>Url</th>
   </tr>
   </thead>
 
@@ -18,9 +18,9 @@
         <td><%= user.id %></td>
         <td><%= user.email %></td>
         <td><%= user.money %></td>
-        <td><%= user.created_at %></td>
         <td><%= user.spent %></td>
-        <td><%= user.auto_extension %></td>
+        <td><%= user.name %></td>
+        <td><%= user.url %></td>
         <td><%= link_to 'Info', admin_info_path(id: user.id), class: 'btn btn-default' %></td>
       </tr>
       </tbody>

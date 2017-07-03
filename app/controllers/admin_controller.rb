@@ -3,7 +3,7 @@ class AdminController < ApplicationController
   before_action :admin?
 
   def home
-    @users = User.all
+    @users = User.select(:spent)
     @count_users = @users.count
     @count_spent=0
     @users.each do |u|
