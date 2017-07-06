@@ -20,7 +20,7 @@
         <td><%= user.money %></td>
         <td><%= user.spent %></td>
         <td><%= user.name %></td>
-        <td><%= link_to user.provider, user.url%></td>
+        <td><%= link_to(user.provider, user.url) if user.url %></td>
         <td><%= link_to 'Info', admin_info_path(id: user.id), class: 'btn btn-default' %></td>
       </tr>
       </tbody>
