@@ -56,7 +56,6 @@ Rails.application.routes.draw do
   get 'cabinet/ref', to: 'cabinet#ref', as: 'cabinet_ref'
   get 'cabinet/panel/:id', to: 'cabinet#panel', as: 'cabinet_panel'
 
-
   match '/ref/:ref' => 'home#ref', via: [:get, :post]
   get 'admin/info/:id', to: 'admin#info', as: 'admin_info'
   get 'admin/home'
@@ -69,12 +68,11 @@ Rails.application.routes.draw do
   post 'admin/destroy_payment', to: 'admin#destroy_payment', as: 'admin_destroy_payment'
 
 
-  get '/home/regulations' => 'home#regulations', as: 'home_regulations'
   root 'home#index'
+  get '/home/regulations' => 'home#regulations', as: 'home_regulations'
   get 'home/index'
   get 'home/news'
-
-
+  get '/home/how_buy' => 'home#how_buy', as: 'home_how_buy'
 
   devise_for :users, :controllers => {registrations: "registrations", passwords: "passwords", sessions: "sessions", omniauth_callbacks: 'omniauth_callbacks'}
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

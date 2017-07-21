@@ -4,7 +4,9 @@ require 'date'
 require 'base64'
 	before_action :authenticate_user!
 	before_action :ts_params, only: [:create]
-  before_action :own_server, only: [:panel, :settings_edit, :settings, :reset_permissions, :apply_backup, :delete_backup, :create_backup, :backups, :delete_token, :create_token, :token, :work, :extend_up, :extend, :destroy, :update, :edit]
+  before_action :own_server, only: [:panel, :settings_edit, :settings, :reset_permissions, :apply_backup,
+                                    :delete_backup, :create_backup, :backups, :delete_token, :create_token,
+                                    :token, :work, :extend_up, :extend, :destroy, :update, :edit]
   rescue_from Teamspeak::ServerError, :with => :invalid_server
   
 def home
@@ -17,18 +19,18 @@ def home
     @status = server_status(server.server_list, servs)
     server.disconnect
 end
+
 def edit
-  @days = sec2days(@ts.time_payment.to_time - Time.now)
+  @days = Teamspeak::Other.sec2days(@ts.time_payment.to_time - Time.now)
 end
 
 def update
   unless params[:tsserver][:dns]==@ts.dns and params[:tsserver][:slots]==@ts.slots
-      other = Teamspeak::Other.new
-      days = sec2days(@ts.time_payment.to_time - Time.now)
+      days = Teamspeak::Other.sec2days(@ts.time_payment.to_time - Time.now)
       old_dns = @ts.dns
       cost = (((params[:tsserver][:slots].to_i - @ts.slots) * (Settings.other.slot_cost.to_f/30*days))).round 2
       cost += 10 if old_dns != params[:tsserver][:dns]
-      if current_user.money >= cost
+      if current_user.have_money?(cost)
         if @ts.valid?
           if @ts.update dns: params[:tsserver][:dns], slots: params[:tsserver][:slots]
             server = Teamspeak::Functions.new
@@ -36,13 +38,13 @@ def update
             referall_system cost, current_user.ref
             server.server_edit_slots @ts.machine_id, params[:tsserver][:slots]
             if !old_dns.empty? and !params[:tsserver][:dns].empty?
-              other.edit_dns(old_dns, @ts.port,params[:tsserver][:dns],@ts.port)
+              Teamspeak::Other.edit_dns(old_dns, @ts.port,params[:tsserver][:dns],@ts.port)
             elsif !old_dns.empty? and params[:tsserver][:dns].empty?
-              other.del_dns(old_dns, @ts.port)
+              Teamspeak::Other.del_dns(old_dns, @ts.port)
             elsif old_dns.empty? and !params[:tsserver][:dns].empty?
-              other.new_dns(params[:tsserver][:dns],@ts.port)
+              Teamspeak::Other.new_dns(params[:tsserver][:dns],@ts.port)
             end
-            redirect_to cabinet_home_path, success: 'Вы успешно редактировали сервер'
+            redirect_to cabinet_panel_path(params[:id]), success: 'Вы успешно редактировали сервер'
             server.disconnect
           else
             render 'cabinet/edit'
@@ -65,32 +67,26 @@ end
 
 def create
   server=Teamspeak::Functions.new
-  other = Teamspeak::Other.new
     user = current_user
     @ts = Tsserver.new(ts_params)
     time = ts_params[:time_payment].to_i
     if [1,2,3,6,12].include?(time)
-
-      @ts.time_payment = time
-      @ts.user_id = user.id
-
-      cost = time * Settings.other.slot_cost.to_i * @ts.slots
-
-        if user.money >= cost
+      @ts.time_payment, @ts.user_id, cost = time, user.id, time * Settings.other.slot_cost.to_i * @ts.slots
+        if user.have_money?(cost)
           if @ts.valid?
-            user.spent+=cost
             @ts.time_payment = Date.today + 30*time
             data=server.server_create(free_port,@ts.slots)
-            @ts.machine_id=data['sid']
-            @ts.port=data['virtualserver_port']
-            @token=data['token']
-            other.new_dns(@ts.dns, @ts.port) unless @ts.dns.empty?
-            @ts.save
-            user.money = (user.money - cost).round(2)
-            user.save
-            referall_system cost, current_user.ref
-            redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"
-            server.disconnect
+            @ts.machine_id, @ts.port, @token = data['sid'], data['virtualserver_port'], data['token']
+              if @ts.save and user.update(money: ((user.money - cost).round(2)), spent: user.spent+cost)
+                referall_system cost, current_user.ref
+                Teamspeak::Other.new_dns(@ts.dns, @ts.port) unless @ts.dns.blank?
+                redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"
+              else
+                server.server_destroy @ts.machine_id
+                Teamspeak::Other.del_dns(@ts.dns, @ts.port) unless @ts.dns.blank?
+                redirect_to cabinet_new_path(@ts), danger: 'Что-то пошло не так, отпишите администрации чтобы они это починили.'
+              end
+
           else
              render cabinet_new_path @ts
           end
@@ -100,17 +96,16 @@ def create
     else
       render 'new'
     end
-
+  server.disconnect
 end
 
 
 
 def destroy
         server=Teamspeak::Functions.new
-        other = Teamspeak::Other.new
         dns, port = @ts.dns, @ts.port
         server.server_destroy(@ts.machine_id)
-        other.del_dns(dns, port) unless dns.empty?
+        Teamspeak::Other.del_dns(dns, port) unless dns.empty?
         b = Backup.where tsserver_id: @ts.id
         b.destroy_all
         if @ts.destroy
@@ -130,7 +125,7 @@ def extend_up
   cab = Teamspeak::Functions.new
   cost = @ts.slots * Settings.other.slot_cost.to_i * time
   if [1,2,3,6,12].include?(time)
-    if user.money >= cost
+    if user.have_money?(cost)
         user.spent+= cost
         user.money = user.money - cost
         @ts.state = true
@@ -199,7 +194,7 @@ def pay
 end
 
 def pay_redirect
-  if params[:money].to_i >= 1
+  if params[:money].to_i >= 10
     payment = Walletone::Payment.new(
         WMI_MERCHANT_ID:    Settings.w1.merchant_id,
         WMI_PAYMENT_AMOUNT:  params[:money], # Сумма
@@ -410,18 +405,11 @@ private
     arr
   end
 
-  def sec2days(sec)
-    time = sec.round
-    time /= 60
-    time /= 60
-    time /= 24
-    time+=2
-  end
 
   def referall_system cost, user_id
     if user_id != 0
       u = User.find user_id
-      u.update money: (u.money+(cost*0.1).round(2))
+      u.add_money((cost*0.1).round(2))
     end
   end
   

@@ -63,4 +63,6 @@ class User < ApplicationRecord
   def remove_money money
     self.update money: self.money - money
   end
+
+
 end

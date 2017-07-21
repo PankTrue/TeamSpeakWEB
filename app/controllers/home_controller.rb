@@ -12,8 +12,7 @@ class HomeController < ApplicationController
     redirect_to root_path
   end
 
-  def write_email
-
+  def how_buy
   end
 
 

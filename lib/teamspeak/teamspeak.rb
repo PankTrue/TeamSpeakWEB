@@ -321,18 +321,7 @@ module Teamspeak
   end
 
   class Other
-
-    def initialize
-      @ip = '127.0.0.1'
-    end
-
-    def sec2days(sec)
-      time = seс.round
-      time /= 60
-      time /= 60
-      time /= 24
-      time+=2
-    end
+      @@ip = '127.0.0.1'
 
     def self.sec2days(s)
       time = s.round
@@ -342,14 +331,14 @@ module Teamspeak
       time+=2
     end
 
-    def new_dns dns, port
+    def self.new_dns dns, port
       File.open("#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", 'a') do |f|
         f.puts dns_to_dnscfg(dns, port)
       end
       %x"#{Settings.teamspeak.ts_path}/tsdns/tsdnsserver --update"
     end
 
-    def edit_dns old_dns, old_port, new_dns, new_port
+    def self.edit_dns old_dns, old_port, new_dns, new_port
       arr = Array.new
       File.open "#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", "r" do |f|
         f.each_line do |l|
@@ -368,7 +357,7 @@ module Teamspeak
       %x"#{Settings.teamspeak.ts_path}/tsdns/tsdnsserver --update"
     end
 
-    def del_dns dns, port
+    def self.del_dns dns, port
       arr = Array.new
       File.open "#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", "r" do |f|
         f.each_line do |l|
@@ -384,7 +373,7 @@ module Teamspeak
       %x"#{Settings.teamspeak.ts_path}/tsdns/tsdnsserver --update"
     end
 
-    def dns_to_dnscfg dns, port
+    def self.dns_to_dnscfg dns, port
       "#{dns}.#{Settings.other.dns}=#{Settings.other.ip}:#{port}"
     end
 
