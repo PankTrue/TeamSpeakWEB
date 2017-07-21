@@ -38,7 +38,7 @@ class User < ApplicationRecord
         when 'twitter'
           user.url = auth.info.urls.Twitter
         when 'google_oauth2'
-          user.url = auth.info.urls.Google_oauth2
+          # user.url = auth.info.urls.Google_oauth2
         when 'facebook'
           user.url = auth.info.urls.Facebook
       end
@@ -48,11 +48,19 @@ class User < ApplicationRecord
     return user
   end
 
-
-
   def email_verified?
     self.email && self.email !~ TEMP_EMAIL_REGEX
   end
 
+  def have_money?(money)
+    self.money >= money
+  end
 
+  def add_money money
+    self.update money: self.money + money
+  end
+
+  def remove_money money
+    self.update money: self.money - money
+  end
 end
