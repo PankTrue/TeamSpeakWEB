@@ -12,9 +12,7 @@ require 'base64'
 def home
     @servers = Tsserver.where(user_id: current_user.id).select(:machine_id)
     servs = Array.new
-     @servers.each do |temp|
-        servs << temp.machine_id
-     end
+    @servers.each { |temp| servs << temp.machine_id }
     server = Teamspeak::Functions.new
     @status = server_status(server.server_list, servs)
     server.disconnect
