@@ -64,7 +64,7 @@ end
 
 
 def create
-  server=Teamspeak::Functions.new
+    server=Teamspeak::Functions.new
     user = current_user
     @ts = Tsserver.new(ts_params)
     time = ts_params[:time_payment].to_i
