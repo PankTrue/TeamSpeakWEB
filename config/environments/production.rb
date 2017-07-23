@@ -29,7 +29,7 @@ Rails.application.configure do
 
   config.log_formatter = ActiveSupport::Logger::Formatter.new
 
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.public_file_server.enabled = true
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
