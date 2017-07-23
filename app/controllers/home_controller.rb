@@ -15,5 +15,9 @@ class HomeController < ApplicationController
   def how_buy
   end
 
+  def error_404
+    render file: 'public/404.html', status: 404, layout: false
+  end
+
 
 end

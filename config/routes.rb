@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     end
   end
 
-
+  match '*path', via: :all, to: 'home#error_404'
   mount WalletoneMiddleware.new => '/w1_callback'
 
   # scope :unitpay do
