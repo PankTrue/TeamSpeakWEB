@@ -40,7 +40,7 @@ class User < ApplicationRecord
         when 'google_oauth2'
           # user.url = auth.info.urls.Google_oauth2
         when 'facebook'
-          user.url = auth.info.urls.Facebook
+          # user.url = auth.info.urls.Facebook
       end
     end
     user.skip_confirmation!
