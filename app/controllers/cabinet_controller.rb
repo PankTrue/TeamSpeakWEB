@@ -270,7 +270,7 @@ end
 def settings
     server = Teamspeak::Functions.new
     info = server.server_info @ts.machine_id
-    @name, @welcome_message = info['virtualserver_name'], info['virtualserver_welcomemessage']
+    @name, @welcome_message = info['virtualserver_name'].force_encoding(Encoding::UTF_8), info['virtualserver_welcomemessage'].force_encoding(Encoding::UTF_8)
     server.disconnect
 end
 
