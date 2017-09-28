@@ -1,3 +1,5 @@
+env :PATH, ENV['PATH']
+
 every '5 0 * * *' do
   runner 'Tsserver.update_servers', environment: "production"
 end
