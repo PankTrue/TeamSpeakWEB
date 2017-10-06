@@ -3,11 +3,11 @@ class AdminController < ApplicationController
   before_action :admin?
 
   def home
-    @users = User.select(:spent)
-    @count_users = @users.count
-    @count_spent=0
-    @users.each do |u|
-      @count_spent+=u.spent
+    @count_users = User.count
+    @payments = Payment.select(:amount)
+    @count_spent = 0
+    @payments.each do |pay|
+      @count_spent += pay.amount
     end
   end
 

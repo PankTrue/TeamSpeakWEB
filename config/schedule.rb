@@ -7,5 +7,3 @@ end
 every '0 6 * * *' do
   runner 'Tsserver.spam_info_for_extend', environment: "production"
 end
-
-

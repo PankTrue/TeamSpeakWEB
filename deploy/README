@@ -51,3 +51,7 @@ bundle exec rake assets:precompile RAILS_ENV=production
 #Paste ts3 and tsdns in /etc/init.d/
 #update-rc.d /etc/init.d/tsdns defaults
 #update-rc.d /etc/init.d/ts3 defaults
+
+
+#Backup postgres database
+pg_dump -U ts teamspeak --format=t -f backup.sql.tar
