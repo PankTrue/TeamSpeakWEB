@@ -15,7 +15,7 @@ class Tsserver < ApplicationRecord
 				if (Teamspeak::Other.sec2days(t.time_payment.to_time - Time.now) <= 0)
 					u = User.where(id: t.user_id).take
 					cost = t.slots * Settings.other.slot_cost
-					if (u.auto_extension and u.money) >= cost
+					if (u.auto_extension and u.money >= cost)
 						u.update money: u.money - cost
 						t.update time_payment: Date.today + 30, state: true
 						server.server_start t.machine_id
