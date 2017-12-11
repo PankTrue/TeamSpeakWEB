@@ -69,7 +69,7 @@ module CabinetHelper
 			if user['cid']==channelID
 				if user['client_type'] == 0
 					@count_users+=1
-					name = user['client_nickname']
+					name = user['client_nickname'].to_s
 					icon = '16x16_player_off.png'
 					if(user['client_away'] == 1) then icon = '16x16_away.png'
 					elsif(user['client_flag_talking'] == 1) then icon = '16x16_player_on.png'
