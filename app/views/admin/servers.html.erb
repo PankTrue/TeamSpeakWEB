@@ -20,7 +20,7 @@
       <tbody>
       <tr>
         <td><%= ts.id %></td>
-        <td><%= ts.dns+Setting.other.dns unless ts.dns.empty? %></td>
+        <td><%= ts.dns+Settings.other.dns unless ts.dns.empty? %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
         <td><span id="left_time-<%=ts.id %>">
