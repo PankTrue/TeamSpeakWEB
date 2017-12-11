@@ -20,10 +20,10 @@
       <tbody>
       <tr>
         <td><%= ts.id %></td>
-        <td><%= ts.dns+Settings.other.dns unless ts.dns.empty? %></td>
+        <td><%= ts.dns+'.'+ Settings.other.dns unless ts.dns.empty? %></td>
         <td><%= ts.slots %></td>
         <td><%= ts.time_payment %></td>
-        <td><span id="left_time-<%=ts.id %>">
+        <td><span id="left_time-<%=ts.id if ts.state %>">
             <script>
                 var left_time = parseInt(<%= sec2days(ts.time_payment.to_time - Time.now).to_json %>);
                 if(left_time > 7){
