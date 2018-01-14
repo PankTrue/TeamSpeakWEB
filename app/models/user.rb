@@ -5,6 +5,7 @@ class User < ApplicationRecord
 
    has_many :tsservers
    has_many :payments
+   has_many :audiobots
 
   TEMP_EMAIL_PREFIX = 'change@me'
   TEMP_EMAIL_REGEX = /\Achange@me/

@@ -1,0 +1,121 @@
+<div class="buy">
+  <h2>Покупка Бота</h2>
+
+  <%= form_for @audiobot, url: {controller: "audiobot", action: "create"}, method: :post do |f| %>
+      <% if @audiobot.errors.any? %>
+          <div class="alert alert-danger">
+            <h2><%= pluralize(@audiobot.errors.count, "Ошибка") %></h2>
+
+            <% @audiobot.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </div>
+      <% end %>
+
+
+
+       <div class="border">
+        <%= f.label 'Кол-во памяти' %>
+        <table><tr>
+          <td> <%= f.number_field :audio_quota, in: 100..1000, value: 100 %></td>
+          <td>100мб</td>
+          <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="100,1000"></td>
+          <td>1000мб</td>
+        </tr></table>
+      </div>
+
+
+      <div class="border">
+
+        <div class="field">
+          <%= f.label 'Время оплаты' %>
+          <br>
+          <%= f.select :time_payment, Tsserver::Payment_Data %>
+
+        </div>
+
+      </div>
+
+      <div class="border">
+        <h4>Стоимость: <span class="cost"></span>руб.</h4>
+        <h5><span class="lacks"></span></h5>
+        <h5>На вашем счету: <%= current_user.money %>руб. <%= link_to 'Пополнить', cabinet_pay_path %></h5>
+      </div>
+
+
+      <div class="actions">
+        <%= f.submit "Купить сервер", class: 'btn btn-default'%>
+      </div>
+  <% end %>
+
+</div>
+
+
+<script type="text/javascript" charset="utf-8">
+    function SetCost() {
+        var data2 = parseInt($('#audiobot_time_payment').val());
+        var data1 = parseInt($("#audiobot_audio_quota").val());
+        var money = parseInt(<%= current_user.money.to_json %>);
+        var data = data1 * 0.5 * data2;
+        if(data>money){
+            var lacks = "Нехватает: " + (data-money).toString() + "руб.";
+        }else{
+            var lacks = "";
+        }
+
+        $('span.cost').text(data);
+        $('span.lacks').text(lacks);
+    }
+
+
+    $('#audiobot_time_payment').bind('click', function(event){
+        SetCost();
+    });
+
+    $("#audiobot_audio_quota").bind("keyup focusout", function(event){
+        var data = parseInt($("#audiobot_audio_quota").val());
+        if (data>=1000)
+        {
+            $('#audiobot_audio_quota').val(1000);
+            data = 1000;
+            SetCost();
+        }
+
+        if (data>=100)
+        {
+            var selector = $("[data-slider]");
+            selector.simpleSlider("setValue", data);
+            SetCost();
+
+        }
+
+    });
+
+    $("#audiobot_audio_quota").bind("focusout", function(event){
+        var data = parseInt($("#audiobot_audio_quota").val());
+        if (data<100)
+        {
+            $('#audiobot_audio_quota').val(100);
+            var selector = $("[data-slider]");
+            selector.simpleSlider("setValue", 100);
+            SetCost();
+        }
+    });
+
+    $("[data-slider]").bind("slider:ready slider:changed", function (event, data) {
+        $('#audiobot_audio_quota').val(data.value.toFixed(0));
+        SetCost();
+
+
+    });
+
+
+
+</script>
+
+
+
+
+
+
+

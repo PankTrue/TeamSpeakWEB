@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703124123) do
+ActiveRecord::Schema.define(version: 20180112192239) do
+
+  create_table "actions", force: :cascade do |t|
+    t.string   "action",     null: false
+    t.integer  "user_id"
+    t.integer  "ts_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "audiobots", force: :cascade do |t|
+    t.date     "time_payment",    null: false
+    t.integer  "user_id"
+    t.string   "address"
+    t.string   "password"
+    t.integer  "audio_quota",     null: false
+    t.string   "nickname"
+    t.integer  "default_channel"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["user_id"], name: "index_audiobots_on_user_id"
+  end
 
   create_table "backups", force: :cascade do |t|
     t.integer  "tsserver_id", null: false

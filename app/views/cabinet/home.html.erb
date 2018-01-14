@@ -1,6 +1,7 @@
 <div>
 На вашем счету: <%= current_user.money %> руб.<%= link_to 'Пополнить', cabinet_pay_path, class: 'btn btn-default' %>
 <%= link_to 'Купить сервер', cabinet_new_path, class: 'btn btn-default', data: { turbolinks: false } %>
+<%= link_to 'Купить аудио бота',audiobot_new_path , class: 'btn btn-default', data: { turbolinks: false } %>
 <%= link_to 'Реферальная программа', cabinet_ref_path, class: 'btn btn-default' %>
 </div>
 <h4>Авто-продление</h4>
@@ -54,6 +55,46 @@
     </tbody>
   </table>
 </div>
+
+
+
+<h2>Список Музыкальных ботов</h2>
+<div>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Дата следующего платежа</th>
+      <th>Остаток дней</th>
+      <th>Статус</th>
+
+    </tr>
+    </thead>
+
+    <tbody>
+    <% current_user.audiobots.each do |bot| %>
+        <tr>
+          <td><%= bot.time_payment %></td>
+          <td><span id="left_time-<%= bot.id %>">
+            <script>
+                var left_time = parseInt(<%= sec2days(bot.time_payment.to_time - Time.now).to_json %>);
+                if(left_time > 7){
+                    $('span#left_time-<%=bot.id %>').html('<h4>' + left_time + '</h4>').attr('style', 'color: green');
+                }else if(left_time < 0){
+                    $('span#left_time-<%=bot.id %>').html('<h4>' + left_time + '</h4>').attr('style', 'color: red');
+                }else{
+                    $('span#left_time-<%=bot.id %>').html('<h4>' + left_time + '</h4>').attr('style', 'color: yellow');
+                };
+            </script>
+          </span></td>
+          <td><%= link_to 'Панель', cabinet_panel_path(bot), class: 'btn btn-default' %></td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+
 
 
 

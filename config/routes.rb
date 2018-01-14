@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
 
-
   class WalletoneMiddleware < Walletone::Middleware::Base
     def perform notify, env
       raise 'Wrong signature' unless notify.valid? Settings.w1.signature
@@ -25,6 +24,15 @@ Rails.application.routes.draw do
   #   get :fail, to: 'unitpay#fail'
   #   get :notify, to: 'unitpay#notify'
   # end
+
+
+  get 'audiobot/new'
+  post 'audiobot/create',to: 'audiobot#create',as: 'audiobot_create'
+  get 'audiobot/edit'
+  post 'audiobot/update'
+  delete 'audiobot/destroy'
+  get 'audiobot/panel'
+
 
   post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension', as: 'cabinet_edit_auto_extension'
   post 'cabinet/free_dns', to: 'cabinet#free_dns', as: 'cabinet_free_dns'
@@ -73,6 +81,8 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'home/news'
   get '/home/how_buy' => 'home#how_buy', as: 'home_how_buy'
+
+
 
   devise_for :users, :controllers => {registrations: "registrations", passwords: "passwords", sessions: "sessions", omniauth_callbacks: 'omniauth_callbacks'}
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

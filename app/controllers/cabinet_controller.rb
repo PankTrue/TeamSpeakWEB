@@ -16,6 +16,8 @@ def home
     server = Teamspeak::Functions.new
     @status = server_status(server.server_list, servs)
     server.disconnect
+
+    @audiobots = Audiobot.where(user_id: current_user.id)
 end
 
 def edit
@@ -57,25 +59,22 @@ def update
   end
 end
 
-
 def new
   @ts=Tsserver.new
 end
 
-
 def create
     server=Teamspeak::Functions.new
-    user = current_user
     @ts = Tsserver.new(ts_params)
-    time = ts_params[:time_payment].to_i
+    time = params[:tsserver][:time_payment].to_i
     if [1,2,3,6,12].include?(time)
-      @ts.time_payment, @ts.user_id, cost = time, user.id, time * Settings.other.slot_cost.to_i * @ts.slots
-        if user.have_money?(cost)
+      @ts.time_payment, @ts.user_id, cost = time, current_user.id, time * Settings.other.slot_cost.to_i * @ts.slots
+        if current_user.have_money?(cost)
           if @ts.valid?
             @ts.time_payment = Date.today + 30*time
             data=server.server_create(free_port,@ts.slots)
             @ts.machine_id, @ts.port, @token = data['sid'], data['virtualserver_port'], data['token']
-              if @ts.save and user.update(money: ((user.money - cost).round(2)), spent: user.spent+cost)
+              if @ts.save and current_user.update(money: ((current_user.money - cost).round(2)), spent: current_user.spent+cost)
                 referall_system cost, current_user.ref
                 Teamspeak::Other.new_dns(@ts.dns, @ts.port) unless @ts.dns.blank?
                 redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"
@@ -96,8 +95,6 @@ def create
     end
   server.disconnect
 end
-
-
 
 def destroy
         server=Teamspeak::Functions.new
@@ -209,9 +206,9 @@ def pay_redirect
   end
 end
 
-def pay_unitpay
-  redirect_to ''
-end
+# def pay_unitpay
+#   redirect_to ''
+# end
 
 def free_dns
   dns_list = Tsserver.pluck(:dns)
@@ -347,8 +344,8 @@ private
   end
 
   def own_server
-     @ts = Tsserver.find params[:id]
-     redirect_to cabinet_home_path, danger: 'Нет доступа' unless current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
+    @ts = Tsserver.find params[:id]
+    redirect_to cabinet_home_path, danger: 'Нет доступа' unless current_user.id == @ts.user_id or Settings.other.admin_list.include?(current_user.email)
   end
 
 	def ts_params
