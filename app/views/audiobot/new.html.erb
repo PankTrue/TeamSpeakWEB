@@ -55,8 +55,8 @@
     function SetCost() {
         var data2 = parseInt($('#audiobot_time_payment').val());
         var data1 = parseInt($("#audiobot_audio_quota").val());
-        var money = parseInt(<%= current_user.money.to_json %>);
-        var data = data1 * 0.5 * data2;
+        var money = <%= current_user.money.to_json %>;
+        var data = data1 * <%=Settings.audiobot.audio_quota_cost.to_f %> * data2;
         if(data>money){
             var lacks = "Нехватает: " + (data-money).toString() + "руб.";
         }else{

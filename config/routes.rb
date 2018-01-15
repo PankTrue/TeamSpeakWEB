@@ -26,12 +26,18 @@ Rails.application.routes.draw do
   # end
 
 
-  get 'audiobot/new'
+  get 'audiobot/new',to: 'audiobot#new',as: 'audiobot_new'
   post 'audiobot/create',to: 'audiobot#create',as: 'audiobot_create'
-  get 'audiobot/edit'
-  post 'audiobot/update'
-  delete 'audiobot/destroy'
-  get 'audiobot/panel'
+  get 'audiobot/edit/:id',to: 'audiobot#edit',as: 'audiobot_edit'
+  post 'audiobot/update/:id',to: 'audiobot#update',as: 'audiobot_update'
+  delete 'audiobot/destroy/:id',to: 'audiobot#destroy',as: 'audiobot_destroy'
+  get 'audiobot/panel/:id',to: 'audiobot#panel',as: 'audiobot_panel'
+  get 'audiobot/settings/:id', to: 'audiobot#settings',as: 'audiobot_settings'
+  post 'audiobot/settings_up/:id', to: 'audiobot#settings_up',as: 'audiobot_settings_up'
+  get 'audiobot/extend/:id', to: 'audiobot#extend',as: 'audiobot_extend'
+  post 'audiobot/extend_up/:id', to: 'audiobot#extend_up',as: 'audiobot_extend_up'
+
+
 
 
   post 'cabinet/edit_auto_extension', to: 'cabinet#edit_auto_extension', as: 'cabinet_edit_auto_extension'
@@ -55,7 +61,7 @@ Rails.application.routes.draw do
   post 'cabinet/delete_token', to: 'cabinet#delete_token', as: 'cabinet_delete_token'
   post 'cabinet/reset_permissions/:id', to: 'cabinet#reset_permissions', as: 'cabinet_reset_permissions'
   get 'cabinet/settings/:id', to: 'cabinet#settings', as: 'cabinet_settings'
-  post 'cabinet/settings_edit', to: 'cabinet#settings_edit', as: 'cabinet_settings_edit'
+  post 'cabinet/settings_edit/:id', to: 'cabinet#settings_edit', as: 'cabinet_settings_edit'
   # get 'cabinet/bans/:id', to: 'cabinet#bans', as: 'cabinet_bans'
   # post 'cabinet/ban', to: 'cabinet#ban', as: 'cabinet_ban'
   # post 'cabinet/unban', to: 'cabinet#unban', as: 'cabinet_unban'

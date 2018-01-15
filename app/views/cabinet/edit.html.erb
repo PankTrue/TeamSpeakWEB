@@ -38,6 +38,8 @@
       <div class="border">
 
           <h3>Стоимость: <span class="cost">0</span></h3>
+          <h5><span class="lacks"></span></h5>
+          <h5>На вашем счету: <%= current_user.money %>руб. <%= link_to 'Пополнить', cabinet_pay_path %></h5>
       </div>
 
 
@@ -96,10 +98,20 @@ dns1 = false
         }else{
             addmoney = 0.0;
         };
+      var money = parseInt(<%= current_user.money.to_json %>);
       var def = parseInt(<%= @ts.slots %>);
       var current = parseInt($('#tsserver_slots').val());
-      var days = parseInt(<%= @days %>)
-      $('span.cost').text((((current-def)*(<%=Settings.other.slot_cost.to_json %>/30*days))+addmoney).toFixed(2));
+      var days = parseInt(<%= @days %>);
+      var cost = ((((current-def)*(<%=Settings.other.slot_cost.to_json %>/30*days))+addmoney).toFixed(2));
+
+        if(cost>money){
+            var lacks = "Нехватает: " + (cost-money).toString() + "руб.";
+        }else{
+            var lacks = "";
+        }
+
+        $('span.cost').text(cost);
+        $('span.lacks').text(lacks);
     }
 
     $('#tsserver_time_payment').bind('click', function(event){

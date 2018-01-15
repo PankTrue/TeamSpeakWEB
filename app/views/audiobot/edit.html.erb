@@ -1,2 +1,108 @@
-<h1>Audiobot#edit</h1>
-<p>Find me in app/views/audiobot/edit.html.erb</p>
+<div class="edit">
+  <%= form_for @audiobot, url: {controller: "audiobot", action: "update"}, method: :post do |f| %>
+      <% if @audiobot.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@audiobot.errors.count, "error") %> prohibited this ts from being saved:</h2>
+
+            <ul>
+              <% @audiobot.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+
+      <div class="border">
+
+        <%= f.label 'Кол-во памяти' %>
+        <table><tr>
+          <td> <%= f.number_field :audio_quota, in: 100..1000  %></td>
+          <td>100мб</td>
+          <td><input type="text" data-slider="true" data-slider-theme="volume" data-slider-range="100,1000" value="<%=@audiobot.audio_quota %>"></td>
+          <td>1000мб</td>
+        </table></tr>
+      </div>
+      <div class="border">
+
+        <h3>Стоимость: <span class="cost">0</span></h3>
+        <h5><span class="lacks"></span></h5>
+        <h5>На вашем счету: <%= current_user.money %>руб. <%= link_to 'Пополнить', cabinet_pay_path %></h5>
+      </div>
+
+
+      <div class="actions">
+        <%= f.submit "Изменить"%>
+      </div>
+
+  <% end %>
+</div>
+
+
+<script type="text/javascript" charset="utf-8">
+    function SetCost() {
+        var money = parseInt(<%= current_user.money.to_json %>);
+        var def = parseInt(<%= @audiobot.audio_quota %>);
+        var current = parseInt($('#audiobot_audio_quota').val());
+        var days = parseInt(<%= @days %>);
+        var cost = ((current-def)*(<%=Settings.audiobot.audio_quota_cost.to_f%>)/30*days).toFixed(2);
+
+        if(cost>money){
+            var lacks = "Нехватает: " + (cost-money).toString() + "руб.";
+        }else{
+            var lacks = "";
+        }
+
+        $('span.cost').text(cost);
+        $('span.lacks').text(lacks);
+    }
+
+
+    $('#audiobot_time_payment').bind('click', function(event){
+        SetCost();
+    });
+
+    $("#audiobot_audio_quota").bind("keyup focusout", function(event){
+        var data = parseInt($("#audiobot_audio_quota").val());
+        if (data>=1000)
+        {
+            $('#audiobot_audio_quota').val(1000);
+            data = 1000;
+            SetCost();
+        }
+
+        if (data>=100)
+        {
+            var selector = $("[data-slider]");
+            selector.simpleSlider("setValue", data);
+            SetCost();
+
+        }
+
+    });
+
+    $("#audiobot_audio_quota").bind("focusout", function(event){
+        var data = parseInt($("#audiobot_audio_quota").val());
+        if (data<100)
+        {
+            $('#audiobot_audio_quota').val(100);
+            var selector = $("[data-slider]");
+            selector.simpleSlider("setValue", 100);
+            SetCost();
+        }
+    });
+
+    $("[data-slider]").bind("slider:ready slider:changed", function (event, data) {
+        $('#audiobot_audio_quota').val(data.value.toFixed(0));
+        SetCost();
+
+
+    });
+
+
+
+</script>
+
+
+<%= link_to 'Назад', audiobot_panel_path(@audiobot), class: "btn btn-primary"  %>
+

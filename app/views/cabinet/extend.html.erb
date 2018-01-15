@@ -12,27 +12,54 @@
     <% end %>
 
 
-    <div class="field">
-      <%= f.label 'На сколько хотите продлить?' %>
-      <%= f.select :time_payment, Tsserver::Payment_Data%>
+    <div class="border">
+      <ul class="hr">
+        <div class="field">
+          <%= f.label 'На сколько хотите продлить?' %>
+          <%= f.select :time_payment, Tsserver::Payment_Data%>
+        </div>
+      </ul>
     </div>
 
-    <div>
-      <h2>Стоимость: <span class="Cost"><%= @ts.slots * Settings.other.slot_cost.to_i %> </span> руб. </h2>
 
+
+    <div class="border">
+      <ul class="hr">
+        <div>
+          <h3>Стоимость: <span class="cost">0</span> руб. </h3>
+          <h5><span class="lacks"></span></h5>
+          <h5>На вашем счету: <%= current_user.money %>руб. <%= link_to 'Пополнить', cabinet_pay_path %></h5>
+        </div>
+      </ul>
     </div>
 
     <div class="actions">
-      <%= f.submit "Продлить"%>
+      <%= f.submit "Продлить" %>
     </div>
 <% end %>
 
 <script>
   $(document).on('turbolinks:load', function() {
 
+      SetCost();
+
+      function SetCost() {
+          var money = parseInt(<%= current_user.money.to_json %>);
+          var data1 = parseInt($('#tsserver_time_payment').val());
+          var cost = <%= Settings.other.slot_cost.to_i %> * data1 * <%= @ts.slots %>;
+
+          if(cost>money){
+              var lacks = "Нехватает: " + (cost-money).toString() + "руб.";
+          }else{
+              var lacks = "";
+          }
+
+          $('span.cost').text(cost);
+          $('span.lacks').text(lacks);
+      };
+
     $('#tsserver_time_payment').bind('click',function(event){
-      var data1 = parseInt($('#tsserver_time_payment').val());
-      $('span.Cost').text( 3 * data1 * <%= @ts.slots %>);
+      SetCost();
     });
 
   });

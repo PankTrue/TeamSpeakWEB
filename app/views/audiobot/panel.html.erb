@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-md-6">
+
+    <div class="functions">
+      <ul style="list-style-type: none">
+        <li><%= link_to 'Настройки', audiobot_settings_path(@audiobot), class: 'btn btn-primary' %></li>
+        <li><%= link_to 'Редактировать', audiobot_edit_path(@audiobot), data: { turbolinks: false }, class: 'btn btn-primary'%></li>
+        <li><%= link_to 'Продлить', audiobot_extend_path(@audiobot), class: 'btn btn-primary'%></li>
+      </ul>
+    </div>
+  </div>
+
+
+</div>

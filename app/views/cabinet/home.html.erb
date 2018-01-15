@@ -65,7 +65,7 @@
     <tr>
       <th>Дата следующего платежа</th>
       <th>Остаток дней</th>
-      <th>Статус</th>
+      <th>Псевдоним</th>
 
     </tr>
     </thead>
@@ -86,13 +86,13 @@
                 };
             </script>
           </span></td>
-          <td><%= link_to 'Панель', cabinet_panel_path(bot), class: 'btn btn-default' %></td>
+          <td><%= bot.nickname %></td>
+          <td><%= link_to 'Панель', audiobot_panel_path(bot), class: 'btn btn-default' %></td>
         </tr>
     <% end %>
     </tbody>
   </table>
 </div>
-
 
 
 

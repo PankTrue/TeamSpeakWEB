@@ -16,8 +16,6 @@ def home
     server = Teamspeak::Functions.new
     @status = server_status(server.server_list, servs)
     server.disconnect
-
-    @audiobots = Audiobot.where(user_id: current_user.id)
 end
 
 def edit
@@ -65,7 +63,7 @@ end
 
 def create
     server=Teamspeak::Functions.new
-    @ts = Tsserver.new(ts_params)
+    @ts=Tsserver.new(ts_params)
     time = params[:tsserver][:time_payment].to_i
     if [1,2,3,6,12].include?(time)
       @ts.time_payment, @ts.user_id, cost = time, current_user.id, time * Settings.other.slot_cost.to_i * @ts.slots

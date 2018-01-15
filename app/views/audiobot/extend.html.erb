@@ -1,0 +1,69 @@
+<%= form_for @audiobot, url: {controller: "audiobot", action: "extend_up", id: @audiobot}, method: :post do |f| %>
+    <% if @audiobot.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@audiobot.errors.count, "error") %> prohibited this ts from being saved:</h2>
+
+          <ul>
+            <% @audiobot.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="border">
+      <ul class="hr">
+        <div class="field">
+          <%= f.label 'На сколько хотите продлить?' %>
+          <%= f.select :time_payment, Tsserver::Payment_Data%>
+        </div>
+      </ul>
+    </div>
+
+
+
+    <div class="border">
+      <ul class="hr">
+        <div>
+          <h3>Стоимость: <span class="cost">0</span> руб. </h3>
+          <h5><span class="lacks"></span></h5>
+          <h5>На вашем счету: <%= current_user.money %>руб. <%= link_to 'Пополнить', cabinet_pay_path %></h5>
+        </div>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "Продлить"%>
+    </div>
+<% end %>
+
+<script>
+    $(document).on('turbolinks:load', function() {
+
+        SetCost();
+
+        function SetCost() {
+            var money = parseInt(<%= current_user.money.to_json %>);
+            var data1 = parseInt($('#audiobot_time_payment').val());
+            var cost = <%=Settings.audiobot.audio_quota_cost.to_f * @audiobot.audio_quota.to_f%> * data1;
+
+            if(cost>money){
+                var lacks = "Нехватает: " + (cost-money).toString() + "руб.";
+            }else{
+                var lacks = "";
+            }
+
+            $('span.cost').text(cost);
+            $('span.lacks').text(lacks);
+        };
+
+        $('#audiobot_time_payment').bind('click',function(event){
+            SetCost();
+        });
+
+
+    });
+
+</script>
+<%= link_to 'Назад', audiobot_panel_path(@audiobot), class: "btn btn-default" %>
+
