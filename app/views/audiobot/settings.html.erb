@@ -1,1 +1,19 @@
-settings
+  <h2>Настройки</h2>
+
+  <div>
+    <%= form_tag audiobot_settings_up_path, method: :post do %>
+        <%= label_tag 'Адрес' %> <br>
+        <%= text_field_tag  :address, @audiobot.address %><br>
+        <%= label_tag 'Пароль' %><br>
+        <%= text_field_tag  :password, @audiobot.password %><br>
+        <%= label_tag 'Псевдоним' %><br>
+        <%= text_field_tag  :nickname, @audiobot.nickname %><br>
+        <%= label_tag 'Стандартный канал' %><br>
+        <%= number_field_tag  :default_channel, @audiobot.default_channel %><br>
+        <%= submit_tag 'Сохранить', class: 'btn btn-default' %><br>
+    <% end %>
+  </div>
+
+  <br>
+
+  <%= link_to 'Назад', audiobot_panel_path(@audiobot), class: "btn btn-primary"  %>

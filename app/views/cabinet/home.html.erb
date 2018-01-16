@@ -26,7 +26,7 @@
     </thead>
 
     <tbody>
-      <% current_user.tsservers.each do |ts| %>
+      <% @servers.each do |ts| %>
         <tr>
           <td><%= ts.dns+'.'+Settings.other.dns unless ts.dns == '' %></td>
           <td><%= Settings.other.ip + ':' + ts.port.to_s %></td>

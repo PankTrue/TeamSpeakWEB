@@ -10,7 +10,7 @@ require 'base64'
   rescue_from Teamspeak::ServerError, :with => :invalid_server
   
 def home
-    @servers = Tsserver.where(user_id: current_user.id).select(:machine_id)
+    @servers = Tsserver.where(user_id: current_user.id)
     servs = Array.new
     @servers.each { |temp| servs << temp.machine_id }
     server = Teamspeak::Functions.new
@@ -113,28 +113,26 @@ def extend
 end
 
 def extend_up
-  user = current_user
   time = params[:tsserver][:time_payment].to_i
-  cab = Teamspeak::Functions.new
   cost = @ts.slots * Settings.other.slot_cost.to_i * time
   if [1,2,3,6,12].include?(time)
-    if user.have_money?(cost)
-        user.spent+= cost
-        user.money = user.money - cost
+    if current_user.have_money?(cost)
+        current_user.spent+= cost
+        current_user.money -= cost
         @ts.state = true
         if Date.today <= @ts.time_payment
           @ts.time_payment = @ts.time_payment + time * 30
         else
           @ts.time_payment = Date.today + time * 30
-          #cab.server_start(@ts.machine_id)
-          cab.server_autostart @ts.machine_id, 1
+          server = Teamspeak::Functions.new
+          server.server_start(@ts.machine_id)
+          server.server_autostart @ts.machine_id, 1
+          server.disconnect
         end
-        if @ts.save validate:false and user.save
+        if @ts.save validate:false and current_user.save
           referall_system cost, current_user.ref
           redirect_to cabinet_home_path, success:'Вы успешно продлил'
         end
-        cab.disconnect
-
     else
       redirect_to cabinet_home_path, danger: 'Недостаточно средств'
     end
@@ -158,7 +156,6 @@ def work
           redirect_to cabinet_home_path, warning: 'Продлите сервер'
         end
 end
-
 
 def token
       server = Teamspeak::Functions.new
@@ -203,10 +200,6 @@ def pay_redirect
     redirect_to cabinet_pay_path, warning: 'Сумма должна быть больше или равна 5 рублей'
   end
 end
-
-# def pay_unitpay
-#   redirect_to ''
-# end
 
 def free_dns
   dns_list = Tsserver.pluck(:dns)
@@ -264,7 +257,7 @@ end
 
 def settings
     server = Teamspeak::Functions.new
-    info = server.server_info @ts.machine_id
+    info = server.server_info(@ts.machine_id)
     @name, @welcome_message = info['virtualserver_name'].force_encoding(Encoding::UTF_8), info['virtualserver_welcomemessage'].force_encoding(Encoding::UTF_8)
     server.disconnect
 end
@@ -350,10 +343,6 @@ private
 		params.require(:tsserver).permit(:slots, :dns, :time_payment)
   end
 
-
-
-
-
   def free_port
     i=2000
     server=Teamspeak::Functions.new
@@ -397,16 +386,5 @@ private
     end
     arr
   end
-
-
-  def referall_system cost, user_id
-    if user_id != 0
-      u = User.find user_id
-      u.add_money((cost*0.1).round(2))
-    end
-  end
-  
-
-
 
 end
