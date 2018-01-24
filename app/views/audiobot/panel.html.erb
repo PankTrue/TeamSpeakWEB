@@ -13,6 +13,7 @@
         <li><%= link_to 'Редактировать', audiobot_edit_path(@audiobot), data: { turbolinks: false }, class: 'btn btn-primary'%></li>
         <li><%= link_to 'Продлить', audiobot_extend_path(@audiobot), class: 'btn btn-primary'%></li>
         <li><%= link_to 'Настройки бота', audiobot_settings_path(@audiobot), class: 'btn btn-primary'%></li>
+        <li><%= link_to 'Перезапустить', audiobot_restart_path(@audiobot),method: :post, class: 'btn btn-primary'%></li>
       </ul>
     </div>
   </div>

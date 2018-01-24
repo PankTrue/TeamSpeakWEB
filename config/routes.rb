@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   post 'audiobot/settings_up/:id', to: 'audiobot#settings_up',as: 'audiobot_settings_up'
   get 'audiobot/extend/:id', to: 'audiobot#extend',as: 'audiobot_extend'
   post 'audiobot/extend_up/:id', to: 'audiobot#extend_up',as: 'audiobot_extend_up'
+  post 'audiobot/restart/:id', to: 'audiobot#restart', as: 'audiobot_restart'
 
 
 

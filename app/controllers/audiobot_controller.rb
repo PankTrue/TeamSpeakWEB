@@ -3,7 +3,7 @@ class AudiobotController < ApplicationController
   before_action :authenticate_user!
   before_action :audiobot_params_for_create, only: [:create]
   before_action :audiobot_params_for_settings_up, only: [:settings_up]
-  before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up]
+  before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up, :restart]
 
   def new
     @audiobot = Audiobot.new()
@@ -72,6 +72,7 @@ class AudiobotController < ApplicationController
 
   def settings_up
     if(@audiobot.update(audiobot_params_for_settings_up))
+      update_audiobot_cfg
       redirect_to audiobot_panel_path(@audiobot), success: 'Вы успешно изменили настройки бота'
     else
       render 'audiobot/settings'
@@ -108,6 +109,13 @@ class AudiobotController < ApplicationController
     end
   end
 
+  def restart
+    %x"echo restart > #{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/events"
+    redirect_to audiobot_panel_path(@audiobot.id), success: "Вы успешно перезапустили бота"
+  end
+
+  
+
 
 private
 
@@ -122,6 +130,29 @@ private
 
   def audiobot_params_for_settings_up
     params.permit(:address, :password, :nickname,:default_channel)
+  end
+
+  def update_audiobot_cfg
+    data = {
+              address: @audiobot.address,
+              audio_quota: @audiobot.audio_quota,
+              default_channel: @audiobot.default_channel,
+              nickname: @audiobot.nickname,
+              password: @audiobot.password,
+              state: @audiobot.state
+            }.to_json
+
+    path = "#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}"
+    FileUtils.mkpath(path)
+
+    File.open("#{path}/config.json",'w') do |file|
+      file.write(data)
+    end
+    botslist_update()
+  end
+
+  def botslist_update
+    %x"echo bots_list_update > #{Settings.audiobot.path_for_audiobot}/manager.events"
   end
 
 end
