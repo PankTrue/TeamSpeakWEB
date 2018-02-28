@@ -4,7 +4,7 @@
   <%= form_for @ts, url: {controller: "cabinet", action: "create"}, method: :post do |f| %>
       <% if @ts.errors.any? %>
           <div class="alert alert-danger">
-            <h2><%= pluralize(@ts.errors.count, "Ошибка") %></h2>
+            <h2><%= pluralize(@ts.errors.count, "ошибка") %></h2>
 
               <% @ts.errors.full_messages.each do |message| %>
                   <li><%= message %></li>

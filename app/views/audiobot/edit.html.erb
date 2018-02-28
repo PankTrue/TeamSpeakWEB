@@ -2,7 +2,7 @@
   <%= form_for @audiobot, url: {controller: "audiobot", action: "update"}, method: :post do |f| %>
       <% if @audiobot.errors.any? %>
           <div id="error_explanation">
-            <h2><%= pluralize(@audiobot.errors.count, "error") %> prohibited this ts from being saved:</h2>
+            <h2><%= pluralize(@audiobot.errors.count, "ошибка") %></h2>
 
             <ul>
               <% @audiobot.errors.full_messages.each do |message| %>

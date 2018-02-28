@@ -1,18 +1,58 @@
   <h2>Настройки</h2>
 
-  <div>
-    <%= form_tag audiobot_settings_up_path, method: :post do %>
-        <%= label_tag 'Адрес' %> <br>
-        <%= text_field_tag  :address, @audiobot.address %><br>
-        <%= label_tag 'Пароль' %><br>
-        <%= text_field_tag  :password, @audiobot.password %><br>
-        <%= label_tag 'Псевдоним' %><br>
-        <%= text_field_tag  :nickname, @audiobot.nickname %><br>
-        <%= label_tag 'Стандартный канал' %><br>
-        <%= number_field_tag  :default_channel, @audiobot.default_channel %><br>
-        <%= submit_tag 'Сохранить', class: 'btn btn-default' %><br>
+
+    <%= form_for @audiobot, url: {controller: "audiobot", action: "settings_up"}, method: :post do |f| %>
+        <% if @audiobot.errors.any? %>
+            <div class="alert alert-danger">
+              <h2><%= pluralize(@audiobot.errors.count, "ошибка") %></h2>
+
+              <% @audiobot.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </div>
+        <% end %>
+
+
+        <div class="border">
+          <%= f.label 'Адрес' %>
+          <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
+            <%= f.text_field :address, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="border">
+          <%= f.label 'Пароль' %>
+          <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
+            <%= f.text_field :password, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="border">
+          <%= f.label 'Псевдоним' %>
+          <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
+            <%= f.text_field :nickname, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="border">
+          <%= f.label 'Стандартный канал' %>
+          <div class="input-group col-xs-8 col-sm-6 col-md-5 col-lg-4">
+            <%= f.number_field :default_channel, class: 'form-control' %>
+          </div>
+        </div>
+
+
+
+
+      <div class="actions">
+        <%= f.submit "Сохранить", class: 'btn btn-default'%>
+      </div>
+
+
     <% end %>
-  </div>
+
+
+
 
   <br>
 

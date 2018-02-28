@@ -4,7 +4,7 @@
   <%= form_for @audiobot, url: {controller: "audiobot", action: "create"}, method: :post do |f| %>
       <% if @audiobot.errors.any? %>
           <div class="alert alert-danger">
-            <h2><%= pluralize(@audiobot.errors.count, "Ошибка") %></h2>
+            <h2><%= pluralize(@audiobot.errors.count, "ошибка") %></h2>
 
             <% @audiobot.errors.full_messages.each do |message| %>
                 <li><%= message %></li>

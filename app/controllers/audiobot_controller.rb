@@ -67,7 +67,6 @@ class AudiobotController < ApplicationController
   end
 
   def settings
-    
   end
 
   def settings_up
@@ -114,8 +113,6 @@ class AudiobotController < ApplicationController
     redirect_to audiobot_panel_path(@audiobot.id), success: "Вы успешно перезапустили бота"
   end
 
-  
-
 
 private
 
@@ -129,7 +126,7 @@ private
   end
 
   def audiobot_params_for_settings_up
-    params.permit(:address, :password, :nickname,:default_channel)
+    params.require(:audiobot).permit(:address, :password, :nickname,:default_channel)
   end
 
   def update_audiobot_cfg
