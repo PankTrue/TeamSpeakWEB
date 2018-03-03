@@ -122,7 +122,7 @@ private
   end
 
   def audiobot_params_for_create
-      params.require(:audiobot).permit(:audio_quota, :time_payment)
+      params.require(:audiobot).permit(:audio_quota, :time_payment,:address)
   end
 
   def audiobot_params_for_settings_up

@@ -13,6 +13,13 @@
       <% end %>
 
 
+    <div class="border">
+      <%= f.label 'Адрес' %>
+      <table><tr>
+        <td> <%= f.text_field :address, value: @audiobot.address %></td>
+      </tr></table>
+    </div>
+
 
        <div class="border">
         <%= f.label 'Кол-во памяти' %>
