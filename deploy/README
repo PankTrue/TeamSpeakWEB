@@ -46,8 +46,8 @@ git clone git@gitlab.com:PankTrue/TeamSpeakWEB.git
 
 #Bundle
 bundle install --without test development
-bundle exec rake db:migrate RAILS_ENV=production
-bundle exec rake assets:precompile RAILS_ENV=production
+bundle exec rails db:migrate RAILS_ENV=production
+bundle exec rails assets:precompile RAILS_ENV=production
 
 #Setting nginx
 #Раскоментировать строчку с passenger
