@@ -37,6 +37,13 @@ psql
 CREATE USER ts WITH PASSWORD 'pank021199true';
 CREATE DATABASE "teamspeak" WITH OWNER = ts;
 
+#Download site
+ssh-keygen
+cat .ssh/id_rsa.pub
+add pub key on gitlab (Settings -> SSH keys)
+git clone git@gitlab.com:PankTrue/TeamSpeakWEB.git
+
+
 #Bundle
 bundle install --without test development
 bundle exec rake db:migrate RAILS_ENV=production
