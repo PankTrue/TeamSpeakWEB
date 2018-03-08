@@ -53,6 +53,8 @@ bundle exec rails assets:precompile RAILS_ENV=production
 #Раскоментировать строчку с passenger
 #/etc/nginx/passenger.conf - поменять на passenger.conf
 #/etx/nginx/sites-enabled/teamspeak - создать и вставить teamspeak.conf
+sudo rm /etc/nginx/sites-enabled/default
+
 
 #Setting daemon
 #Paste ts3 and tsdns in /etc/init.d/
