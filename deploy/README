@@ -35,7 +35,7 @@ sudo su postgres;
 psql;
 CREATE USER ts WITH PASSWORD 'pank0211';
 CREATE DATABASE "teamspeak" WITH OWNER = ts;
-exit
+exit;
 
 #Download site
 ssh-keygen;
