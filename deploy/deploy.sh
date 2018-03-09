@@ -13,7 +13,7 @@ echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc;
 rbenv install 2.4.0;
 rbenv global 2.4.0;
 ruby -v;
-gem install bundle;
+gem install bundler;
 
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7;
