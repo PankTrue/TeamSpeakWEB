@@ -35,6 +35,7 @@ sudo apt-get install postgresql postgresql-contrib libpq-dev;
 #psql;
 #CREATE USER ts WITH PASSWORD 'pank0211';
 #CREATE DATABASE "teamspeak" WITH OWNER = ts;
+#\q
 #exit;
 
 #Download site
