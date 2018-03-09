@@ -31,18 +31,16 @@ sudo apt-get install postgresql postgresql-contrib libpq-dev;
 
 
 #Setting postgres
-sudo su postgres;
-psql;
-CREATE USER ts WITH PASSWORD 'pank0211';
-CREATE DATABASE "teamspeak" WITH OWNER = ts;
-exit;
+#sudo su postgres;
+#psql;
+#CREATE USER ts WITH PASSWORD 'pank0211';
+#CREATE DATABASE "teamspeak" WITH OWNER = ts;
+#exit;
 
 #Download site
 ssh-keygen;
 cat .ssh/id_rsa.pub;
 #add pub key on gitlab (Settings -> SSH keys)
-echo Press Enter when you add the key to gitlab;
-read;
 git clone git@gitlab.com:PankTrue/TeamSpeakWEB.git;
 
 
