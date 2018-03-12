@@ -67,8 +67,4 @@ sudo rm /etc/nginx/sites-enabled/default
 #update-rc.d /etc/init.d/ts3 defaults
 
 
-#Backup postgres database
-pg_dump -U ts teamspeak --format=t -f backup.sql.tar
-
-#Restore postgres database
-pg_restore -U ts -d teamspeak -1 backup.sql.tar
+https://www.opsdash.com/blog/postgresql-backup-restore.html
