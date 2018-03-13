@@ -66,5 +66,11 @@ sudo rm /etc/nginx/sites-enabled/default
 #update-rc.d /etc/init.d/tsdns defaults
 #update-rc.d /etc/init.d/ts3 defaults
 
+#add to sudo nano /etc/postgresql/9.5/main/pg_hba.conf
+#local   replication     postgres                                  trust
+#host    replication     postgres          127.0.0.1/32             md5
 
-https://www.opsdash.com/blog/postgresql-backup-restore.html
+#create backup postgres
+pg_basebackup -D pg_backup -Ft -z -Xf -P -U postgres
+
+#restore backup postgres
