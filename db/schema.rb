@@ -12,9 +12,6 @@
 
 ActiveRecord::Schema.define(version: 20180112192239) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "audiobots", force: :cascade do |t|
     t.date     "time_payment",                          null: false
     t.integer  "user_id"
@@ -26,7 +23,7 @@ ActiveRecord::Schema.define(version: 20180112192239) do
     t.boolean  "state",           default: true
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
-    t.index ["user_id"], name: "index_audiobots_on_user_id", using: :btree
+    t.index ["user_id"], name: "index_audiobots_on_user_id"
   end
 
   create_table "backups", force: :cascade do |t|
@@ -34,7 +31,7 @@ ActiveRecord::Schema.define(version: 20180112192239) do
     t.text     "data",        null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.index ["tsserver_id"], name: "index_backups_on_tsserver_id", using: :btree
+    t.index ["tsserver_id"], name: "index_backups_on_tsserver_id"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -55,7 +52,7 @@ ActiveRecord::Schema.define(version: 20180112192239) do
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.boolean  "state",        default: true
-    t.index ["user_id"], name: "index_tsservers_on_user_id", using: :btree
+    t.index ["user_id"], name: "index_tsservers_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -83,10 +80,10 @@ ActiveRecord::Schema.define(version: 20180112192239) do
     t.string   "unconfirmed_email"
     t.string   "url"
     t.string   "name"
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
-    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
-    t.index ["provider"], name: "index_users_on_provider", using: :btree
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["provider"], name: "index_users_on_provider"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
 end
