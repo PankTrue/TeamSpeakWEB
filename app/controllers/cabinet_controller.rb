@@ -10,10 +10,11 @@ require 'base64'
   rescue_from Teamspeak::ServerError, :with => :invalid_server
   
 def home
-    @servers = Tsserver.where(user_id: current_user.id).select(:machine_id)
+    @servers = Tsserver.where(user_id: current_user.id).select(:machine_id,:server_id)
+    return if @servers.blank?
     servs = Array.new
     @servers.each { |temp| servs << temp.machine_id }
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@servers.first.server_id) #TODO: сделать чтобы если у пользователя сервера на разных машинах server_list брать с разных машин и получать статус
     @status = server_status(server.server_list, servs)
     server.disconnect
 end
@@ -31,16 +32,16 @@ def update
       if current_user.have_money?(cost)
         if @ts.valid?
           if @ts.update dns: params[:tsserver][:dns], slots: params[:tsserver][:slots]
-            server = Teamspeak::Functions.new
+            server = Teamspeak::Functions.new(@ts.server_id)
             current_user.update! money: ((current_user.money - cost).round 2), spent: current_user.spent+=cost
             referall_system cost, current_user.ref
             server.server_edit_slots @ts.machine_id, params[:tsserver][:slots]
             if !old_dns.empty? and !params[:tsserver][:dns].empty?
-              Teamspeak::Other.edit_dns(old_dns, @ts.port,params[:tsserver][:dns],@ts.port)
+              Teamspeak::Other.edit_dns(old_dns, @ts.port,params[:tsserver][:dns],@ts.port,@ts.server_id)
             elsif !old_dns.empty? and params[:tsserver][:dns].empty?
-              Teamspeak::Other.del_dns(old_dns, @ts.port)
+              Teamspeak::Other.del_dns(old_dns, @ts.port, @ts.server_id)
             elsif old_dns.empty? and !params[:tsserver][:dns].empty?
-              Teamspeak::Other.new_dns(params[:tsserver][:dns],@ts.port)
+              Teamspeak::Other.new_dns(params[:tsserver][:dns],@ts.port,@ts.server_id)
             end
             redirect_to cabinet_panel_path(params[:id]), success: 'Вы успешно редактировали сервер'
             server.disconnect
@@ -64,24 +65,23 @@ end
 
 
 def create
-    server=Teamspeak::Functions.new
-    user = current_user
+    server=Teamspeak::Functions.new(0) #TODO: сделать выбор сервера
     @ts = Tsserver.new(ts_params)
     time = ts_params[:time_payment].to_i
     if [1,2,3,6,12].include?(time)
-      @ts.time_payment, @ts.user_id, cost = time, user.id, time * Settings.other.slot_cost.to_i * @ts.slots
-        if user.have_money?(cost)
+      @ts.time_payment, @ts.user_id, cost = time, current_user.id, time * Settings.other.slot_cost.to_i * @ts.slots
+        if current_user.have_money?(cost)
           if @ts.valid?
             @ts.time_payment = Date.today + 30*time
             data=server.server_create(free_port,@ts.slots)
             @ts.machine_id, @ts.port, @token = data['sid'], data['virtualserver_port'], data['token']
-              if @ts.save and user.update(money: ((user.money - cost).round(2)), spent: user.spent+cost)
+              if @ts.save and current_user.update(money: ((current_user.money - cost).round(2)), spent: current_user.spent+cost)
                 referall_system cost, current_user.ref
-                Teamspeak::Other.new_dns(@ts.dns, @ts.port) unless @ts.dns.blank?
+                Teamspeak::Other.new_dns(@ts.dns, @ts.port, @ts.server_id) unless @ts.dns.blank?
                 redirect_to cabinet_home_path, success:'Вы успешно создали сервер', info:"Ваш ключ: #{@token}"
               else
                 server.server_destroy @ts.machine_id
-                Teamspeak::Other.del_dns(@ts.dns, @ts.port) unless @ts.dns.blank?
+                Teamspeak::Other.del_dns(@ts.dns, @ts.port,@ts.server_id) unless @ts.dns.blank?
                 redirect_to cabinet_new_path(@ts), danger: 'Что-то пошло не так, отпишите администрации чтобы они это починили.'
               end
 
@@ -100,10 +100,10 @@ end
 
 
 def destroy
-        server=Teamspeak::Functions.new
+        server=Teamspeak::Functions.new(@ts.server_id)
         dns, port = @ts.dns, @ts.port
         server.server_destroy(@ts.machine_id)
-        Teamspeak::Other.del_dns(dns, port) unless dns.empty?
+        Teamspeak::Other.del_dns(dns, port,@ts.server_id) unless dns.empty?
         b = Backup.where tsserver_id: @ts.id
         b.destroy_all
         if @ts.destroy
@@ -120,7 +120,7 @@ end
 def extend_up
   user = current_user
   time = params[:tsserver][:time_payment].to_i
-  cab = Teamspeak::Functions.new
+  cab = Teamspeak::Functions.new(@ts.server_id)
   cost = @ts.slots * Settings.other.slot_cost.to_i * time
   if [1,2,3,6,12].include?(time)
     if user.have_money?(cost)
@@ -150,7 +150,7 @@ end
 
 def work
         if @ts.state
-          server=Teamspeak::Functions.new
+          server=Teamspeak::Functions.new(@ts.server_id)
           if server.server_status(@ts.machine_id)
             server.server_stop @ts.machine_id
             redirect_to cabinet_panel_path, success: 'Вы успешно выключили сервер'
@@ -166,7 +166,7 @@ end
 
 
 def token
-      server = Teamspeak::Functions.new
+      server = Teamspeak::Functions.new(@ts.server_id)
       @tokens = server.token_list(@ts.machine_id)
       @groups = {}
       server.group_list(@ts.machine_id).each {|t| @groups.merge!({"#{t['name'].force_encoding("UTF-8")}":t['sgid']}) if t["type"]==1}
@@ -174,14 +174,14 @@ def token
 end
 
 def create_token
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     server.create_token(@ts.machine_id, params[:group_id], params[:description])
     redirect_to cabinet_token_path(params[:id]), success: 'Вы успешно создали токен'
     server.disconnect
 end
 
 def delete_token
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     server.delete_token @ts.machine_id, params[:token]
     redirect_to cabinet_token_path params[:id]
     server.disconnect
@@ -233,7 +233,7 @@ end
 
 def create_backup
   unless backup = Backup.where(tsserver_id: params[:id]).count >= 3
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     backup = Backup.new(tsserver_id: params[:id], data: server.create_backup(@ts.machine_id).to_s)
     server.disconnect
     if backup.save
@@ -254,28 +254,28 @@ end
 
 def apply_backup
     backup = Backup.find params[:backup_id]
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     server.deploy_backup(@ts.machine_id, backup.data)
     redirect_to cabinet_backups_path(backup.tsserver_id), success: 'Вы успешно применили бекап!'
     server.disconnect
 end
 
 def reset_permissions
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     server.reset_permissions @ts.machine_id
     redirect_to cabinet_home_path, success: 'Вы успешно сбросили права'
     server.disconnect
 end
 
 def settings
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     info = server.server_info @ts.machine_id
     @name, @welcome_message = info['virtualserver_name'].force_encoding(Encoding::UTF_8), info['virtualserver_welcomemessage'].force_encoding(Encoding::UTF_8)
     server.disconnect
 end
 
 def settings_edit
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(@ts.server_id)
     server.set_settings @ts.machine_id, params[:name], params[:welcome_message], params[:pass]
     redirect_to cabinet_panel_path(@ts.id), success: 'Вы успешно изменили настройки сервера'
     server.disconnect
@@ -330,7 +330,7 @@ end
 
 def panel
     @count_users = 0
-    server=Teamspeak::Functions.new
+    server=Teamspeak::Functions.new(@ts.server_id)
     server.command('use', {sid: @ts.machine_id}, '-virtual')
     @info=server.command('serverinfo', {}, '-virtual')
     @channel=server.command('channellist', {}, '-flags -voice -limits -virtual')
@@ -361,7 +361,7 @@ private
 
   def free_port
     i=2000
-    server=Teamspeak::Functions.new
+    server=Teamspeak::Functions.new(@ts.server_id)
     data=server.server_list
     used_ports=[]
       data.each do |temp|

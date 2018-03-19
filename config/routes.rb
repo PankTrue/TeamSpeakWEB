@@ -66,6 +66,8 @@ Rails.application.routes.draw do
   get 'admin/del_physical_server', to: 'admin#del_physical_server', as: 'admin_del_physical_server'
   get 'admin/amounts', to: 'admin#amounts', as: 'admin_amounts'
   post 'admin/destroy_payment', to: 'admin#destroy_payment', as: 'admin_destroy_payment'
+  get 'admin/panel_tsserver/:id', to: 'admin#panel_tsserver', as: 'admin_panel_tsserver'
+  post 'admin/update_panel_tsserver', to: 'admin#update_panel_tsserver', as: 'admin_update_panel_tsserver'
 
 
   root 'home#index'

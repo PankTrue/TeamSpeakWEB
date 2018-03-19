@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703124123) do
+ActiveRecord::Schema.define(version: 20180319065418) do
+
+  create_table "audiobots", force: :cascade do |t|
+    t.date     "time_payment",                          null: false
+    t.integer  "user_id"
+    t.string   "address",         default: "127.0.0.1", null: false
+    t.string   "password"
+    t.integer  "audio_quota",                           null: false
+    t.string   "nickname",        default: "audiobot",  null: false
+    t.integer  "default_channel"
+    t.boolean  "state",           default: true
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.index ["user_id"], name: "index_audiobots_on_user_id"
+  end
 
   create_table "backups", force: :cascade do |t|
     t.integer  "tsserver_id", null: false
@@ -38,6 +52,7 @@ ActiveRecord::Schema.define(version: 20170703124123) do
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.boolean  "state",        default: true
+    t.integer  "server_id",    default: 0
     t.index ["user_id"], name: "index_tsservers_on_user_id"
   end
 
