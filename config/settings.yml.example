@@ -1,21 +1,40 @@
-development: &defaults
+defaults:
   w1:
-    merchant_id: '123641701293'
-    signature: 'longsignature'
+    merchant_id: ''
+    signature: ''
   teamspeak:
     login: 'serveradmin'
-    password: 'noIma+u2'
-    #password: '3Z9OOU5e'
-    ts_path: '~/teamspeak'
+    password: ''
+    ts_path: '/home/ts/tsserver'
   other:
-    admin_list: ['linkinpark02111@mail.ru', 'maks2x2@mail.ru']
-    dns: 'panktrue.ddns.net'
-    ip: '109.62.238.42'
+    admin_list: ['linkinpark02111@mail.ru']
+    dns: 'easy-ts3.ru'
+    ip: '95.46.8.140'
+    slot_cost: 3
   unitpay:
     public_key: 'key'
     secret_key: 'key'
-
-
+  oauth:
+    vkontakte:
+      key: '6084681'
+      private: ''
+    facebook:
+      key: '1933881836851432'
+      private: ''
+    twitter:
+      key: 'WzIRfurzzgspKLU1mtsdOFUaT'
+      private: ''
+    google_oauth2:
+      key: '193231808108-nqo79imif20t0hu8vrfeof5qprh24hrp.apps.googleusercontent.com'
+      private: ''
+  recaptcha:
+    site_key: '6LcJchcUAAAAACgxXpkf-s7MkCtThMI5VW8H91Oa'
+    secret_key: ''
+    
+    
+    
+development: 
+  <<: *defaults
 
 staging:
   <<: *defaults
