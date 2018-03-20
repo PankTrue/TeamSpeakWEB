@@ -1,20 +1,21 @@
+#!/bin/bash
 sudo apt-get update
-sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev nodejs postfix
+sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev nodejs postfix lsof
 
 #Install ruby------------------------------------------
 git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-exec $SHELL
 
 git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
-exec $SHELL
+source ~/.bashrc
+
 
 rbenv install 2.4.0
 rbenv global 2.4.0
 ruby -v
-gem install bundle
+gem install bundler
 
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
@@ -34,24 +35,46 @@ sudo apt-get install postgresql postgresql-contrib libpq-dev
 #Setting postgres
 sudo su postgres
 psql
-CREATE USER ts WITH PASSWORD 'pank021199true';
+CREATE USER ts WITH PASSWORD 'pank0211';
 CREATE DATABASE "teamspeak" WITH OWNER = ts;
+\q
+exit
 
+#Download site
+ssh-keygen
+cat .ssh/id_rsa.pub
+#add pub key on gitlab (Settings -> SSH keys)
+git clone git@gitlab.com:PankTrue/TeamSpeakWEB.git
+
+
+
+#Setting database.yml and settings.yml
 #Bundle
 bundle install --without test development
-bundle exec rake db:migrate RAILS_ENV=production
-bundle exec rake assets:precompile RAILS_ENV=production
+bundle exec rails db:migrate RAILS_ENV=production
+bundle exec rails assets:precompile RAILS_ENV=production
 
 #Setting nginx
-#Раскоментировать строчку с passenger
-#/etc/nginx/passenger.conf - поменять на passenger.conf
-#/etx/nginx/sites-enabled/teamspeak - создать и вставить teamspeak.conf
+sudo cp ~/TeamSpeakWEB/deploy/nginx/passenger.conf /etc/nginx/passenger.conf
+sudo cp ~/TeamSpeakWEB/deploy/nginx/nginx.conf /etc/nginx/nginx.conf;
+sudo cp ~/TeamSpeakWEB/deploy/nginx/sites-enabled/teamspeak /etx/nginx/sites-enabled/teamspeak;
+sudo rm /etc/nginx/sites-enabled/default
+
 
 #Setting daemon
 #Paste ts3 and tsdns in /etc/init.d/
 #update-rc.d /etc/init.d/tsdns defaults
 #update-rc.d /etc/init.d/ts3 defaults
 
+#add to sudo nano /etc/postgresql/9.5/main/pg_hba.conf
+#local   replication     postgres                                  trust
+#host    replication     postgres          127.0.0.1/32             md5
 
-#Backup postgres database
-pg_dump -U ts teamspeak --format=t -f backup.sql.tar
+#create backup postgres
+pg_basebackup -D pg_backup -Ft -z -Xf -P -U postgres
+
+#restore backup postgres
+sudo service postgresql stop
+sudo rm -rf /var/lib/postgresql/9.5/main/*
+sudo -u postgres tar -xvC /var/lib/postgresql/9.5/main -f ./base.tar.gz
+sudo service postgresql start

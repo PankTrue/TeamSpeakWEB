@@ -58,3 +58,28 @@ end
 
 
 
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'bootstrap-sass'
+gem 'font-awesome-rails'
+gem 'devise', '~> 4.4.3'
+#gem 'unicorn'
+gem 'nginx','~> 0.0.2'
+gem 'pg', '~> 0.18'
+gem 'rufus-scheduler'
+gem 'settingslogic'
+gem 'rack-attack'
+gem 'walletone', git: 'https://github.com/BrandyMint/walletone'
+gem 'unitpay'
+gem 'dalli'
+gem 'bcrypt'
+gem "recaptcha", require: "recaptcha/rails"
+gem 'passenger'
+gem 'rb-inotify'
+gem 'omniauth-vkontakte'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
+gem 'whenever', require: false
+

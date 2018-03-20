@@ -1,0 +1,33 @@
+<div class="update">
+<%= form_for @ts, url: {controller: "admin", action: "update_panel_tsserver", id: @ts.id}, method: :post do |f|%>
+
+  <% if @ts.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@ts.errors.count, "Ошибка") %></h2>
+
+      <% @ts.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </div>
+  <% end %>
+
+
+  <div class="border">
+    <%= f.label 'Server_id:' %>
+    <%= f.number_field :server_id, value: @ts.server_id %>
+  </div>
+
+
+
+
+
+
+
+
+  <%= f.submit "Update", class: 'btn btn-default'%>
+
+
+<% end %>
+
+
+</div>

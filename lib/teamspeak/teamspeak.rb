@@ -39,7 +39,7 @@ module Teamspeak
     #
     #   connect('voice.domain.com', 88888)
     def initialize(host = 'localhost', port = 10_011)
-      connect('localhost', 10_011)
+      connect(host, 10_011)
       login(Settings.teamspeak.login,Settings.teamspeak.password)
     end
 
@@ -177,8 +177,8 @@ module Teamspeak
 
   class Functions < Client
 
-    def initialize
-      super
+    def initialize(server_id)
+      super(Settings.other.ip[server_id])
     end
 
     def info
@@ -331,23 +331,23 @@ module Teamspeak
       time+=2
     end
 
-    def self.new_dns dns, port
+    def self.new_dns dns, port,server_id
       File.open("#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", 'a') do |f|
-        f.puts dns_to_dnscfg(dns, port)
+        f.puts dns_to_dnscfg(dns, port,server_id)
       end
       %x"#{Settings.teamspeak.ts_path}/tsdns/tsdnsserver --update"
     end
 
-    def self.edit_dns old_dns, old_port, new_dns, new_port
+    def self.edit_dns old_dns, old_port, new_dns, new_port,server_id
       arr = Array.new
       File.open "#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", "r" do |f|
         f.each_line do |l|
           arr << l
         end
       end
-      index = arr.index(dns_to_dnscfg(old_dns, old_port)+"\n")
+      index = arr.index(dns_to_dnscfg(old_dns, old_port,server_id)+"\n")
       unless index.nil?
-        arr[index] = dns_to_dnscfg(new_dns, new_port).to_s + "\n"
+        arr[index] = dns_to_dnscfg(new_dns, new_port,server_id).to_s + "\n"
       end
 
       arr.uniq!
@@ -357,7 +357,7 @@ module Teamspeak
       %x"#{Settings.teamspeak.ts_path}/tsdns/tsdnsserver --update"
     end
 
-    def self.del_dns dns, port
+    def self.del_dns dns, port,server_id
       arr = Array.new
       File.open "#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", "r" do |f|
         f.each_line do |l|
@@ -365,7 +365,7 @@ module Teamspeak
         end
       end
 
-      arr.delete(dns_to_dnscfg(dns, port)+"\n")
+      arr.delete(dns_to_dnscfg(dns, port, server_id)+"\n")
 
       File.open "#{Settings.teamspeak.ts_path}/tsdns/tsdns_settings.ini", "w" do |f|
         f.puts arr
@@ -373,8 +373,8 @@ module Teamspeak
       %x"#{Settings.teamspeak.ts_path}/tsdns/tsdnsserver --update"
     end
 
-    def self.dns_to_dnscfg dns, port
-      "#{dns}.#{Settings.other.dns}=#{Settings.other.ip}:#{port}"
+    def self.dns_to_dnscfg dns, port,server_id
+      "#{dns}.#{Settings.other.dns}=#{Settings.other.ip[server_id]}:#{port}"
     end
 
   end
