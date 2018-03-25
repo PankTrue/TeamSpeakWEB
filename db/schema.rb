@@ -10,21 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180112192239) do
-ActiveRecord::Schema.define(version: 20180319065418) do
+ActiveRecord::Schema.define(version: 20180324172025) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "audiobots", force: :cascade do |t|
-    t.date     "time_payment",                          null: false
-    t.integer  "user_id"
-    t.string   "address",         default: "127.0.0.1", null: false
+    t.date     "time_payment",                                    null: false
+    t.integer  "user_id",                                         null: false
+    t.string   "address",                   default: "127.0.0.1", null: false
     t.string   "password"
-    t.integer  "audio_quota",                           null: false
-    t.string   "nickname",        default: "audiobot",  null: false
-    t.integer  "default_channel"
-    t.boolean  "state",           default: true
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.index ["user_id"], name: "index_audiobots_on_user_id"
+    t.integer  "audio_quota",                                     null: false
+    t.string   "nickname",                  default: "audiobot",  null: false
+    t.integer  "default_channel",           default: 0
+    t.boolean  "state",                     default: true
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.integer  "server_id",       limit: 2, default: 0
+    t.index ["user_id"], name: "index_audiobots_on_user_id", using: :btree
   end
 
   create_table "backups", force: :cascade do |t|
@@ -32,7 +35,7 @@ ActiveRecord::Schema.define(version: 20180319065418) do
     t.text     "data",        null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.index ["tsserver_id"], name: "index_backups_on_tsserver_id"
+    t.index ["tsserver_id"], name: "index_backups_on_tsserver_id", using: :btree
   end
 
   create_table "payments", force: :cascade do |t|
@@ -44,17 +47,17 @@ ActiveRecord::Schema.define(version: 20180319065418) do
   end
 
   create_table "tsservers", force: :cascade do |t|
-    t.integer  "port",                        null: false
+    t.integer  "port",                                  null: false
     t.string   "dns"
-    t.integer  "slots",                       null: false
-    t.date     "time_payment",                null: false
-    t.integer  "user_id",                     null: false
-    t.integer  "machine_id",                  null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.boolean  "state",        default: true
-    t.integer  "server_id",    default: 0
-    t.index ["user_id"], name: "index_tsservers_on_user_id"
+    t.integer  "slots",                                 null: false
+    t.date     "time_payment",                          null: false
+    t.integer  "user_id",                               null: false
+    t.integer  "machine_id",                            null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.boolean  "state",                  default: true
+    t.integer  "server_id",    limit: 2, default: 0
+    t.index ["user_id"], name: "index_tsservers_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
@@ -82,10 +85,10 @@ ActiveRecord::Schema.define(version: 20180319065418) do
     t.string   "unconfirmed_email"
     t.string   "url"
     t.string   "name"
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["provider"], name: "index_users_on_provider"
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["provider"], name: "index_users_on_provider", using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
 end

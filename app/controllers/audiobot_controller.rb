@@ -1,5 +1,7 @@
 class AudiobotController < ApplicationController
 
+  require 'socket'
+
   before_action :authenticate_user!
   before_action :audiobot_params_for_create, only: [:create]
   before_action :audiobot_params_for_settings_up, only: [:settings_up]
@@ -20,6 +22,8 @@ class AudiobotController < ApplicationController
       if current_user.have_money?(cost)
         if @audiobot.valid?
           if @audiobot.save and current_user.update(money: ((current_user.money - cost).round(2)), spent: current_user.spent+cost)
+            update_audiobot_cfg
+            audiobot_start
             referall_system cost, current_user.ref
             redirect_to cabinet_home_path, success:'Вы успешно купили аудио бота'
           else
@@ -50,6 +54,7 @@ class AudiobotController < ApplicationController
           @audiobot.update!(audio_quota: params[:audiobot][:audio_quota].to_i)
           referall_system cost, current_user.ref
         end
+        update_audiobot_cfg
         redirect_to audiobot_panel_path(params[:id]), success: 'Вы успешно редактировали бота'
       else
         render 'cabinet/edit'
@@ -99,6 +104,8 @@ class AudiobotController < ApplicationController
             current_user.save
             referall_system cost, current_user.ref
           end
+          update_audiobot_cfg
+
           redirect_to cabinet_home_path, success:'Вы успешно продлил'
       else
         redirect_to cabinet_home_path, danger: 'Недостаточно средств'
@@ -109,7 +116,9 @@ class AudiobotController < ApplicationController
   end
 
   def restart
-    %x"echo restart > #{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/events"
+    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
+      sock.write("dickdickdickdickrestart #{@audiobot.id}")
+    end
     redirect_to audiobot_panel_path(@audiobot.id), success: "Вы успешно перезапустили бота"
   end
 
@@ -130,26 +139,23 @@ private
   end
 
   def update_audiobot_cfg
-    data = {
-              address: @audiobot.address,
-              audio_quota: @audiobot.audio_quota,
-              default_channel: @audiobot.default_channel,
-              nickname: @audiobot.nickname,
-              password: @audiobot.password,
-              state: @audiobot.state
-            }.to_json
-
-    path = "#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}"
-    FileUtils.mkpath(path)
-
-    File.open("#{path}/config.json",'w') do |file|
-      file.write(data)
+    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
+      sock.write("dickdickdickdickconfig_update #{@audiobot.id}")
     end
-    botslist_update()
   end
 
   def botslist_update
-    %x"echo bots_list_update > #{Settings.audiobot.path_for_audiobot}/manager.events"
+    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
+      sock.write("dickdickdickdickbots_list_update")
+    end
   end
+
+  def audiobot_start
+    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
+      sock.write("dickdickdickdickstart #{@audiobot.id}")
+    end
+  end
+
+
 
 end

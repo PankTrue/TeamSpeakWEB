@@ -2,12 +2,12 @@ class CreateAudiobots < ActiveRecord::Migration[5.0]
   def change
     create_table :audiobots do |t|
       t.date    :time_payment, null: false
-      t.integer :user_id
+      t.integer :user_id, null: false
       t.string  :address, default: "127.0.0.1", null:false
       t.string :password
       t.integer :audio_quota, null: false
       t.string :nickname, default: "audiobot",null:false
-      t.integer :default_channel
+      t.integer :default_channel, default: 0
       t.boolean :state, default: true
       t.timestamps
     end

@@ -1,12 +1,12 @@
 class SessionsController < Devise::SessionsController
   # prepend_before_action :check_captcha, only: [:create]
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
   private
 
   # def check_captcha
@@ -15,6 +15,6 @@ class SessionsController < Devise::SessionsController
   #     respond_with_navigational(resource) { render :new }
   #   end
   # end
-  
-  
+
+
 end

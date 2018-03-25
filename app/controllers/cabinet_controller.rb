@@ -11,7 +11,6 @@ require 'base64'
   
 def home
     @servers = Tsserver.where(user_id: current_user.id)
-    @servers = Tsserver.where(user_id: current_user.id).select(:machine_id,:server_id)
     return if @servers.blank?
     servs = Array.new
     @servers.each { |temp| servs << temp.machine_id }
@@ -64,12 +63,10 @@ def new
 end
 
 def create
-    server=Teamspeak::Functions.new
     @ts=Tsserver.new(ts_params)
     time = params[:tsserver][:time_payment].to_i
     server=Teamspeak::Functions.new(0) #TODO: сделать выбор сервера
     @ts = Tsserver.new(ts_params)
-    time = ts_params[:time_payment].to_i
     if [1,2,3,6,12].include?(time)
       @ts.time_payment, @ts.user_id, cost = time, current_user.id, time * Settings.other.slot_cost.to_i * @ts.slots
         if current_user.have_money?(cost)
@@ -262,8 +259,6 @@ def reset_permissions
 end
 
 def settings
-    server = Teamspeak::Functions.new
-    info = server.server_info(@ts.machine_id)
     server = Teamspeak::Functions.new(@ts.server_id)
     info = server.server_info @ts.machine_id
     @name, @welcome_message = info['virtualserver_name'].force_encoding(Encoding::UTF_8), info['virtualserver_welcomemessage'].force_encoding(Encoding::UTF_8)
