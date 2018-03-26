@@ -155,12 +155,4 @@ private
     end
   end
 
-  def audiobot_start
-    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
-      sock.write("dickdickdickdickstart #{@audiobot.id}")
-    end
-  end
-
-
-
 end
