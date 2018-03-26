@@ -22,6 +22,7 @@
     </div>
 
 
+
        <div class="border">
         <%= f.label 'Кол-во памяти' %>
         <table><tr>
@@ -33,16 +34,24 @@
       </div>
 
 
-      <div class="border">
+    <div class="border">
+      <div class="field">
+        <%= f.label 'Расположение' %>
+        <br>
+        <%= i = -1;f.select :server_id, Settings.other.locale.collect{|l|  [l, i+=1]} %>
+      </div>
+    </div>
 
+
+      <div class="border">
         <div class="field">
           <%= f.label 'Время оплаты' %>
           <br>
           <%= f.select :time_payment, Tsserver::Payment_Data %>
-
         </div>
-
       </div>
+
+
 
       <div class="border">
         <h4>Стоимость: <span class="cost"></span>руб.</h4>

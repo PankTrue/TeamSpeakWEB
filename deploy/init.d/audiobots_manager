@@ -1,0 +1,70 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          audiobots_manager
+# Required-Start:    networking
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      S 0 1 6
+# Short-Description: Audiobots Manager Daemon
+# Description:       Starts/Stops/Restarts the Audiobots Manager Daemon
+### END INIT INFO
+
+
+# path to manager root directory
+SERVER_PATH=/home/ts/audiobot
+# full path to manager server binary
+SERVER_BINARY=$SERVER_PATH/audiobots_manager
+# user running manager server
+TEAMSPEAK_SYSTEM_USER=ts
+# group running manager server
+TEAMSPEAK_SYSTEM_GROUP=ts
+
+
+# full path to pid file for start-stop-daemon
+PID_FILE=$SERVER_PATH/audiobots_manager.pid
+
+DAEMON_COMMAND_PARAMS=""
+
+case "$1" in
+ start)
+        echo "Starting audiobots_manager server..."
+        export LD_LIBRARY_PATH="${SERVER_PATH}:${LD_LIBRARY_PATH}"
+        start-stop-daemon --start --quiet --exec "$SERVER_BINARY" --chdir "$SERVER_PATH" \
+                          --chuid "$TEAMSPEAK_SYSTEM_USER" --group "$TEAMSPEAK_SYSTEM_GROUP" \
+                          --background --make-pidfile --pidfile "$PID_FILE"
+        if [ $? != 0 ]; then
+                echo "! Failed. (Server already running?)"
+                exit 1
+        else
+                echo "done."
+        fi
+ ;;
+ stop)
+        echo "Stopping audiobots_manager server..."
+        start-stop-daemon --stop --quiet --pidfile "$PID_FILE"
+        if [ $? != 0 ]; then
+                echo "! Failed."
+                exit 1
+        else
+                echo "done."
+        fi
+ ;;
+ status)
+        if [ -e $PID_FILE ]; then
+                if ( kill -0 $(cat $PID_FILE) 2&gt; /dev/null ); then
+                        echo "Manager is running"
+                else
+                        echo "Manager not running"
+                fi
+        else
+                echo "Server PID file not found"
+        fi
+ ;;
+ *)
+        echo "Usage: $0 {start|stop|status}"
+    exit 1
+ ;;
+esac
+
+exit 0
+Sign up for free

@@ -9,7 +9,7 @@ class Tsserver < ApplicationRecord
 	validates :dns, uniqueness: true, allow_blank: true, format: {with: /\A[\w|-]+\z/, message: "не правильно введен" }
 
 		def self.update_servers
-			server = Teamspeak::Functions.new
+			server = Teamspeak::Functions.new()
 			ts = Tsserver.all
 			ts.each do |t|
 				if (Teamspeak::Other.sec2days(t.time_payment.to_time - Time.now) <= 0)

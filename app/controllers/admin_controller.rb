@@ -16,7 +16,7 @@ class AdminController < ApplicationController
   end
 
   def belongs_verification
-    server = Teamspeak::Functions.new
+    server = Teamspeak::Functions.new(0) #TODO: доделать
     physical_servers = server.server_list
     logic_servers = Tsserver.all
     @physical = machine_id_list_not_found_in_db physical_servers, logic_servers
@@ -37,14 +37,14 @@ class AdminController < ApplicationController
   end
 
   def servers
-    server = Teamspeak::Functions.new
     @ts = Tsserver.all.sort
+    server = Teamspeak::Functions.new(@ts.first.server_id)
     @physical = server.server_list
     server.disconnect
   end
 
-  def del_physical_server
-    server=Teamspeak::Functions.new
+  def del_physical_server #useless
+    server=Teamspeak::Functions.new(0)
     server.server_destroy(params[:id])
     redirect_to admin_servers_path
   end
@@ -57,6 +57,16 @@ class AdminController < ApplicationController
     Payment.delete(params[:id])
     redirect_to admin_amounts_path
   end
+
+  def panel_tsserver
+    @ts = Tsserver.find params[:id]
+  end
+
+  def update_panel_tsserver
+    Tsserver.find(params[:id]).update(server_id: params[:tsserver][:server_id])
+    redirect_to admin_panel_tsserver_path(params[:id])
+  end
+  
 
 private
   def admin?
