@@ -18,7 +18,7 @@ class AudiobotController < ApplicationController
       @audiobot.user_id = current_user.id
       cost = params[:audiobot][:time_payment].to_i * Settings.audiobot.audio_quota_cost.to_f * params[:audiobot][:audio_quota].to_i
       @audiobot.time_payment = Date.today + 30 * params[:audiobot][:time_payment].to_i
-      @audiobot.server_id = params[:audiobot][:server_id].to_s
+      # @audiobot.server_id = params[:audiobot][:server_id].to_i
       if current_user.have_money?(cost)
         if @audiobot.valid?
           if @audiobot.save and current_user.update(money: ((current_user.money - cost).round(2)), spent: current_user.spent+cost)

@@ -343,7 +343,7 @@ private
   end
 
 	def ts_params
-		params.require(:tsserver).permit(:slots, :dns, :time_payment)
+		params.require(:tsserver).permit(:slots, :dns, :time_payment,:server_id)
   end
 
   def free_port

@@ -7,6 +7,9 @@ class Tsserver < ApplicationRecord
 
 	validates :slots, presence: true, numericality: true, inclusion: {in: 10..512}
 	validates :dns, uniqueness: true, allow_blank: true, format: {with: /\A[\w|-]+\z/, message: "не правильно введен" }
+	validates :server_id,inclusion: {in: 0..Settings.other.ip.size,message: 'нет в списке'}
+
+
 
 		def self.update_servers
 			server = Teamspeak::Functions.new()
