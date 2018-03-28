@@ -63,7 +63,7 @@ class AdminController < ApplicationController
   end
 
   def update_panel_tsserver
-    Tsserver.find(params[:id]).update(server_id: params[:tsserver][:server_id])
+    Tsserver.find(params[:id]).update(server_id: params[:tsserver][:server_id], user_id: params[:tsserver][:user_id], machine_id: params[:tsserver][:machine_id])
     redirect_to admin_panel_tsserver_path(params[:id])
   end
   
