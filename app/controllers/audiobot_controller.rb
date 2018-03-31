@@ -1,13 +1,14 @@
 class AudiobotController < ApplicationController
 
   require 'socket'
+  require 'timeout'
 
   before_action :authenticate_user!
   before_action :audiobot_params_for_create, only: [:create]
   before_action :audiobot_params_for_settings_up, only: [:settings_up]
   before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up, :restart]
 
-  rescue_from Errno::ECONNREFUSED, :with => :invalid_manager
+  rescue_from Errno::ECONNREFUSED,Errno::ETIMEDOUT, :with => :invalid_manager
   rescue_from ActiveRecord::RecordInvalid, :with => :invalid_transaction
 
 
@@ -40,9 +41,9 @@ class AudiobotController < ApplicationController
       @audiobot.save!
       current_user.update!(money: ((current_user.money - cost).round(2)), spent: current_user.spent+cost)
       referall_system cost, current_user.ref
-      update_audiobot_cfg
-      audiobot_start
     end
+    update_audiobot_cfg
+    audiobot_start
 
     redirect_to cabinet_home_path, success: 'Вы успешно купили аудиобота'
   end
@@ -68,8 +69,8 @@ class AudiobotController < ApplicationController
       current_user.update!(money: ((current_user.money - cost).round 2), spent: current_user.spent+=cost)
       @audiobot.update!(audio_quota: params[:audiobot][:audio_quota].to_i)
       referall_system cost, current_user.ref
-      update_audiobot_cfg
     end
+    update_audiobot_cfg
 
     redirect_to audiobot_panel_path(params[:id]), success: 'Вы успешно редактировали бота'
   end
@@ -86,8 +87,8 @@ class AudiobotController < ApplicationController
   def settings_up
     ActiveRecord::Base.transaction do
       @audiobot.update!(audiobot_params_for_settings_up)
-      update_audiobot_cfg
     end
+    update_audiobot_cfg
     redirect_to audiobot_panel_path(@audiobot), success: 'Вы успешно изменили настройки бота'
   end
 
@@ -122,16 +123,15 @@ class AudiobotController < ApplicationController
       @audiobot.save!
       current_user.save!
       referall_system cost, current_user.ref
-      update_audiobot_cfg
     end
+    update_audiobot_cfg
+    botslist_update
 
     redirect_to cabinet_home_path, success:'Вы успешно продлил'
   end
 
   def restart
-    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
-      sock.write("#{Settings.audiobot.verify_data}restart #{@audiobot.id}")
-    end
+    send_command_for_audiobot_manager('restart')
     redirect_to audiobot_panel_path(@audiobot.id), success: "Вы успешно перезапустили бота"
   end
 
@@ -152,21 +152,15 @@ private
   end
 
   def update_audiobot_cfg
-    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
-      sock.write("#{Settings.audiobot.verify_data}config_update #{@audiobot.id}")
-    end
+    send_command_for_audiobot_manager('config_update')
   end
 
   def botslist_update
-    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
-      sock.write("#{Settings.audiobot.verify_data}bots_list_update")
-    end
+    send_command_for_audiobot_manager('bots_list_update')
   end
 
   def audiobot_start
-    TCPSocket.open(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port) do |sock|
-      sock.write("#{Settings.audiobot.verify_data}start #{@audiobot.id}")
-    end
+    send_command_for_audiobot_manager('start')
   end
 
   def invalid_manager
@@ -175,6 +169,13 @@ private
 
   def invalid_transaction
     redirect_to home_index_path, danger:'Что-то пошло не так, сообщите об этом администрации'
+  end
+
+  def send_command_for_audiobot_manager(message)
+    Socket.tcp(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port,nil,nil,connect_timeout: 5) do |sock|
+      sock.write("#{Settings.audiobot.verify_data}#{message} #{@audiobot.id}")
+      raise Errno::ECONNREFUSED if(sock.gets != "OK")
+    end
   end
 
 end
