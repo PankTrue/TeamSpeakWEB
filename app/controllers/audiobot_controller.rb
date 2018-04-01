@@ -1,12 +1,12 @@
 class AudiobotController < ApplicationController
 
   require 'socket'
-  require 'timeout'
+  require 'net/ssh'
 
   before_action :authenticate_user!
   before_action :audiobot_params_for_create, only: [:create]
   before_action :audiobot_params_for_settings_up, only: [:settings_up]
-  before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up, :restart]
+  before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up, :restart, :playlist, :play_audio]
 
   rescue_from Errno::ECONNREFUSED,Errno::ETIMEDOUT, :with => :invalid_manager
   rescue_from ActiveRecord::RecordInvalid, :with => :invalid_transaction
@@ -135,6 +135,18 @@ class AudiobotController < ApplicationController
     redirect_to audiobot_panel_path(@audiobot.id), success: "Вы успешно перезапустили бота"
   end
 
+  def playlist
+    @audiobot = Audiobot.find(params[:id])
+    @playlist = getDecodedPlayList
+    @total = @playlist[0].split(' ')[1]
+    @playlist.slice!(0)
+  end
+
+  def play_audio
+    audiobot_play_audio(params[:audio_id]) unless params[:audio_id].blank?
+    redirect_to audiobot_playlist_path(@audiobot.id), success: "Запись #{params[:audio_id].to_i + 1} была успешно воспроизведена"
+  end
+
 
 private
 
@@ -163,6 +175,10 @@ private
     send_command_for_audiobot_manager('start')
   end
 
+  def audiobot_play_audio(audio_id)
+    send_command_for_audiobot_manager("play_audio #{audio_id}")
+  end
+
   def invalid_manager
     redirect_to home_index_path, danger:'Проблемы с сервером, сообщите об этом администрации'
   end
@@ -176,6 +192,13 @@ private
       sock.write("#{Settings.audiobot.verify_data}#{message} #{@audiobot.id}")
       raise Errno::ECONNREFUSED if(sock.gets != "OK")
     end
+  end
+
+  def getDecodedPlayList
+    Net::SSH.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |ssh|
+      return ssh.exec!("ls -s1h #{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFiles").split("\n")
+    end
+
   end
 
 end

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+
   class WalletoneMiddleware < Walletone::Middleware::Base
     def perform notify, env
       raise 'Wrong signature' unless notify.valid? Settings.w1.signature
@@ -26,17 +27,19 @@ Rails.application.routes.draw do
   # end
 
 
-  get 'audiobot/new',to: 'audiobot#new',as: 'audiobot_new'
-  post 'audiobot/create',to: 'audiobot#create',as: 'audiobot_create'
-  get 'audiobot/edit/:id',to: 'audiobot#edit',as: 'audiobot_edit'
-  post 'audiobot/update/:id',to: 'audiobot#update',as: 'audiobot_update'
-  delete 'audiobot/destroy/:id',to: 'audiobot#destroy',as: 'audiobot_destroy'
-  get 'audiobot/panel/:id',to: 'audiobot#panel',as: 'audiobot_panel'
-  get 'audiobot/settings/:id', to: 'audiobot#settings',as: 'audiobot_settings'
-  post 'audiobot/settings_up/:id', to: 'audiobot#settings_up',as: 'audiobot_settings_up'
-  get 'audiobot/extend/:id', to: 'audiobot#extend',as: 'audiobot_extend'
-  post 'audiobot/extend_up/:id', to: 'audiobot#extend_up',as: 'audiobot_extend_up'
-  post 'audiobot/restart/:id', to: 'audiobot#restart', as: 'audiobot_restart'
+  get     'audiobot/new',to: 'audiobot#new',as: 'audiobot_new'
+  post    'audiobot/create',to: 'audiobot#create',as: 'audiobot_create'
+  get     'audiobot/edit/:id',to: 'audiobot#edit',as: 'audiobot_edit'
+  post    'audiobot/update/:id',to: 'audiobot#update',as: 'audiobot_update'
+  delete  'audiobot/destroy/:id',to: 'audiobot#destroy',as: 'audiobot_destroy'
+  get     'audiobot/panel/:id',to: 'audiobot#panel',as: 'audiobot_panel'
+  get     'audiobot/settings/:id', to: 'audiobot#settings',as: 'audiobot_settings'
+  post    'audiobot/settings_up/:id', to: 'audiobot#settings_up',as: 'audiobot_settings_up'
+  get     'audiobot/extend/:id', to: 'audiobot#extend',as: 'audiobot_extend'
+  post    'audiobot/extend_up/:id', to: 'audiobot#extend_up',as: 'audiobot_extend_up'
+  post    'audiobot/restart/:id', to: 'audiobot#restart', as: 'audiobot_restart'
+  get     'audiobot/playlist/:id', to: 'audiobot#playlist', as: 'audiobot_playlist'
+  post     'audiobot/play_audio', to: 'audiobot#play_audio', as: 'audiobot_play_audio'
 
 
 

@@ -1,0 +1,32 @@
+<h2>PlayList | Total: <%= @total %> </h2>
+<div>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Size</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @playlist.each_with_index do |audiofile,index| %>
+       <% size = String.new %>
+      <% audiofile.slice!(0) if audiofile[0] == ' ' %>
+      <% audiofile.each_char do |char|%>
+        <% break if char == ' ' %>
+        <% audiofile.slice!(0) %>
+      <% size << char %>
+      <% end %>
+      <tr>
+        <td> <%= index+1 %></td>
+        <td><%= audiofile %></td>
+        <td> <%= size %> </td>
+
+        <td><%= link_to 'Play', audiobot_play_audio_path(id: @audiobot.id,audio_id: index),method: :post, class: 'btn btn-primary'%></td>
+
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
