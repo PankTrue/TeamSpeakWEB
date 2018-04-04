@@ -2,13 +2,15 @@ class AudiobotController < ApplicationController
 
   require 'socket'
   require 'net/ssh'
+  require 'net/sftp'
+  require 'timeout'
 
   before_action :authenticate_user!
   before_action :audiobot_params_for_create, only: [:create]
   before_action :audiobot_params_for_settings_up, only: [:settings_up]
-  before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up, :restart, :playlist, :play_audio]
+  before_action :own_bot,only: [:edit,:update,:destroy,:panel, :settings,:settings_up,:extend, :extend_up, :restart, :playlist, :play_audio,:upload_audio_file]
 
-  rescue_from Errno::ECONNREFUSED,Errno::ETIMEDOUT, :with => :invalid_manager
+  rescue_from Errno::ECONNREFUSED,Errno::ETIMEDOUT,Timeout::Error, :with => :invalid_manager
   rescue_from ActiveRecord::RecordInvalid, :with => :invalid_transaction
 
 
@@ -147,6 +149,16 @@ class AudiobotController < ApplicationController
     redirect_to audiobot_playlist_path(@audiobot.id), success: "Запись #{params[:audio_id].to_i + 1} была успешно воспроизведена"
   end
 
+  def upload_audio_file
+    uploader_io = params[:audio_file]
+
+    Net::SFTP.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |sftp|
+      sftp.upload!(uploader_io.tempfile.path,"#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFilesSource/#{uploader_io.original_filename}")
+      File.delete(uploader_io.tempfile.path)
+    end
+    redirect_to audiobot_playlist_path(@audiobot.id), success: 'Файл успешно загружен'
+  end
+
 
 private
 
@@ -190,7 +202,9 @@ private
   def send_command_for_audiobot_manager(message)
     Socket.tcp(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port,nil,nil,connect_timeout: 5) do |sock|
       sock.write("#{Settings.audiobot.verify_data}#{message} #{@audiobot.id}")
-      raise Errno::ECONNREFUSED if(sock.gets != "OK")
+      Timeout::timeout(2) do
+        raise Errno::ECONNREFUSED if(sock.gets()!= "OK")
+      end
     end
   end
 

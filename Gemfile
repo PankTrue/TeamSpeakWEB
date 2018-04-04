@@ -82,6 +82,9 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'whenever', require: false
+gem 'net-ssh'
+gem 'net-sftp'
 gem 'net-ssh-gateway'
+
 
 

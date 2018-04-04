@@ -1,3 +1,9 @@
+<%= form_tag audiobot_upload_audio_file_path(id: @audiobot.id), multipart: true  do %>
+  <%= file_field_tag :audio_file %>
+  <%= submit_tag 'Upload' %>
+<% end %>
+
+
 <h2>PlayList | Total: <%= @total %> </h2>
 <div>
   <table class="table">
