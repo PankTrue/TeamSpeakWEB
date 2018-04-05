@@ -1,5 +1,5 @@
 <%= form_tag audiobot_upload_audio_file_path(id: @audiobot.id), multipart: true  do %>
-  <%= file_field_tag :audio_file %>
+  <%= file_field_tag :audio_files, name: 'audio_files[]', multiple: true %>
   <%= submit_tag 'Upload' %>
 <% end %>
 
@@ -29,7 +29,7 @@
         <td><%= audiofile %></td>
         <td> <%= size %> </td>
 
-        <td><%= link_to 'Play', audiobot_play_audio_path(id: @audiobot.id,audio_id: index),method: :post, class: 'btn btn-primary'%></td>
+        <td><%= link_to 'Play', audiobot_play_audio_path(id: @audiobot.id,audio_id: index+1),method: :post, class: 'btn btn-primary'%></td>
 
       </tr>
     <% end %>

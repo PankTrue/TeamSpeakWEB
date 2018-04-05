@@ -150,13 +150,18 @@ class AudiobotController < ApplicationController
   end
 
   def upload_audio_file
-    uploader_io = params[:audio_file]
-
-    Net::SFTP.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |sftp|
-      sftp.upload!(uploader_io.tempfile.path,"#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFilesSource/#{uploader_io.original_filename}")
-      File.delete(uploader_io.tempfile.path)
+    if(params[:audio_files].blank?)
+      redirect_to audiobot_playlist_path(@audiobot.id), warning: 'Вы не выбрали файлы'
+      return
     end
-    redirect_to audiobot_playlist_path(@audiobot.id), success: 'Файл успешно загружен'
+
+      Net::SFTP.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |sftp|
+        (params[:audio_files] || []).each do |file|
+          sftp.upload!(file.tempfile.path,"#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFilesSource/#{file.original_filename}")
+          File.delete(file.tempfile.path)
+        end
+      end
+      redirect_to audiobot_playlist_path(@audiobot.id), success: 'Файл успешно загружен'
   end
 
 
