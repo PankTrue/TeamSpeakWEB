@@ -35,7 +35,7 @@ class AudiobotController < ApplicationController
       return
     end
     unless @audiobot.valid?
-      redirect_to audiobot_new_path(@audiobot),'Некоторые поля были введены неверно'
+      redirect_to audiobot_new_path(@audiobot),danger: 'Некоторые поля были введены неверно'
       return
     end
 
@@ -138,10 +138,8 @@ class AudiobotController < ApplicationController
   end
 
   def playlist
-    @audiobot = Audiobot.find(params[:id])
     @playlist = getDecodedPlayList
-    @total = @playlist[0].split(' ')[1]
-    @playlist.slice!(0)
+    @for_decode = getSizeRawAudioFiles
   end
 
   def play_audio
@@ -155,12 +153,30 @@ class AudiobotController < ApplicationController
       return
     end
 
-      Net::SFTP.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |sftp|
-        (params[:audio_files] || []).each do |file|
-          sftp.upload!(file.tempfile.path,"#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFilesSource/#{file.original_filename}")
-          File.delete(file.tempfile.path)
-        end
+    full_size = 0
+    (params[:audio_files] || []).each do |file|
+      if((Audiobot::AUDIO_FORMATS_REGEXP =~ file.original_filename).nil?)
+        redirect_to audiobot_playlist_path(@audiobot.id), warning: "Один из файлов не поддерживается. Список поддерживаемых форматов: #{Audiobot::AUDIO_FORMATS.join(',')}"
+        return
       end
+      full_size += file.size
+    end
+
+    total_decoded_size = getDecodedPlayList[:total]
+    if(full_size > (@audiobot.audio_quota.megabytes - (total_decoded_size + getSizeRawAudioFiles)))
+      (params[:audio_files] || []).each do |file|
+        File.delete(file.tempfile.path)
+      end
+      redirect_to audiobot_playlist_path(@audiobot.id), danger: 'Вы привысили квоту на размер файлов'
+      return
+    end
+
+    Net::SFTP.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |sftp|
+      (params[:audio_files] || []).each do |file|
+        sftp.upload!(file.tempfile.path,"#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFilesSource/#{file.original_filename}")
+        File.delete(file.tempfile.path)
+      end
+    end
       redirect_to audiobot_playlist_path(@audiobot.id), success: 'Файл успешно загружен'
   end
 
@@ -207,17 +223,40 @@ private
   def send_command_for_audiobot_manager(message)
     Socket.tcp(Settings.other.ip[@audiobot.server_id],Settings.audiobot.manager_port,nil,nil,connect_timeout: 5) do |sock|
       sock.write("#{Settings.audiobot.verify_data}#{message} #{@audiobot.id}")
-      Timeout::timeout(2) do
+      Timeout::timeout(4) do
         raise Errno::ECONNREFUSED if(sock.gets()!= "OK")
       end
     end
   end
 
   def getDecodedPlayList
-    Net::SSH.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |ssh|
-      return ssh.exec!("ls -s1h #{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFiles").split("\n")
+    data = {total: 0}
+    Net::SFTP.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |sftp|
+      sftp.dir.entries("#{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFiles").each do |remote_file|
+        unless(['.','..'].include?(remote_file.name))
+          data[remote_file.name] = remote_file.attributes.size
+          data[:total] += remote_file.attributes.size
+        end
+      end
     end
+    return data
+    # Net::SSH.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |ssh|
+    #   return ssh.exec!("ls -s1h #{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFiles").split("\n")
+    # end
+  end
 
+  def getSizeRawAudioFiles
+    data = ''
+    Net::SSH.start(Settings.other.ip[@audiobot.server_id],Settings.other.ssh_user,password: Settings.other.ssh_password) do |ssh|
+      data = ssh.exec!("du -sh #{Settings.audiobot.path_for_audiobot}/data/#{@audiobot.id}/AudioFilesSource/").split(' ')[0]
+    end
+    if(data[-1] == 'K')
+      return data.to_i * 1024
+    elsif(data[-1] == 'M')
+      return data.to_i * 1048576
+    elsif(data[-1] == 'G')
+      return data.to_i * 1073741824
+    end
   end
 
 end

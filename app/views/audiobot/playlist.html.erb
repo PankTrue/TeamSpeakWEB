@@ -1,10 +1,15 @@
 <%= form_tag audiobot_upload_audio_file_path(id: @audiobot.id), multipart: true  do %>
-  <%= file_field_tag :audio_files, name: 'audio_files[]', multiple: true %>
+  <%= file_field_tag :audio_files, name: 'audio_files[]', multiple: true, max_file_size: 8.megabytes  %>
   <%= submit_tag 'Upload' %>
 <% end %>
 
 
-<h2>PlayList | Total: <%= @total %> </h2>
+<h3>Total: <%= (@playlist[:total].to_f/1048576).round(3) %> Mb / <%= @audiobot.audio_quota%> Mb</h3>
+<h3>For Decode: <%= (@for_decode.to_f/1048576).round(3) %> Mb</h3>
+<h3>Available: <%= (@audiobot.audio_quota - (@playlist[:total].to_f/1048576 + @for_decode.to_f/1048576)).round(3) %> Mb</h3>
+<br>
+
+<h1>PlayList</h1>
 <div>
   <table class="table">
     <thead>
@@ -16,18 +21,12 @@
     </thead>
 
     <tbody>
-    <% @playlist.each_with_index do |audiofile,index| %>
-       <% size = String.new %>
-      <% audiofile.slice!(0) if audiofile[0] == ' ' %>
-      <% audiofile.each_char do |char|%>
-        <% break if char == ' ' %>
-        <% audiofile.slice!(0) %>
-      <% size << char %>
-      <% end %>
+    <% @playlist.each_with_index do |(key,value),index| %>
       <tr>
-        <td> <%= index+1 %></td>
-        <td><%= audiofile %></td>
-        <td> <%= size %> </td>
+        <% next if index == 0 %>
+        <td> <%= index %></td>
+        <td><%= key %></td>
+        <td> <%= (value.to_f/1048576).round(3) %> Mb</td>
 
         <td><%= link_to 'Play', audiobot_play_audio_path(id: @audiobot.id,audio_id: index+1),method: :post, class: 'btn btn-primary'%></td>
 

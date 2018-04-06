@@ -47,7 +47,7 @@ group :development do
   gem 'listen', '~> 3.0.5'
   gem 'byebug', platform: :mri
   gem 'meta_request'
-  gem 'better_errors'
+  gem 'better_errors', git: 'https://github.com/charliesome/better_errors', branch: 'master'
   gem 'binding_of_caller'
 end
 
