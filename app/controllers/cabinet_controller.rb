@@ -410,7 +410,6 @@ private
       u.add_money((cost*0.1).round(2))
     end
   end
-  
 
 
 
