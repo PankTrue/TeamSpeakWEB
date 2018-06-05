@@ -82,4 +82,5 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'whenever', require: false
+gem 'backup'
 
