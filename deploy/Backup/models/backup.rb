@@ -2,12 +2,12 @@ require "settingslogic"
 
 
 class DatabaseCfg < Settingslogic
-  source "~/TeamSpeakWEB/config/database.yml"
+  source "/home/ts/teamspeakweb/config/database.yml"
   namespace "production"
 end
 
 class Settings < Settingslogic
-  source "~/TeamSpeakWEB/config/settings.yml"
+  source "/home/ts/teamspeakweb/config/settings.yml"
   namespace "production"
 end
 
