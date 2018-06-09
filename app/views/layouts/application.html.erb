@@ -73,7 +73,7 @@
           </div>
       <% end %>
 
-      <%= yield %>
+      <%= yield.force_encoding(Encoding::UTF_8) %>
 
     </main>
 

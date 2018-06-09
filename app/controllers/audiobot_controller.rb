@@ -144,7 +144,7 @@ class AudiobotController < ApplicationController
 
   def play_audio
     audiobot_play_audio(params[:audio_id]) unless params[:audio_id].blank?
-    redirect_to audiobot_playlist_path(@audiobot.id), success: "Запись #{params[:audio_id].to_i + 1} была успешно воспроизведена"
+    redirect_to audiobot_playlist_path(@audiobot.id), success: "Запись #{params[:audio_id].to_i} была успешно воспроизведена"
   end
 
   def upload_audio_file

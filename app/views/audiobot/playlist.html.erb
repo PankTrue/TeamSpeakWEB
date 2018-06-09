@@ -28,7 +28,7 @@
         <td><%= key %></td>
         <td> <%= (value.to_f/1048576).round(3) %> Mb</td>
 
-        <td><%= link_to 'Play', audiobot_play_audio_path(id: @audiobot.id,audio_id: index+1),method: :post, class: 'btn btn-primary'%></td>
+        <td><%= link_to 'Play', audiobot_play_audio_path(id: @audiobot.id,audio_id: index),method: :post, class: 'btn btn-primary'%></td>
 
       </tr>
     <% end %>
