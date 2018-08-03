@@ -116,7 +116,6 @@ end
 
 def extend_up
   time = params[:tsserver][:time_payment].to_i
-  cab = Teamspeak::Functions.new(@ts.server_id)
   cost = @ts.slots * Settings.other.slot_cost.to_i * time
   if [1,2,3,6,12].include?(time)
     if current_user.have_money?(cost)
@@ -127,7 +126,7 @@ def extend_up
           @ts.time_payment = @ts.time_payment + time * 30
         else
           @ts.time_payment = Date.today + time * 30
-          server = Teamspeak::Functions.new
+          server = Teamspeak::Functions.new(@ts.server_id)
           server.server_start(@ts.machine_id)
           server.server_autostart @ts.machine_id, 1
           server.disconnect
@@ -200,7 +199,7 @@ def pay_redirect
 
     @form = payment.form
   else
-    redirect_to cabinet_pay_path, warning: 'Сумма должна быть больше или равна 5 рублей'
+    redirect_to cabinet_pay_path, warning: 'Сумма должна быть больше или равна 10 рублей'
   end
 end
 
@@ -223,7 +222,7 @@ def backups
 end
 
 def create_backup
-  unless backup = Backup.where(tsserver_id: params[:id]).count >= 3
+  unless Backup.where(tsserver_id: params[:id]).count >= 3
     server = Teamspeak::Functions.new(@ts.server_id)
     backup = Backup.new(tsserver_id: params[:id], data: server.create_backup(@ts.machine_id).to_s)
     server.disconnect
