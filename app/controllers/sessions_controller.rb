@@ -1,3 +1,4 @@
+#delete this file
 class SessionsController < Devise::SessionsController
   # prepend_before_action :check_captcha, only: [:create]
 

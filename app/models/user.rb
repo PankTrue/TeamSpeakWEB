@@ -33,7 +33,7 @@ class User < ApplicationRecord
     end
     if user.url.blank? or user.name.blank?
       user.name = auth.info.name
-      case auth.provider
+      case auth.provider #TODO: use class_eval and rescue
         when 'vkontakte'
           user.url = auth.info.urls.Vkontakte
         when 'twitter'
