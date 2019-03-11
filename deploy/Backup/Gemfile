@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+
+gem "backup",git: 'https://github.com/vtm9/backup', branch: 'dropbox_api_v2'
+gem "settingslogic"

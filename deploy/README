@@ -78,3 +78,8 @@ sudo service postgresql stop
 sudo rm -rf /var/lib/postgresql/9.5/main/*
 sudo -u postgres tar -xvC /var/lib/postgresql/9.5/main -f ./base.tar.gz
 sudo service postgresql start
+
+#backup
+cp -r ~/Backup ~/
+bundle install
+bundle exec backup perform -t backup

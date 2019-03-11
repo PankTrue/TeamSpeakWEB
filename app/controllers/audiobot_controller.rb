@@ -144,7 +144,7 @@ class AudiobotController < ApplicationController
 
   def play_audio
     audiobot_play_audio(params[:audio_id]) unless params[:audio_id].blank?
-    redirect_to audiobot_playlist_path(@audiobot.id), success: "Запись #{params[:audio_id].to_i + 1} была успешно воспроизведена"
+    redirect_to audiobot_playlist_path(@audiobot.id), success: "Запись #{params[:audio_id].to_i} была успешно воспроизведена"
   end
 
   def upload_audio_file
@@ -156,6 +156,9 @@ class AudiobotController < ApplicationController
     full_size = 0
     (params[:audio_files] || []).each do |file|
       if((Audiobot::AUDIO_FORMATS_REGEXP =~ file.original_filename).nil?)
+        (params[:audio_files] || []).each do |file|
+          File.delete(file.tempfile.path)
+        end
         redirect_to audiobot_playlist_path(@audiobot.id), warning: "Один из файлов не поддерживается. Список поддерживаемых форматов: #{Audiobot::AUDIO_FORMATS.join(',')}"
         return
       end
